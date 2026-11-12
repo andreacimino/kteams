@@ -97,7 +97,7 @@ QIcon DesktopIntegration::iconWithPresence(const QString &availability)
         QPixmap pm = base.pixmap(size, size);
         QPainter p(&pm);
         p.setRenderHint(QPainter::Antialiasing);
-        const qreal d = size * 0.46;
+        const qreal d = size * 0.34;
         const QRectF dot(size - d, size - d, d, d);
         p.setPen(QPen(QColor(255, 255, 255), qMax(1.0, size / 16.0)));
         p.setBrush(color);
