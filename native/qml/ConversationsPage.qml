@@ -127,6 +127,7 @@ Kirigami.ScrollablePage {
                 QQC2.TabButton { text: qsTr("Calendar"); icon.name: "view-calendar" }
                 QQC2.TabButton { text: backend.activityUnread > 0 ? qsTr("Activity (%1)").arg(backend.activityUnread) : qsTr("Activity"); icon.name: "notifications" }
                 onCurrentIndexChanged: if (currentIndex === 2) backend.loadCalendarWeek(backend.calendarWeekOffset)
+                Component.onCompleted: if (backend.startTab >= 0) currentIndex = backend.startTab
             }
             RowLayout {
                 Layout.fillWidth: true

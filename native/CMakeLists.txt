@@ -36,6 +36,7 @@ add_executable(kteams
     src/desktopintegration.h
     src/screencast.cpp
     src/screencast.h
+    src/demo.h
     src/callengine.cpp
     src/callengine.h
     src/nativecall.cpp

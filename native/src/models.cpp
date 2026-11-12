@@ -1,4 +1,5 @@
 #include "models.h"
+#include "demo.h"
 
 #include <QHash>
 #include <QLocale>
@@ -15,9 +16,9 @@ QVariant ConversationModel::data(const QModelIndex &index, int role) const
     const auto &it = m_items[index.row()];
     switch (role) {
     case IdRole: return it.id;
-    case TitleRole: return it.title;
+    case TitleRole: return Demo::title(it.title);
     case TypeRole: return it.type;
-    case PreviewRole: return it.preview;
+    case PreviewRole: return Demo::text(it.preview);
     case LastActivityRole: return QVariant::fromValue(it.lastActivity);
     case PinnedRole: return it.pinned;
     case MutedRole: return it.muted;
@@ -134,8 +135,8 @@ QVariant ChannelModel::data(const QModelIndex &index, int role) const
     const auto &it = m_items[index.row()];
     switch (role) {
     case IdRole: return it.id;
-    case NameRole: return it.name;
-    case TeamRole: return it.teamName;
+    case NameRole: return Demo::title(it.name);
+    case TeamRole: return Demo::title(it.teamName);
     case GeneralRole: return it.general;
     case UnreadRole: return it.unread;
     case LastActivityRole: return QVariant::fromValue(it.lastActivity);
@@ -180,16 +181,16 @@ QVariant MessageModel::data(const QModelIndex &index, int role) const
     const auto &it = m_items[index.row()];
     switch (role) {
     case IdRole: return it.id;
-    case FromRole: return it.from;
-    case ContentRole: return it.content;
+    case FromRole: return Demo::name(it.from);
+    case ContentRole: return Demo::text(it.content);
     case TimeRole: return it.time;
     case TimestampRole: return QVariant::fromValue(it.timestamp);
     case MineRole: return it.mine;
     case ReplyCountRole: return it.replyCount;
     case FromIdRole: return it.fromId;
-    case RichTextRole: return it.richText;
-    case ImagesRole: return it.images;
-    case FilesRole: return it.files;
+    case RichTextRole: return Demo::enabled() ? Demo::text(it.content).toHtmlEscaped() : it.richText;
+    case ImagesRole: return Demo::enabled() ? QStringList() : it.images;
+    case FilesRole: return Demo::enabled() ? QVariantList() : it.files;
     case ReactionsRole: return it.reactions;
     case EditedRole: return it.edited;
     case DeletedRole: return it.deleted;
@@ -293,7 +294,7 @@ QVariant CalendarModel::data(const QModelIndex &index, int role) const
     const QLocale locale;
     switch (role) {
     case IdRole: return e.id;
-    case SubjectRole: return e.subject;
+    case SubjectRole: return Demo::title(e.subject);
     case StartRole: return e.start;
     case EndRole: return e.end;
     case TimeRangeRole:
@@ -304,8 +305,8 @@ QVariant CalendarModel::data(const QModelIndex &index, int role) const
         const QString day = locale.toString(e.start.toLocalTime().date(), QStringLiteral("dddd d MMMM"));
         return e.start.toLocalTime().date() == QDate::currentDate() ? QStringLiteral("Oggi, ") + day : day;
     }
-    case LocationRole: return e.location;
-    case OrganizerRole: return e.organizer;
+    case LocationRole: return Demo::enabled() ? QString() : e.location;
+    case OrganizerRole: return Demo::name(e.organizer);
     case ChatIdRole: return e.chatId;
     case OnlineRole: return e.online;
     case ShowAsRole: return e.showAs;
@@ -386,11 +387,11 @@ QVariant ActivityModel::data(const QModelIndex &index, int role) const
     const auto &it = m_items[index.row()];
     switch (role) {
     case IdRole: return it.id;
-    case WhoRole: return it.who;
+    case WhoRole: return Demo::name(it.who);
     case WhoMriRole: return it.whoMri;
     case TextRole: return it.text;
-    case PreviewRole: return it.preview;
-    case WhereRole: return it.where;
+    case PreviewRole: return Demo::text(it.preview);
+    case WhereRole: return Demo::title(it.where);
     case ThreadIdRole: return it.threadId;
     case MessageIdRole: return it.messageId;
     case TimestampRole: return QVariant::fromValue(it.timestamp);

@@ -1,4 +1,5 @@
 #include "avatarcache.h"
+#include "demo.h"
 
 #include <QCryptographicHash>
 #include <QDateTime>
@@ -47,6 +48,7 @@ QString AvatarCache::pathFor(const QString &mri, const QString &suffix) const
 
 QString AvatarCache::urlFor(const QString &mri)
 {
+    if (Demo::enabled()) return {}; // initials of the made-up names instead of real pictures
     if (mri.isEmpty()) return {};
     const auto known = m_known.constFind(mri);
     if (known != m_known.cend()) return *known;

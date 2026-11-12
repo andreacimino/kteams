@@ -1,4 +1,5 @@
 #include "backend.h"
+#include "demo.h"
 
 #include <QBuffer>
 #include <QCryptographicHash>
@@ -787,6 +788,11 @@ void Backend::handleConversations(const QJsonArray &arr, bool incremental)
         // Names, members and teams once per session (the cache has them too, but the
         // presence polling and fresh members start from here).
         if (!m_peopleLoaded) { m_peopleLoaded = true; loadPeople(); }
+        // Demo mode: a chat open from the start, for screenshots.
+        if (Demo::enabled() && !items.isEmpty() && m_currentConversationId.isEmpty()) {
+            const QString first = items.first().id;
+            QTimer::singleShot(std::chrono::seconds(2), this, [this, first] { emit openConversationRequested(first); });
+        }
         m_client.fetchMessages(QString::fromLatin1(kActivityFeed));
         return;
     }
@@ -1707,7 +1713,7 @@ QVariantList Backend::currentMembers() const
     QVariantList list;
     for (const QString &mri : m_chatMembers.value(m_currentConversationId)) {
         const QString name = m_people.value(mri).displayName;
-        if (!name.isEmpty()) list << QVariantMap{{QStringLiteral("mri"), mri}, {QStringLiteral("name"), name}};
+        if (!name.isEmpty()) list << QVariantMap{{QStringLiteral("mri"), mri}, {QStringLiteral("name"), Demo::name(name)}};
     }
     return list;
 }
@@ -2208,9 +2214,9 @@ void Backend::runSearch()
         for (const MessageItem &m : items) {
             if (m.deleted || !m.content.contains(q, Qt::CaseInsensitive)) continue;
             hits.append({m.timestamp, QVariantMap{{QStringLiteral("conversationId"), conversationId},
-                                                  {QStringLiteral("title"), conv ? conv->title : QString()},
-                                                  {QStringLiteral("who"), m.from}, {QStringLiteral("fromMri"), m.fromId},
-                                                  {QStringLiteral("text"), m.content.simplified()},
+                                                  {QStringLiteral("title"), Demo::title(conv ? conv->title : QString())},
+                                                  {QStringLiteral("who"), Demo::name(m.from)}, {QStringLiteral("fromMri"), m.fromId},
+                                                  {QStringLiteral("text"), Demo::text(m.content.simplified())},
                                                   {QStringLiteral("timestamp"), m.timestamp}, {QStringLiteral("messageId"), m.id}}});
         }
     };
@@ -2226,6 +2232,10 @@ void Backend::runSearch()
 QVariantMap Backend::personInfo(const QString &mri) const
 {
     const Person p = m_people.value(mri);
+    if (Demo::enabled())
+        return {{QStringLiteral("mri"), mri}, {QStringLiteral("name"), Demo::name(p.displayName)}, {QStringLiteral("email"), QStringLiteral("name@example.com")},
+                {QStringLiteral("jobTitle"), QStringLiteral("Product manager")}, {QStringLiteral("department"), QStringLiteral("Engineering")},
+                {QStringLiteral("presence"), m_presence.value(mri)}};
     return {{QStringLiteral("mri"), mri}, {QStringLiteral("name"), p.displayName}, {QStringLiteral("email"), p.email},
             {QStringLiteral("jobTitle"), p.jobTitle}, {QStringLiteral("department"), p.department},
             {QStringLiteral("presence"), m_presence.value(mri)}};

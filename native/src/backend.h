@@ -14,6 +14,7 @@
 #include "fileuploader.h"
 #include "mediacache.h"
 #include "nativecall.h"
+#include "demo.h"
 #include "screencast.h"
 #include "models.h"
 #include "oauth.h"
@@ -97,8 +98,8 @@ public:
     int activityUnread() const { return m_activity.unreadCount(); }
     MessageModel* messages() { return &m_messages; }
     QString currentConversationId() const { return m_currentConversationId; }
-    QString currentConversationTitle() const { return m_currentConversationTitle; }
-    QString selfDisplayName() const { return m_selfDisplayName; }
+    QString currentConversationTitle() const { return Demo::title(m_currentConversationTitle); }
+    QString selfDisplayName() const { return Demo::name(m_selfDisplayName); }
     bool currentIsChannel() const { return m_channelIds.contains(m_currentConversationId); }
     bool hasMoreHistory() const { return m_hasMoreHistory; }
     QSortFilterProxyModel *filteredMessages() { return &m_filteredMessages; }
@@ -110,7 +111,7 @@ public:
     int avatarRevision() const { return m_avatarRevision; }
     int mediaRevision() const { return m_mediaRevision; }
     int presenceRevision() const { return m_presenceRevision; }
-    QString typingText() const { return m_typingText; }
+    QString typingText() const { return Demo::enabled() && !m_typingText.isEmpty() ? tr("%1 is typing...").arg(Demo::name(m_typingText)) : m_typingText; }
     bool realtime() const { return m_trouter.isConnected(); }
     bool uploading() const { return m_uploading || m_files.busy(); }
     bool downloading() const { return m_downloading; }
@@ -222,12 +223,15 @@ public:
     // A Teams meeting in the calendar (Microsoft Graph); attendees: e-mail addresses.
     Q_INVOKABLE void createMeeting(const QString &subject, const QDateTime &start, const QDateTime &end, const QStringList &attendees);
     Q_PROPERTY(QString activityFilter READ activityFilter WRITE setActivityFilter NOTIFY activityChanged)
+    // Demo mode helpers (screenshots): the tab to open at start (KTEAMS_START_TAB, 0-3), or -1.
+    Q_PROPERTY(int startTab READ startTab CONSTANT)
+    int startTab() const { return qEnvironmentVariableIsSet("KTEAMS_START_TAB") ? qEnvironmentVariableIntValue("KTEAMS_START_TAB") : -1; }
     Q_PROPERTY(QString quoteWho READ quoteWho NOTIFY quoteChanged)
     Q_PROPERTY(QString quoteText READ quoteText NOTIFY quoteChanged)
     QString activityFilter() const { return m_activityFilter; }
     void setActivityFilter(const QString &filter);
-    QString quoteWho() const { return m_quoteWho; }
-    QString quoteText() const { return m_quoteText; }
+    QString quoteWho() const { return Demo::name(m_quoteWho); }
+    QString quoteText() const { return Demo::text(m_quoteText); }
     // Own status: "Available", "Busy", "DoNotDisturb", "BeRightBack", "Away", "Offline".
     Q_INVOKABLE void setMyAvailability(const QString &availability);
     Q_INVOKABLE void setStatusMessage(const QString &message);
