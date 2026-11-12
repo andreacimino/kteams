@@ -77,6 +77,10 @@ int main(int argc, char *argv[])
     if (!engine.rootObjects().isEmpty())
         desktop.setWindow(qobject_cast<QQuickWindow *>(engine.rootObjects().constFirst()));
     QObject::connect(&backend, &Backend::unreadCountChanged, &desktop, [&] { desktop.setUnreadCount(backend.unreadCount()); });
+    // Own presence on the tray icon; the tray's status menu sets it.
+    QObject::connect(&backend, &Backend::presenceChanged, &desktop, [&] { desktop.setPresence(backend.presenceOf(backend.property("selfMriValue").toString())); });
+    QObject::connect(&backend, &Backend::selfChanged, &desktop, [&] { desktop.setPresence(backend.presenceOf(backend.property("selfMriValue").toString())); });
+    QObject::connect(&desktop, &DesktopIntegration::availabilityRequested, &backend, &Backend::setMyAvailability);
 
     return app.exec();
 }

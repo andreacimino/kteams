@@ -4,6 +4,8 @@
 #include <QPointer>
 #include <QWindow>
 
+class QAction;
+
 class KStatusNotifierItem;
 
 // Plasma integration: tray icon (show/hide the window, quit), unread badge on the
@@ -22,6 +24,10 @@ public:
     void setWindow(QWindow *window);
     // Chats with unread messages: tray state/tooltip and task manager badge.
     void setUnreadCount(int count);
+    // Own presence ("Available", "Busy", "DoNotDisturb", "BeRightBack", "Away", "Offline",
+    // "InACall"...): a dot on the tray icon, the tooltip, and the checked entry of the
+    // tray's status submenu.
+    void setPresence(const QString &availability);
 
     bool startAtLogin() const;
     void setStartAtLogin(bool enabled);
@@ -29,6 +35,8 @@ public:
 
 signals:
     void startAtLoginChanged();
+    // The user picked a status in the tray menu.
+    void availabilityRequested(const QString &availability);
 
 private:
     QString autostartPath() const;
@@ -36,4 +44,9 @@ private:
     KStatusNotifierItem *m_tray = nullptr;
     QPointer<QWindow> m_window;
     int m_unread = -1;
+    QString m_presence;
+    QList<QAction *> m_statusActions; // data(): the availability each one sets
+    void updateTooltip();
+    static QString presenceIcon(const QString &availability);
+    static QString presenceText(const QString &availability);
 };

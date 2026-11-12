@@ -9,6 +9,9 @@
 #include <QIcon>
 #include <QStandardPaths>
 #include <KStatusNotifierItem>
+#include <QAction>
+#include <QActionGroup>
+#include <QMenu>
 
 DesktopIntegration::DesktopIntegration(QObject *parent) : QObject(parent)
 {
@@ -39,6 +42,58 @@ DesktopIntegration::DesktopIntegration(QObject *parent) : QObject(parent)
     m_tray->setStatus(KStatusNotifierItem::Active);
     // The standard menu brings "Quit"; clicking the icon shows/hides the associated window.
     m_tray->setStandardActionsEnabled(true);
+    // Status submenu, as the official client's tray has.
+    QMenu *status = new QMenu(tr("Status"), m_tray->contextMenu());
+    status->setIcon(QIcon::fromTheme(QStringLiteral("user-online")));
+    auto *group = new QActionGroup(status);
+    const QList<QPair<QString, QString>> choices{{QStringLiteral("Available"), tr("Available")}, {QStringLiteral("Busy"), tr("Busy")},
+                                                 {QStringLiteral("DoNotDisturb"), tr("Do not disturb")}, {QStringLiteral("BeRightBack"), tr("Be right back")},
+                                                 {QStringLiteral("Away"), tr("Away")}, {QStringLiteral("Offline"), tr("Appear offline")}};
+    for (const auto &[value, label] : choices) {
+        QAction *a = status->addAction(QIcon::fromTheme(presenceIcon(value)), label);
+        a->setCheckable(true);
+        a->setData(value);
+        group->addAction(a);
+        connect(a, &QAction::triggered, this, [this, value] { emit availabilityRequested(value); });
+        m_statusActions << a;
+    }
+    m_tray->contextMenu()->insertMenu(m_tray->contextMenu()->actions().value(0), status);
+    m_tray->contextMenu()->insertSeparator(m_tray->contextMenu()->actions().value(1));
+}
+
+QString DesktopIntegration::presenceIcon(const QString &availability)
+{
+    if (availability == QLatin1String("Available")) return QStringLiteral("user-online");
+    if (availability == QLatin1String("Away") || availability == QLatin1String("BeRightBack")) return QStringLiteral("user-away");
+    if (availability == QLatin1String("Offline") || availability.isEmpty()) return QStringLiteral("user-offline");
+    return QStringLiteral("user-busy"); // Busy, DoNotDisturb, InACall, InAMeeting, Presenting
+}
+
+QString DesktopIntegration::presenceText(const QString &availability)
+{
+    static const QHash<QString, QString> names{{QStringLiteral("Available"), tr("Available")}, {QStringLiteral("Busy"), tr("Busy")},
+                                               {QStringLiteral("DoNotDisturb"), tr("Do not disturb")}, {QStringLiteral("BeRightBack"), tr("Be right back")},
+                                               {QStringLiteral("Away"), tr("Away")}, {QStringLiteral("Offline"), tr("Offline")},
+                                               {QStringLiteral("InACall"), tr("In a call")}, {QStringLiteral("InAMeeting"), tr("In a meeting")},
+                                               {QStringLiteral("Presenting"), tr("Presenting")}};
+    return names.value(availability, availability);
+}
+
+void DesktopIntegration::setPresence(const QString &availability)
+{
+    if (availability == m_presence) return;
+    m_presence = availability;
+    m_tray->setOverlayIconByName(presenceIcon(availability));
+    for (QAction *a : std::as_const(m_statusActions)) a->setChecked(a->data().toString() == availability);
+    updateTooltip();
+}
+
+void DesktopIntegration::updateTooltip()
+{
+    QStringList parts;
+    if (!m_presence.isEmpty()) parts << presenceText(m_presence);
+    if (m_unread > 0) parts << (m_unread == 1 ? tr("1 unread chat") : tr("%1 unread chats").arg(m_unread));
+    m_tray->setToolTipSubTitle(parts.join(QStringLiteral(" · ")));
 }
 
 void DesktopIntegration::setWindow(QWindow *window)
@@ -51,15 +106,14 @@ void DesktopIntegration::setUnreadCount(int count)
 {
     if (count == m_unread) return;
     m_unread = count;
+    // Unread: the "needs attention" state (highlighted icon); the overlay dot is the presence.
     m_tray->setStatus(count > 0 ? KStatusNotifierItem::NeedsAttention : KStatusNotifierItem::Active);
     m_tray->setAttentionIconByPixmap(QIcon(QStringLiteral(":/KTeams/icon.svg")));
-    m_tray->setOverlayIconByName(count > 0 ? QStringLiteral("mail-unread-new") : QString());
-    m_tray->setToolTipSubTitle(count > 0 ? (count == 1 ? tr("1 unread chat") : tr("%1 unread chats").arg(count))
-                                         : QString());
+    updateTooltip();
 
     // Task manager badge: the Unity LauncherEntry signal, which Plasma's task manager reads.
     // It matches the installed desktop file by id.
-    QDBusMessage signal = QDBusMessage::createSignal(QStringLiteral("/org/ac/teams/native"),
+    QDBusMessage signal = QDBusMessage::createSignal(QStringLiteral("/org/kteams/kteams"),
                                                      QStringLiteral("com.canonical.Unity.LauncherEntry"), QStringLiteral("Update"));
     signal << QStringLiteral("application://%1.desktop").arg(QString::fromLatin1(kDesktopId))
            << QVariantMap{{QStringLiteral("count"), qint64(count)}, {QStringLiteral("count-visible"), count > 0}};

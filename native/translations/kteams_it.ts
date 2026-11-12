@@ -677,12 +677,72 @@
 <context>
     <name>DesktopIntegration</name>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="57" />
+        <location filename="../src/desktopintegration.cpp" line="46" />
+        <source>Status</source>
+        <translation>Stato</translation>
+    </message>
+    <message>
+        <location filename="../src/desktopintegration.cpp" line="49" />
+        <location filename="../src/desktopintegration.cpp" line="74" />
+        <source>Available</source>
+        <translation>Disponibile</translation>
+    </message>
+    <message>
+        <location filename="../src/desktopintegration.cpp" line="49" />
+        <location filename="../src/desktopintegration.cpp" line="74" />
+        <source>Busy</source>
+        <translation>Occupato</translation>
+    </message>
+    <message>
+        <location filename="../src/desktopintegration.cpp" line="50" />
+        <location filename="../src/desktopintegration.cpp" line="75" />
+        <source>Do not disturb</source>
+        <translation>Non disturbare</translation>
+    </message>
+    <message>
+        <location filename="../src/desktopintegration.cpp" line="50" />
+        <location filename="../src/desktopintegration.cpp" line="75" />
+        <source>Be right back</source>
+        <translation>Torno subito</translation>
+    </message>
+    <message>
+        <location filename="../src/desktopintegration.cpp" line="51" />
+        <location filename="../src/desktopintegration.cpp" line="76" />
+        <source>Away</source>
+        <translation>Assente</translation>
+    </message>
+    <message>
+        <location filename="../src/desktopintegration.cpp" line="51" />
+        <source>Appear offline</source>
+        <translation>Mostra come offline</translation>
+    </message>
+    <message>
+        <location filename="../src/desktopintegration.cpp" line="76" />
+        <source>Offline</source>
+        <translation>Offline</translation>
+    </message>
+    <message>
+        <location filename="../src/desktopintegration.cpp" line="77" />
+        <source>In a call</source>
+        <translation>In chiamata</translation>
+    </message>
+    <message>
+        <location filename="../src/desktopintegration.cpp" line="77" />
+        <source>In a meeting</source>
+        <translation>In riunione</translation>
+    </message>
+    <message>
+        <location filename="../src/desktopintegration.cpp" line="78" />
+        <source>Presenting</source>
+        <translation>Sta presentando</translation>
+    </message>
+    <message>
+        <location filename="../src/desktopintegration.cpp" line="95" />
         <source>1 unread chat</source>
         <translation>1 chat non letta</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="57" />
+        <location filename="../src/desktopintegration.cpp" line="95" />
         <source>%1 unread chats</source>
         <translation>%1 chat non lette</translation>
     </message>
