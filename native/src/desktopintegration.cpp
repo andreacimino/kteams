@@ -7,6 +7,8 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QIcon>
+#include <QPainter>
+#include <QPen>
 #include <QStandardPaths>
 #include <KStatusNotifierItem>
 #include <QAction>
@@ -79,11 +81,46 @@ QString DesktopIntegration::presenceText(const QString &availability)
     return names.value(availability, availability);
 }
 
+QIcon DesktopIntegration::iconWithPresence(const QString &availability)
+{
+    // The tray's overlay icons are too small to read: the dot is painted into the icon
+    // itself, large, at every size the tray may ask for.
+    QColor color;
+    if (availability == QLatin1String("Available")) color = QColor(0x2e, 0xb8, 0x5c);
+    else if (availability == QLatin1String("Away") || availability == QLatin1String("BeRightBack")) color = QColor(0xf5, 0xb8, 0x00);
+    else if (availability == QLatin1String("Offline")) color = QColor(0x9a, 0x9a, 0x9a);
+    else if (!availability.isEmpty()) color = QColor(0xd9, 0x2d, 0x2d); // busy, do not disturb, in a call...
+    const QIcon base(QStringLiteral(":/KTeams/icon.svg"));
+    if (!color.isValid()) return base;
+    QIcon icon;
+    for (int size : {22, 24, 32, 48, 64, 128}) {
+        QPixmap pm = base.pixmap(size, size);
+        QPainter p(&pm);
+        p.setRenderHint(QPainter::Antialiasing);
+        const qreal d = size * 0.46;
+        const QRectF dot(size - d, size - d, d, d);
+        p.setPen(QPen(QColor(255, 255, 255), qMax(1.0, size / 16.0)));
+        p.setBrush(color);
+        p.drawEllipse(dot);
+        if (availability == QLatin1String("DoNotDisturb")) { // the bar of the official icon
+            p.setPen(Qt::NoPen);
+            p.setBrush(Qt::white);
+            p.drawRect(QRectF(dot.left() + d * 0.22, dot.center().y() - d * 0.09, d * 0.56, d * 0.18));
+        }
+        p.end();
+        icon.addPixmap(pm);
+    }
+    return icon;
+}
+
 void DesktopIntegration::setPresence(const QString &availability)
 {
     if (availability == m_presence) return;
     m_presence = availability;
-    m_tray->setOverlayIconByName(presenceIcon(availability));
+    const QIcon icon = iconWithPresence(availability);
+    m_tray->setIconByPixmap(icon);
+    m_tray->setAttentionIconByPixmap(icon);
+    m_tray->setToolTipIconByPixmap(icon);
     for (QAction *a : std::as_const(m_statusActions)) a->setChecked(a->data().toString() == availability);
     updateTooltip();
 }
@@ -108,7 +145,6 @@ void DesktopIntegration::setUnreadCount(int count)
     m_unread = count;
     // Unread: the "needs attention" state (highlighted icon); the overlay dot is the presence.
     m_tray->setStatus(count > 0 ? KStatusNotifierItem::NeedsAttention : KStatusNotifierItem::Active);
-    m_tray->setAttentionIconByPixmap(QIcon(QStringLiteral(":/KTeams/icon.svg")));
     updateTooltip();
 
     // Task manager badge: the Unity LauncherEntry signal, which Plasma's task manager reads.

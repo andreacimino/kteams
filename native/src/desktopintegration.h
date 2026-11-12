@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QPointer>
+#include <QIcon>
 #include <QWindow>
 
 class QAction;
@@ -48,5 +49,6 @@ private:
     QList<QAction *> m_statusActions; // data(): the availability each one sets
     void updateTooltip();
     static QString presenceIcon(const QString &availability);
+    static QIcon iconWithPresence(const QString &availability);
     static QString presenceText(const QString &availability);
 };
