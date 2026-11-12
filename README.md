@@ -4,34 +4,55 @@ A **native** Microsoft Teams client for KDE Plasma (work / school accounts), wri
 Qt 6 / Kirigami. No embedded browser: it talks to the Teams services directly, as the
 official client does, and uses about 120 MB of memory against ~1 GB for Teams web.
 
-Status: in daily use for chat and audio calls; video, screen sharing and meetings are
-implemented and being verified on real calls. The interface is in English, with an Italian
-translation picked automatically from the system language.
+The interface is in English, with an Italian translation picked automatically from the
+system language. Status as of November 2026, honestly:
 
-## What it does
+## Status
 
-- **Sign-in** with the normal Microsoft login (device code: the browser opens, you enter the
-  code, you come back). The token stays in the system wallet (KWallet).
-- **Chat**, one-to-one and groups, **teams and channels** with threads, formatting, pictures
-  and attachments (sending, also by drag and drop, and downloading), reactions, mentions,
-  edit and delete, quotes, "seen by", "is typing". Pinned, muted and hidden chats; groups can
-  be renamed, have people added, and be left.
-- **Native calls** (WebRTC through GStreamer): audio with echo cancellation, one-to-one and
-  group, outgoing and incoming with a ringtone; **camera** and **screen sharing** (Plasma's
-  system picker); **meetings** joined from the calendar.
-- **Presence**: your own status and everybody else's, a status message, "Do not disturb"
-  that silences notifications.
-- **Calendar**: the week, reminders, accept/decline, join, new meeting.
-- **Activity**: mentions, replies, reactions, with filters.
-- **Plasma notifications** with sounds and pictures, a tray icon with the unread count,
-  start at login, shortcuts (Ctrl+K search, Ctrl+N new chat, Ctrl+1..4 tabs).
-- **Local cache**: chats, channels, people and recent messages are back at once on start-up.
+**Works, used every day**
 
-- **Search**: chats by name, and messages (the recent ones of every chat; not Teams'
-  server-side search yet).
+- Sign-in with the normal Microsoft login (device code), session kept in the system wallet.
+- Chats (one-to-one and groups) and teams/channels with threads: text with formatting,
+  pictures, files (send, drag and drop, download), reactions, mentions, edit and delete,
+  reply quotes, "seen by", "is typing", read state and unread counts.
+- Chat management: pin, mute, hide; group chats renamed, people added, leaving.
+- Audio calls: outgoing (one-to-one and group), incoming with ringtone, Teams' test call;
+  echo cancellation and noise suppression; mute, hang up.
+- Presence (own and others'), status message, Do not disturb.
+- Calendar: week view, reminders, accept/decline, join; new meeting (through Microsoft Graph).
+- Activity feed (mentions, replies, reactions) with filters and mark-all-read.
+- Plasma notifications with sounds and pictures, tray icon with unread count, start at
+  login, keyboard shortcuts.
+- Search: chats by name, inside a chat (Ctrl+F), and across the recent messages of every chat.
+- Local cache: everything reappears at once on start-up.
 
-Not yet: a grid with several videos at once, meeting lobby, Adaptive Cards, settings
-(audio/video devices).
+**Implemented, not yet confirmed on real calls**
+
+- Camera in calls (sending works against Teams' media controller; receiving someone's video
+  is verified only in a loopback test, not yet with a Teams user).
+- Screen sharing (Plasma's picker through the desktop portal; same verification state).
+- Joining meetings from the calendar (lobby, roster and the "someone is sharing" cases
+  untested).
+- Incoming video from Teams desktop clients, which offer their video section differently
+  from Teams web (a renegotiation path exists for that).
+
+**Not there yet**
+
+- Several videos at once (a grid): one remote camera and one shared screen are shown.
+- Teams' server-side message search (only recent messages are searched locally).
+- Adaptive Cards and other app/bot content (shown as plain text or empty).
+- Message formatting toolbar, forwarding, link previews.
+- Meeting lobby, hand raising, in-meeting chat; hold and transfer; call keep-alive on very
+  long calls.
+- Settings page (audio/video devices, sounds); the camera is `/dev/video0` (or
+  `KTEAMS_CAMERA`).
+- Packages for distributions other than Arch (Flatpak/AppImage planned).
+
+**Known limits**
+
+- The protocol is Microsoft's own, undocumented one, learned from captures and from Teams
+  web's code: a change on Microsoft's side can break a feature without notice.
+- One account at a time.
 
 ## Install
 
