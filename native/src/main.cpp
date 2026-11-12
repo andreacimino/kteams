@@ -11,6 +11,7 @@
 #include <QMutex>
 #include <QLocale>
 #include <QStandardPaths>
+#include <QTimer>
 #include <QTranslator>
 #include <QQuickWindow>
 
@@ -77,6 +78,18 @@ int main(int argc, char *argv[])
     if (!engine.rootObjects().isEmpty())
         desktop.setWindow(qobject_cast<QQuickWindow *>(engine.rootObjects().constFirst()));
     QObject::connect(&backend, &Backend::unreadCountChanged, &desktop, [&] { desktop.setUnreadCount(backend.unreadCount()); });
+    // Screenshot helper (demo mode): KTEAMS_SCREENSHOT=<file.png> saves the window after
+    // KTEAMS_SCREENSHOT_DELAY seconds (default 20) and quits.
+    if (qEnvironmentVariableIsSet("KTEAMS_SCREENSHOT") && !engine.rootObjects().isEmpty()) {
+        auto *window = qobject_cast<QQuickWindow *>(engine.rootObjects().constFirst());
+        const int delay = qEnvironmentVariableIsSet("KTEAMS_SCREENSHOT_DELAY") ? qEnvironmentVariableIntValue("KTEAMS_SCREENSHOT_DELAY") : 20;
+        const QString file = qEnvironmentVariable("KTEAMS_SCREENSHOT");
+        if (window) { window->setWidth(1280); window->setHeight(800); }
+        QTimer::singleShot(std::chrono::seconds(delay), &app, [window, file] {
+            if (window) window->grabWindow().save(file);
+            QCoreApplication::quit();
+        });
+    }
     // Own presence on the tray icon; the tray's status menu sets it.
     QObject::connect(&backend, &Backend::presenceChanged, &desktop, [&] { desktop.setPresence(backend.presenceOf(backend.property("selfMriValue").toString())); });
     QObject::connect(&backend, &Backend::selfChanged, &desktop, [&] { desktop.setPresence(backend.presenceOf(backend.property("selfMriValue").toString())); });

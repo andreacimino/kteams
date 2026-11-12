@@ -7,6 +7,16 @@ official client does, and uses about 120 MB of memory against ~1 GB for Teams we
 The interface is in English, with an Italian translation picked automatically from the
 system language. Status as of November 2026, honestly:
 
+## Screenshots
+
+Chats and a group conversation (demo data):
+
+![Chat](docs/screenshots/chat.png)
+
+The calendar week, with meetings to join:
+
+![Calendar](docs/screenshots/calendar.png)
+
 ## Status
 
 **Works, used every day**
@@ -88,6 +98,9 @@ Then "KTeams" from the menu, or `kteams`.
 - `native/tests/offer_dump.cpp` → `kteams-offer-test`: prints the SDP offer, turns the
   camera on, and with `loop` runs a call between two engines in one process, without calling
   anyone. `cmake --build native/build --target kteams-offer-test`.
+- Screenshots: `KTEAMS_DEMO=1` replaces every name, title and message with made-up ones;
+  `KTEAMS_SCREENSHOT=file.png` (with `KTEAMS_START_TAB=0..3`) saves the window after
+  `KTEAMS_SCREENSHOT_DELAY` seconds and quits. `docs/screenshots/` was made that way.
 - `native/call/`: `kteams-capture`, Teams web in a QtWebEngine window, a developer tool only
   (`-DBUILD_CALL_HELPER=ON`): with `--capture` it records the protocol traffic, secrets
   masked. The app does not use it.

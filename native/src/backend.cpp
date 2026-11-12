@@ -790,7 +790,8 @@ void Backend::handleConversations(const QJsonArray &arr, bool incremental)
         if (!m_peopleLoaded) { m_peopleLoaded = true; loadPeople(); }
         // Demo mode: a chat open from the start, for screenshots.
         if (Demo::enabled() && !items.isEmpty() && m_currentConversationId.isEmpty()) {
-            const QString first = items.first().id;
+            QString first = items.first().id;
+            for (const ConversationItem &c : std::as_const(items)) if (!c.preview.isEmpty() && c.type != QLatin1String("oneToOne")) { first = c.id; break; }
             QTimer::singleShot(std::chrono::seconds(2), this, [this, first] { emit openConversationRequested(first); });
         }
         m_client.fetchMessages(QString::fromLatin1(kActivityFeed));

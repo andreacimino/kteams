@@ -303,7 +303,7 @@ QVariant CalendarModel::data(const QModelIndex &index, int role) const
             + locale.toString(e.end.toLocalTime().time(), QLocale::ShortFormat);
     case DayRole: {
         const QString day = locale.toString(e.start.toLocalTime().date(), QStringLiteral("dddd d MMMM"));
-        return e.start.toLocalTime().date() == QDate::currentDate() ? QStringLiteral("Oggi, ") + day : day;
+        return e.start.toLocalTime().date() == QDate::currentDate() ? tr("Today, %1").arg(day) : day;
     }
     case LocationRole: return Demo::enabled() ? QString() : e.location;
     case OrganizerRole: return Demo::name(e.organizer);

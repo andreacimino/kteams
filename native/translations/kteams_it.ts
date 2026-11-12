@@ -3,229 +3,230 @@
 <context>
     <name>Backend</name>
     <message>
-        <location filename="../src/backend.cpp" line="417" />
+        <location filename="../src/backend.cpp" line="418" />
         <source>Incoming call</source>
         <translation>Chiamata in arrivo</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="418" />
+        <location filename="../src/backend.cpp" line="419" />
         <source>%1 is calling you</source>
         <translation>%1 ti sta chiamando</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="418" />
-        <location filename="../src/backend.cpp" line="1226" />
-        <location filename="../src/backend.cpp" line="1398" />
+        <location filename="../src/backend.cpp" line="419" />
+        <location filename="../src/backend.cpp" line="1245" />
+        <location filename="../src/backend.cpp" line="1424" />
         <source>Someone</source>
         <translation>Qualcuno</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="547" />
+        <location filename="../src/backend.cpp" line="548" />
         <source>Loading profile...</source>
         <translation>Caricamento profilo...</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="581" />
+        <location filename="../src/backend.cpp" line="588" />
         <source>Chat session expired, renewing...</source>
         <translation>Sessione chat scaduta, rinnovo...</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="673" />
+        <location filename="../src/backend.cpp" line="684" />
         <source>Loading messages...</source>
         <translation>Caricamento messaggi...</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="698" />
+        <location filename="../src/backend.cpp" line="709" />
         <source>Loading conversations...</source>
         <translation>Caricamento conversazioni...</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="728" />
+        <location filename="../src/backend.cpp" line="739" />
         <source>Personal notes</source>
         <translation>Note personali</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="732" />
-        <location filename="../src/backend.cpp" line="812" />
+        <location filename="../src/backend.cpp" line="743" />
+        <location filename="../src/backend.cpp" line="831" />
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="732" />
-        <location filename="../src/backend.cpp" line="812" />
+        <location filename="../src/backend.cpp" line="743" />
+        <location filename="../src/backend.cpp" line="831" />
         <source>Group chat</source>
         <translation>Chat di gruppo</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="740" />
+        <location filename="../src/backend.cpp" line="751" />
         <source>📷 Picture</source>
         <translation>📷 Immagine</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="866" />
+        <location filename="../src/backend.cpp" line="885" />
         <source>This message was deleted.</source>
         <translation>Questo messaggio è stato eliminato.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1035" />
-        <location filename="../src/backend.cpp" line="1568" />
-        <location filename="../src/backend.cpp" line="1768" />
+        <location filename="../src/backend.cpp" line="1054" />
+        <location filename="../src/backend.cpp" line="1594" />
+        <location filename="../src/backend.cpp" line="1794" />
         <source>Open</source>
         <translation>Apri</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1398" />
+        <location filename="../src/backend.cpp" line="1424" />
+        <location filename="../src/backend.h" line="114" />
         <source>%1 is typing...</source>
         <translation>%1 sta scrivendo...</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1430" />
-        <location filename="../src/backend.cpp" line="1444" />
+        <location filename="../src/backend.cpp" line="1456" />
+        <location filename="../src/backend.cpp" line="1470" />
         <source>Picture too large (20 MB at most).</source>
         <translation>Immagine troppo grande (massimo 20 MB).</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1440" />
+        <location filename="../src/backend.cpp" line="1466" />
         <source>Cannot read %1</source>
         <translation>Impossibile leggere %1</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1475" />
+        <location filename="../src/backend.cpp" line="1501" />
         <source>Unknown team for this channel: cannot upload the file.</source>
         <translation>Team del canale sconosciuto: impossibile caricare il file.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1501" />
+        <location filename="../src/backend.cpp" line="1527" />
         <source>Meeting link not recognized.</source>
         <translation>Link della riunione non riconosciuto.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1504" />
+        <location filename="../src/backend.cpp" line="1530" />
         <source>Push channel not connected: try again in a few seconds.</source>
         <translation>Canale push non connesso: riprova tra qualche secondo.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1505" />
+        <location filename="../src/backend.cpp" line="1531" />
         <source>A call is already in progress.</source>
         <translation>C'è già una chiamata in corso.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1565" />
+        <location filename="../src/backend.cpp" line="1591" />
         <source>Download finished</source>
         <translation>Download completato</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1570" />
+        <location filename="../src/backend.cpp" line="1596" />
         <source>Show in folder</source>
         <translation>Mostra nella cartella</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1579" />
+        <location filename="../src/backend.cpp" line="1605" />
         <source>This file has no downloadable link.</source>
         <translation>Questo file non ha un link scaricabile.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1599" />
+        <location filename="../src/backend.cpp" line="1625" />
         <source>Download failed: %1</source>
         <translation>Download non riuscito: %1</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1604" />
+        <location filename="../src/backend.cpp" line="1630" />
         <source>Cannot write %1</source>
         <translation>Impossibile scrivere %1</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1622" />
+        <location filename="../src/backend.cpp" line="1648" />
         <source>Picture not downloaded yet.</source>
         <translation>Immagine non ancora scaricata.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1627" />
+        <location filename="../src/backend.cpp" line="1653" />
         <source>Cannot save the picture.</source>
         <translation>Impossibile salvare l'immagine.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1650" />
+        <location filename="../src/backend.cpp" line="1676" />
         <source>The camera turns on once the call is connected.</source>
         <translation>La telecamera si accende a chiamata connessa.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1657" />
+        <location filename="../src/backend.cpp" line="1683" />
         <source>Sharing starts once the call is connected.</source>
         <translation>La condivisione parte a chiamata connessa.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1673" />
+        <location filename="../src/backend.cpp" line="1699" />
         <source>Open a chat with people to call them.</source>
         <translation>Apri una chat con delle persone per chiamarle.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1744" />
+        <location filename="../src/backend.cpp" line="1770" />
         <source>mentioned you</source>
         <translation>ti ha menzionato</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1745" />
+        <location filename="../src/backend.cpp" line="1771" />
         <source>reacted %1 to your message</source>
         <translation>ha reagito %1 al tuo messaggio</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1746" />
+        <location filename="../src/backend.cpp" line="1772" />
         <source>replied</source>
         <translation>ha risposto</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1747" />
+        <location filename="../src/backend.cpp" line="1773" />
         <source>missed call</source>
         <translation>chiamata persa</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1748" />
+        <location filename="../src/backend.cpp" line="1774" />
         <source>voicemail</source>
         <translation>messaggio vocale</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1876" />
+        <location filename="../src/backend.cpp" line="1902" />
         <source>Meeting: invalid title or times.</source>
         <translation>Riunione: titolo e orari non validi.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1901" />
+        <location filename="../src/backend.cpp" line="1927" />
         <source>Meeting not created (HTTP %1)</source>
         <translation>Riunione non creata (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1932" />
+        <location filename="../src/backend.cpp" line="1958" />
         <source>In %1 minutes: %2</source>
         <translation>Tra %1 minuti: %2</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1932" />
+        <location filename="../src/backend.cpp" line="1958" />
         <source>meeting</source>
         <translation>riunione</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1933" />
+        <location filename="../src/backend.cpp" line="1959" />
         <source>Starts at %1</source>
         <translation>Inizio alle %1</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1940" />
+        <location filename="../src/backend.cpp" line="1966" />
         <source>Open chat</source>
         <translation>Apri la chat</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1971" />
+        <location filename="../src/backend.cpp" line="1997" />
         <source>Event not found in the calendar (Graph).</source>
         <translation>Evento non trovato nel calendario (Graph).</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1979" />
+        <location filename="../src/backend.cpp" line="2005" />
         <source>Replying to the invitation failed (HTTP %1)</source>
         <translation>Risposta all'invito non riuscita (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="2108" />
+        <location filename="../src/backend.cpp" line="2134" />
         <source>Saved data: %1 conversations (refreshing)</source>
         <translation>Dati salvati: %1 conversazioni (aggiornamento in corso)</translation>
     </message>
@@ -233,9 +234,14 @@
 <context>
     <name>CalendarModel</name>
     <message>
-        <location filename="../src/models.cpp" line="300" />
+        <location filename="../src/models.cpp" line="301" />
         <source>All day</source>
         <translation>Tutto il giorno</translation>
+    </message>
+    <message>
+        <location filename="../src/models.cpp" line="306" />
+        <source>Today, %1</source>
+        <translation>Oggi, %1</translation>
     </message>
 </context>
 <context>
@@ -519,157 +525,157 @@
         <translation>Attività (%1)</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="137" />
+        <location filename="../qml/ConversationsPage.qml" line="138" />
         <source>Search chats and messages</source>
         <translation>Cerca chat e messaggi</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="151" />
+        <location filename="../qml/ConversationsPage.qml" line="152" />
         <source>Unread only</source>
         <translation>Solo non lette</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="158" />
+        <location filename="../qml/ConversationsPage.qml" line="159" />
         <source>Chats</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="160" />
+        <location filename="../qml/ConversationsPage.qml" line="161" />
         <source>Messages (%1)</source>
         <translation>Messaggi (%1)</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="160" />
+        <location filename="../qml/ConversationsPage.qml" line="161" />
         <source>Messages</source>
         <translation>Messaggi</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="164" />
+        <location filename="../qml/ConversationsPage.qml" line="165" />
         <source>reading the other chats…</source>
         <translation>lettura delle altre chat…</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="169" />
+        <location filename="../qml/ConversationsPage.qml" line="170" />
         <source>All</source>
         <translation>Tutte</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="170" />
+        <location filename="../qml/ConversationsPage.qml" line="171" />
         <source>Mentions</source>
         <translation>Menzioni</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="171" />
+        <location filename="../qml/ConversationsPage.qml" line="172" />
         <source>Replies</source>
         <translation>Risposte</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="172" />
+        <location filename="../qml/ConversationsPage.qml" line="173" />
         <source>Reactions</source>
         <translation>Reazioni</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="178" />
+        <location filename="../qml/ConversationsPage.qml" line="179" />
         <source>Mark all as read</source>
         <translation>Segna tutto come letto</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="188" />
+        <location filename="../qml/ConversationsPage.qml" line="189" />
         <source>New meeting</source>
         <translation>Nuova riunione</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="194" />
+        <location filename="../qml/ConversationsPage.qml" line="195" />
         <source>Previous week</source>
         <translation>Settimana precedente</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="204" />
+        <location filename="../qml/ConversationsPage.qml" line="205" />
         <source>Today</source>
         <translation>Oggi</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="211" />
+        <location filename="../qml/ConversationsPage.qml" line="212" />
         <source>Next week</source>
         <translation>Settimana successiva</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="233" />
+        <location filename="../qml/ConversationsPage.qml" line="234" />
         <source>Error</source>
         <translation>Errore</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="234" />
+        <location filename="../qml/ConversationsPage.qml" line="235" />
         <source>No activity</source>
         <translation>Nessuna attività</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="234" />
+        <location filename="../qml/ConversationsPage.qml" line="235" />
         <source>No events this week</source>
         <translation>Nessun evento questa settimana</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="234" />
+        <location filename="../qml/ConversationsPage.qml" line="235" />
         <source>No teams</source>
         <translation>Nessun team</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="234" />
+        <location filename="../qml/ConversationsPage.qml" line="235" />
         <source>No chats</source>
         <translation>Nessuna chat</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="234" />
+        <location filename="../qml/ConversationsPage.qml" line="235" />
         <source>No messages found</source>
         <translation>Nessun messaggio trovato</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="381" />
+        <location filename="../qml/ConversationsPage.qml" line="382" />
         <source>(no title)</source>
         <translation>(senza titolo)</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="396" />
+        <location filename="../qml/ConversationsPage.qml" line="397" />
         <source>Join</source>
         <translation>Partecipa</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="469" />
+        <location filename="../qml/ConversationsPage.qml" line="470" />
         <source>Unpin</source>
         <translation>Stacca</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="469" />
+        <location filename="../qml/ConversationsPage.qml" line="470" />
         <source>Pin</source>
         <translation>Fissa in alto</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="470" />
+        <location filename="../qml/ConversationsPage.qml" line="471" />
         <source>Unmute</source>
         <translation>Riattiva</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="470" />
+        <location filename="../qml/ConversationsPage.qml" line="471" />
         <source>Mute</source>
         <translation>Silenzia</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="471" />
+        <location filename="../qml/ConversationsPage.qml" line="472" />
         <source>Hide</source>
         <translation>Nascondi</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="473" />
+        <location filename="../qml/ConversationsPage.qml" line="474" />
         <source>Rename…</source>
         <translation>Rinomina…</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="474" />
+        <location filename="../qml/ConversationsPage.qml" line="475" />
         <source>Add people…</source>
         <translation>Aggiungi persone…</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="475" />
+        <location filename="../qml/ConversationsPage.qml" line="476" />
         <source>Leave</source>
         <translation>Abbandona</translation>
     </message>
@@ -677,72 +683,72 @@
 <context>
     <name>DesktopIntegration</name>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="46" />
+        <location filename="../src/desktopintegration.cpp" line="48" />
         <source>Status</source>
         <translation>Stato</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="49" />
-        <location filename="../src/desktopintegration.cpp" line="74" />
+        <location filename="../src/desktopintegration.cpp" line="51" />
+        <location filename="../src/desktopintegration.cpp" line="76" />
         <source>Available</source>
         <translation>Disponibile</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="49" />
-        <location filename="../src/desktopintegration.cpp" line="74" />
+        <location filename="../src/desktopintegration.cpp" line="51" />
+        <location filename="../src/desktopintegration.cpp" line="76" />
         <source>Busy</source>
         <translation>Occupato</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="50" />
-        <location filename="../src/desktopintegration.cpp" line="75" />
+        <location filename="../src/desktopintegration.cpp" line="52" />
+        <location filename="../src/desktopintegration.cpp" line="77" />
         <source>Do not disturb</source>
         <translation>Non disturbare</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="50" />
-        <location filename="../src/desktopintegration.cpp" line="75" />
+        <location filename="../src/desktopintegration.cpp" line="52" />
+        <location filename="../src/desktopintegration.cpp" line="77" />
         <source>Be right back</source>
         <translation>Torno subito</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="51" />
-        <location filename="../src/desktopintegration.cpp" line="76" />
+        <location filename="../src/desktopintegration.cpp" line="53" />
+        <location filename="../src/desktopintegration.cpp" line="78" />
         <source>Away</source>
         <translation>Assente</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="51" />
+        <location filename="../src/desktopintegration.cpp" line="53" />
         <source>Appear offline</source>
         <translation>Mostra come offline</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="76" />
+        <location filename="../src/desktopintegration.cpp" line="78" />
         <source>Offline</source>
         <translation>Offline</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="77" />
+        <location filename="../src/desktopintegration.cpp" line="79" />
         <source>In a call</source>
         <translation>In chiamata</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="77" />
+        <location filename="../src/desktopintegration.cpp" line="79" />
         <source>In a meeting</source>
         <translation>In riunione</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="78" />
+        <location filename="../src/desktopintegration.cpp" line="80" />
         <source>Presenting</source>
         <translation>Sta presentando</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="95" />
+        <location filename="../src/desktopintegration.cpp" line="132" />
         <source>1 unread chat</source>
         <translation>1 chat non letta</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="95" />
+        <location filename="../src/desktopintegration.cpp" line="132" />
         <source>%1 unread chats</source>
         <translation>%1 chat non lette</translation>
     </message>
