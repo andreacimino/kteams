@@ -62,9 +62,9 @@ Details in `packaging/README.md`.
 
 From source (any distribution with Qt 6.5+, KF6, GStreamer 1.22+ with webrtcbin):
 
-    cmake -S native -B native/build -DCMAKE_BUILD_TYPE=Release
+    cmake -S native -B native/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/.local
     cmake --build native/build
-    cmake --install native/build --prefix ~/.local     # menu entry, icon, notification sounds
+    cmake --install native/build     # menu entry, icon, notification sounds
 
 Then "KTeams" from the menu, or `kteams`.
 
