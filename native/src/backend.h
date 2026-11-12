@@ -359,6 +359,7 @@ private:
     bool m_downloading = false;
     NativeCall m_nativeCall;
     bool m_cameraWhenConnected = false;
+    bool m_peopleLoaded = false;
     QHash<QString, QVector<MessageItem>> m_searchIndex; // conversation -> newest messages
     QVariantList m_messageResults;
     QStringList m_indexQueue;

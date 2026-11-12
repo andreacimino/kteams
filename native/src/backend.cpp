@@ -563,15 +563,21 @@ void Backend::onAuthFailed(const QString &message, bool sessionLost)
 
 void Backend::onClientError(const QString &context, int httpStatus, const QString &message)
 {
+    // A page fetched for the search index only: skip that chat quietly, go on with the next.
+    if (!m_indexQueue.isEmpty() && message.contains(QString::fromLatin1(QUrl::toPercentEncoding(m_indexQueue.first())))) {
+        m_indexQueue.removeFirst();
+        indexNext();
+        return;
+    }
     // Without the profile the list still works, only one-to-one titles are less precise.
-    if (context == QLatin1String("profilo")) m_client.fetchConversations();
+    if (context == QLatin1String("profile")) m_client.fetchConversations();
     // The device registration expired (purple-teams notes this too): register it again.
     if (context == QLatin1String("presence (activity)") && httpStatus == 404) {
         presenceToken([this](const QString &t) { m_client.registerPresenceEndpoint(m_trouter.endpointId(), t); });
         return;
     }
     // Names and teams: a dropped connection (no HTTP status) is worth another try.
-    const bool peopleCall = context == QLatin1String("profili") || context == QLatin1String("team e chat");
+    const bool peopleCall = context == QLatin1String("profiles") || context == QLatin1String("teams and chats");
     if (peopleCall && httpStatus == 0 && m_peopleRetries < 2) {
         ++m_peopleRetries;
         QTimer::singleShot(std::chrono::seconds(3 * m_peopleRetries), this, &Backend::loadPeople);
@@ -589,6 +595,10 @@ void Backend::onClientError(const QString &context, int httpStatus, const QStrin
 
 void Backend::resetChatState()
 {
+    m_peopleLoaded = false;
+    m_indexedAll = false;
+    m_indexQueue.clear();
+    m_searchIndex.clear();
     m_skypeRenewTimer.stop();
     m_syncTimer.stop();
     m_lastSyncMs = 0;
@@ -774,7 +784,9 @@ void Backend::handleConversations(const QJsonArray &arr, bool incremental)
         setStatus(QStringLiteral("%1 conversazioni").arg(items.size()));
         scheduleSync();
         m_cacheSaveTimer.start();
-        if (m_chatMembers.isEmpty()) loadPeople();
+        // Names, members and teams once per session (the cache has them too, but the
+        // presence polling and fresh members start from here).
+        if (!m_peopleLoaded) { m_peopleLoaded = true; loadPeople(); }
         m_client.fetchMessages(QString::fromLatin1(kActivityFeed));
         return;
     }
@@ -1298,7 +1310,7 @@ bool Backend::mentionsSelf(const QJsonObject &properties) const
 
 void Backend::pollPresence()
 {
-    if (m_state != State::Connected || m_people.isEmpty()) return;
+    if (m_state != State::Connected) return;
     QStringList mris;
     for (auto it = m_people.cbegin(); it != m_people.cend(); ++it)
         if (it.key().startsWith(QLatin1String("8:"))) mris << it.key(); // not phone numbers ("4:")
@@ -1362,14 +1374,21 @@ void Backend::handlePresence(const QJsonArray &list)
 {
     // purple-teams: teams_got_contact_statuses(): [{mri, presence: {availability, activity, ...}}]
     bool changed = false;
+    bool selfSeen = false;
     for (const auto &v : list) {
         const QJsonObject o = v.toObject();
         const QString mri = o.value(QLatin1String("mri")).toString();
         const QString availability = o.value(QLatin1String("presence")).toObject().value(QLatin1String("availability")).toString();
+        if (mri == selfMri()) {
+            // Own state: logged whole (no secrets in it) while the start-up value is being understood.
+            selfSeen = true;
+            qInfo() << "own presence:" << QString::fromUtf8(QJsonDocument(o).toJson(QJsonDocument::Compact)).left(400);
+        }
         if (mri.isEmpty() || availability.isEmpty() || m_presence.value(mri) == availability) continue;
         m_presence.insert(mri, availability);
         changed = true;
     }
+    if (!selfSeen && !list.isEmpty()) qInfo() << "own presence: not in the answer (" << list.size() << "entries)";
     if (changed) { ++m_presenceRevision; emit presenceChanged(); }
 }
 
@@ -2163,7 +2182,8 @@ void Backend::searchMessages(const QString &text)
         m_indexedAll = true;
         for (int i = 0; i < m_conversations.rowCount(); ++i) {
             const QString id = m_conversations.data(m_conversations.index(i), ConversationModel::IdRole).toString();
-            if (!m_searchIndex.contains(id) && !m_channelIds.contains(id) && id != m_currentConversationId) m_indexQueue << id;
+            if (!m_searchIndex.contains(id) && !m_channelIds.contains(id) && id != m_currentConversationId
+                && !id.startsWith(QLatin1String("19:meeting_"))) m_indexQueue << id;
         }
         indexNext();
     }

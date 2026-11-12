@@ -105,7 +105,7 @@ void TeamsClient::fetchSkypeToken(const QString &accessTokenForSpaces)
 void TeamsClient::fetchSelfProperties()
 {
     // purple-teams: teams_get_self_details()
-    chatGet(QStringLiteral("profilo"), chatUrl(QStringLiteral("/v1/users/ME/properties")),
+    chatGet(QStringLiteral("profile"), chatUrl(QStringLiteral("/v1/users/ME/properties")),
             [this](const QJsonDocument &doc, QNetworkReply *) { emit selfPropertiesFetched(doc.object()); });
 }
 
@@ -136,7 +136,7 @@ void TeamsClient::fetchMessages(const QString &conversationId, qint64 beforeMs)
     q.addQueryItem(QStringLiteral("view"), QStringLiteral("msnp24Equivalent"));
     q.addQueryItem(QStringLiteral("targetType"), QString::fromLatin1(kTargetTypes));
     url.setQuery(q);
-    chatGet(QStringLiteral("messaggi"), url, [this, conversationId, beforeMs](const QJsonDocument &doc, QNetworkReply *) {
+    chatGet(QStringLiteral("messages"), url, [this, conversationId, beforeMs](const QJsonDocument &doc, QNetworkReply *) {
         emit messagesFetched(conversationId, doc.object().value(QLatin1String("messages")).toArray(), beforeMs > 0);
     });
 }
@@ -201,7 +201,7 @@ void TeamsClient::fetchProfiles(const QStringList &mris, const QString &spacesBe
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
     QNetworkReply *reply = m_nam.post(req, QJsonDocument(QJsonArray::fromStringList(mris)).toJson(QJsonDocument::Compact));
     connect(reply, &QNetworkReply::finished, this, [this, reply] {
-        finish(QStringLiteral("profili"), reply, [this](const QJsonDocument &doc, QNetworkReply *) {
+        finish(QStringLiteral("profiles"), reply, [this](const QJsonDocument &doc, QNetworkReply *) {
             // purple-teams: teams_got_friend_profiles() reads "value", else "resolvedUsers"
             const QJsonObject o = doc.object();
             emit profilesFetched(o.contains(QLatin1String("value")) ? o.value(QLatin1String("value")).toArray()
@@ -266,7 +266,7 @@ void TeamsClient::editMessage(const QString &conversationId, const QString &mess
     const QJsonObject body{{QStringLiteral("content"), html},
                            {QStringLiteral("messagetype"), QStringLiteral("RichText/Html")},
                            {QStringLiteral("contenttype"), QStringLiteral("text")}};
-    chatSend(QStringLiteral("modifica"), "PUT", chatUrl(QStringLiteral("/v1/users/ME/conversations/%1/messages/%2").arg(enc, messageId)), body,
+    chatSend(QStringLiteral("edit"), "PUT", chatUrl(QStringLiteral("/v1/users/ME/conversations/%1/messages/%2").arg(enc, messageId)), body,
              [this, conversationId](const QJsonDocument &, QNetworkReply *) { emit messageChanged(conversationId); });
 }
 
@@ -283,7 +283,7 @@ void TeamsClient::sendTyping(const QString &conversationId)
     const QJsonObject body{{QStringLiteral("messagetype"), QStringLiteral("Control/Typing")},
                            {QStringLiteral("contenttype"), QStringLiteral("Application/Message")},
                            {QStringLiteral("content"), QString()}};
-    chatSend(QStringLiteral("scrittura"), "POST", chatUrl(QStringLiteral("/v1/users/ME/conversations/%1/messages").arg(enc)), body,
+    chatSend(QStringLiteral("typing"), "POST", chatUrl(QStringLiteral("/v1/users/ME/conversations/%1/messages").arg(enc)), body,
              [](const QJsonDocument &, QNetworkReply *) {});
 }
 
@@ -301,7 +301,7 @@ void TeamsClient::fetchPresence(const QStringList &mris, const QString &presence
     req.setRawHeader("x-ms-correlation-id", "1");
     QNetworkReply *reply = m_nam.post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
     connect(reply, &QNetworkReply::finished, this, [this, reply] {
-        finish(QStringLiteral("presenza"), reply,
+        finish(QStringLiteral("presence"), reply,
                [this](const QJsonDocument &doc, QNetworkReply *) { emit presenceFetched(doc.array()); });
     });
 }
@@ -369,7 +369,7 @@ void TeamsClient::searchUsers(const QString &text, const QString &spacesBearer)
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-www-form-urlencoded"));
     QNetworkReply *reply = m_nam.post(req, text.toUtf8());
     connect(reply, &QNetworkReply::finished, this, [this, reply, text] {
-        finish(QStringLiteral("ricerca"), reply, [this, text](const QJsonDocument &doc, QNetworkReply *) {
+        finish(QStringLiteral("search"), reply, [this, text](const QJsonDocument &doc, QNetworkReply *) {
             // purple-teams: create_search_results() reads "results", "value" or "values"
             const QJsonObject o = doc.object();
             QJsonArray users = o.value(QLatin1String("results")).toArray();
