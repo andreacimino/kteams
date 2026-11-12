@@ -86,7 +86,9 @@ install(TARGETS kteams RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 if(BUILD_CALL_HELPER)
 install(TARGETS kteams-capture RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
-install(FILES data/org.kteams.kteams.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+# The menu launcher's PATH may not include the install prefix (~/.local/bin): absolute Exec.
+configure_file(data/org.kteams.kteams.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/org.kteams.kteams.desktop @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kteams.kteams.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
 install(FILES data/org.kteams.kteams.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
 install(FILES data/kteams.notifyrc DESTINATION ${CMAKE_INSTALL_DATADIR}/knotifications6)
 

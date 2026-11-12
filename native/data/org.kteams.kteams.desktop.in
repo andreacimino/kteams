@@ -2,7 +2,7 @@
 Name=KTeams
 GenericName=Microsoft Teams client
 Comment=Native Microsoft Teams client for KDE (work account)
-Exec=kteams
+Exec=@CMAKE_INSTALL_FULL_BINDIR@/kteams
 Icon=org.kteams.kteams
 Terminal=false
 Type=Application
