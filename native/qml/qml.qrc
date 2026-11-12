@@ -1,0 +1,20 @@
+<RCC>
+  <qresource prefix="/KTeams/qml">
+    <file>Main.qml</file>
+    <file>LoginPage.qml</file>
+    <file>ChatPage.qml</file>
+    <file>ConversationsPage.qml</file>
+    <file>ThreadPage.qml</file>
+    <file>MessageBubble.qml</file>
+    <file>Composer.qml</file>
+    <file>PresenceAvatar.qml</file>
+    <file>NewChatDialog.qml</file>
+    <file>PersonCard.qml</file>
+    <file>CallPage.qml</file>
+    <file>NewMeetingDialog.qml</file>
+  </qresource>
+  <qresource prefix="/KTeams">
+    <file alias="icon.svg">../data/org.kteams.kteams.svg</file>
+    <file alias="kteams.notifyrc">../data/kteams.notifyrc</file>
+  </qresource>
+</RCC>

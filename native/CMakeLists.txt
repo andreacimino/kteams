@@ -1,0 +1,96 @@
+cmake_minimum_required(VERSION 3.20)
+project(kteams VERSION 0.1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+# No WebEngine: the client is fully native (sign-in with the OAuth device code flow).
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Widgets Qml Quick QuickControls2 Network WebSockets DBus Multimedia LinguistTools)
+# Native calls: WebRTC through GStreamer (video frames go to Qt Multimedia's QVideoSink).
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GST REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-webrtc-1.0 gstreamer-sdp-1.0 gstreamer-video-1.0 gstreamer-app-1.0)
+# Tray icon.
+find_package(KF6StatusNotifierItem REQUIRED)
+# Trouter bodies can be gzip-compressed.
+find_package(ZLIB REQUIRED)
+# Refresh token storage in KWallet / Secret Service.
+find_package(Qt6Keychain REQUIRED)
+# Desktop notifications for new messages.
+find_package(KF6Notifications REQUIRED)
+
+add_executable(kteams
+    src/main.cpp
+    src/backend.cpp
+    src/backend.h
+    src/avatarcache.cpp
+    src/avatarcache.h
+    src/mediacache.cpp
+    src/mediacache.h
+    src/trouter.cpp
+    src/trouter.h
+    src/fileuploader.cpp
+    src/fileuploader.h
+    src/desktopintegration.cpp
+    src/desktopintegration.h
+    src/screencast.cpp
+    src/screencast.h
+    src/callengine.cpp
+    src/callengine.h
+    src/nativecall.cpp
+    src/nativecall.h
+    src/oauth.cpp
+    src/oauth.h
+    src/teamsclient.cpp
+    src/teamsclient.h
+    src/models.cpp
+    src/models.h
+    qml/qml.qrc
+)
+
+target_include_directories(kteams PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# Source strings are English; translations/*.ts hold the other languages (Qt Linguist),
+# compiled and embedded at build time, picked by the system locale at start-up.
+# Refresh the .ts files after changing strings: cmake --build native/build --target update_translations
+qt_add_translations(kteams TS_FILES translations/kteams_it.ts RESOURCE_PREFIX "/i18n")
+
+target_link_libraries(kteams PRIVATE
+    Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2 Qt6::Network Qt6::WebSockets Qt6::Multimedia
+    ZLIB::ZLIB
+    Qt6Keychain::Qt6Keychain
+    KF6::Notifications
+    KF6::StatusNotifierItem
+    PkgConfig::GST
+    Qt6::DBus
+)
+
+# Developer tool, off by default: Teams web in a QtWebEngine window with "--capture",
+# which records the calling protocol (see docs/calling-protocol.md). Not used by the app.
+option(BUILD_CALL_HELPER "Build kteams-capture, the Teams web protocol recorder (needs QtWebEngine)" OFF)
+if(BUILD_CALL_HELPER)
+find_package(Qt6 6.8 REQUIRED COMPONENTS WebEngineCore WebEngineQuick)
+add_executable(kteams-capture
+    call/main.cpp
+    call/call.qrc
+)
+target_link_libraries(kteams-capture PRIVATE
+    Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2 Qt6::WebEngineCore Qt6::WebEngineQuick
+)
+endif()
+
+# cmake --install build --prefix ~/.local  (menu entry, icon, both programs)
+include(GNUInstallDirs)
+install(TARGETS kteams RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+if(BUILD_CALL_HELPER)
+install(TARGETS kteams-capture RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
+install(FILES data/org.kteams.kteams.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+install(FILES data/org.kteams.kteams.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
+install(FILES data/kteams.notifyrc DESTINATION ${CMAKE_INSTALL_DATADIR}/knotifications6)
+
+# Media pipeline check without a call (not built by default): cmake --build native/build --target kteams-offer-test
+add_executable(kteams-offer-test EXCLUDE_FROM_ALL tests/offer_dump.cpp src/callengine.cpp src/callengine.h)
+target_include_directories(kteams-offer-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(kteams-offer-test PRIVATE Qt6::Core Qt6::Multimedia PkgConfig::GST)

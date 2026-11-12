@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=KTeams
+GenericName=Microsoft Teams client
+Comment=Native Microsoft Teams client for KDE (work account)
+Exec=kteams
+Icon=org.kteams.kteams
+Terminal=false
+Type=Application
+Categories=Network;InstantMessaging;Chat;Qt;KDE;
+Keywords=teams;microsoft;chat;office;
+StartupWMClass=kteams
+X-KDE-StartupNotify=true

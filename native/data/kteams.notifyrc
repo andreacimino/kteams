@@ -1,0 +1,39 @@
+[Global]
+IconName=org.kteams.kteams
+Comment=KTeams
+Name=KTeams
+
+[Event/newMessage]
+Name=Nuovo messaggio
+Comment=Un nuovo messaggio in una chat
+Action=Popup|Sound
+Sound=/usr/share/sounds/ocean/stereo/message-new-instant.oga
+
+[Event/mention]
+Name=Menzione
+Comment=Qualcuno ti ha menzionato
+Action=Popup|Sound
+Sound=/usr/share/sounds/ocean/stereo/message-attention.oga
+
+[Event/incomingCall]
+Name=Chiamata in arrivo
+Comment=Qualcuno ti sta chiamando (la suoneria la riproduce l'app)
+Action=Popup
+
+[Event/downloadDone]
+Name=Download completato
+Comment=Un allegato è stato scaricato
+Action=Popup|Sound
+Sound=/usr/share/sounds/ocean/stereo/completion-success.oga
+
+[Event/reminder]
+Name=Promemoria riunione
+Comment=Una riunione sta per iniziare
+Action=Popup|Sound
+Sound=/usr/share/sounds/ocean/stereo/message-attention.oga
+
+[Event/activity]
+Name=Attività
+Comment=Reazione, risposta o menzione nel feed Attività
+Action=Popup|Sound
+Sound=/usr/share/sounds/ocean/stereo/message-new-instant.oga

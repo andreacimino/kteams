@@ -1,0 +1,12 @@
+/build/
+/.cache/
+/compile_commands.json
+*.user
+*.kdev4
+.idea/
+.vscode/
+/native/build/
+/packaging/arch/pkg/
+/packaging/arch/src/
+/packaging/arch/*.tar.gz
+/packaging/arch/*.pkg.tar.*

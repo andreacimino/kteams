@@ -1,0 +1,29 @@
+# Maintainer: Andrea Cimino
+# Built from a tarball of the repository made by build.sh (git archive).
+pkgname=kteams
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Native Microsoft Teams client for KDE (work accounts): chat, calls, video, screen sharing"
+arch=('x86_64' 'aarch64')
+url="https://github.com/andreacimino/kteams"
+license=('GPL-3.0-or-later')
+depends=('qt6-base' 'qt6-declarative' 'qt6-websockets' 'qt6-multimedia' 'qtkeychain-qt6'
+         'kirigami' 'kirigami-addons' 'qqc2-desktop-style' 'knotifications' 'kstatusnotifieritem'
+         'gstreamer' 'gst-plugins-base' 'gst-plugins-good' 'gst-plugins-bad' 'gst-plugins-ugly'
+         'gst-plugin-pipewire' 'libnice' 'zlib' 'hicolor-icon-theme')
+optdepends=('gst-plugin-va: hardware video decoding'
+            'pipewire-pulse: microphone and speakers through PipeWire'
+            'xdg-desktop-portal-kde: screen sharing picker'
+            'ocean-sound-theme: notification and call sounds')
+makedepends=('cmake' 'pkgconf')
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+    cmake -S "$srcdir/$pkgname-$pkgver/native" -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+    cmake --build build
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+}
