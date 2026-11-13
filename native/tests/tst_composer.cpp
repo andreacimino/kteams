@@ -182,6 +182,30 @@ private slots:
         QCOMPARE(list[1].toMap().value("name").toString(), QStringLiteral("image-pasted.png"));
         QCOMPARE(list[1].toMap().value("image").toBool(), true);
     }
+
+    // --- looks ------------------------------------------------------------------------------
+
+    void theAttachmentsAreDrawn()
+    {
+        QTemporaryDir dir;
+        QImage picture(200, 120, QImage::Format_RGB32);
+        picture.fill(QColor(0x3d, 0xae, 0xe9));
+        const QString imagePath = dir.filePath("holiday photo.png");
+        QVERIFY(picture.save(imagePath));
+        QFile pdf(dir.filePath("Contract 2026.pdf"));
+        QVERIFY(pdf.open(QIODevice::WriteOnly));
+        add({QUrl::fromLocalFile(imagePath).toString(), QUrl::fromLocalFile(pdf.fileName()).toString()});
+        typeInto("Here are the files");
+        window.resize(640, 140);
+        QTRY_VERIFY(window.isExposed());
+        QTest::qWait(300); // layout and the thumbnail load
+        const QImage shot = window.grabWindow();
+        QVERIFY(!shot.isNull());
+        // The attachments take room above the text field.
+        QQuickItem *input = composer->findChild<QQuickItem *>("composerInput");
+        QVERIFY(input->mapToItem(composer, QPointF(0, 0)).y() > 20);
+        if (const QByteArray out = qgetenv("KTEAMS_TEST_SCREENSHOT"); !out.isEmpty()) shot.save(QString::fromLocal8Bit(out));
+    }
 };
 
 int main(int argc, char **argv)
