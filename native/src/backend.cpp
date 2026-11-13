@@ -862,6 +862,9 @@ void Backend::handleChatsAndTeams(const QJsonObject &summary)
         m_chatMembers.insert(chat.value(QLatin1String("id")).toString(), others);
     }
     parseTeams(summary.value(QLatin1String("teams")).toArray());
+    // Presence from here on, whether or not names still have to be fetched: a failed
+    // profiles request (seen: HTTP 500 from Microsoft) must not leave the status dot empty.
+    startPresencePolling();
     if (unknown.isEmpty()) { applyMemberTitles(); return; }
 
     // purple-teams sends up to 900 per request; smaller batches give names sooner.
@@ -886,7 +889,13 @@ void Backend::handleProfiles(const QJsonArray &profiles)
     qInfo() << "people:" << m_people.size() << "names for" << m_chatMembers.size() << "chats";
     applyMemberTitles();
     m_cacheSaveTimer.start();
-    if (!m_presenceTimer.isActive()) { pollPresence(); m_presenceTimer.start(); }
+    startPresencePolling(); // the new names are polled right away
+}
+
+void Backend::startPresencePolling()
+{
+    pollPresence();
+    if (!m_presenceTimer.isActive()) m_presenceTimer.start();
 }
 
 QString Backend::titleFromMembers(const QString &conversationId, bool oneToOne) const

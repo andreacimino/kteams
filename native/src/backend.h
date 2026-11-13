@@ -284,6 +284,8 @@ private:
     QVariantList parseReactions(const QJsonObject &properties) const;
     bool mentionsSelf(const QJsonObject &properties) const;
     void pollPresence();
+    // First poll now, then every minute (a second call only polls again).
+    void startPresencePolling();
     void presenceToken(std::function<void(const QString &)> cb);
     void updateActivity();
     void handlePresence(const QJsonArray &list);
