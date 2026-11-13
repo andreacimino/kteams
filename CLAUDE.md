@@ -46,7 +46,7 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 ## Tests: the regression suite
 
 Qt Test executables in `native/tests/` (`tst_content`, `tst_chatparser`, `tst_models`,
-`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_caches`, `tst_backendlogic`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
+`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_caches`, `tst_teamsclient`, `tst_backendlogic`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
 
     cmake -S native -B native/build && cmake --build native/build
     ctest --test-dir native/build --output-on-failure
@@ -64,9 +64,11 @@ Coverage (gcovr), in its own build directory because it changes the compiler fla
   `content.cpp`) and gets its `tst_<module>.cpp`; one slot per behaviour, named after it.
   Not in a test file: raw string literals holding `\"` or `//` (moc misreads them and silently
   drops the whole test class, which then fails to link); build the JSON with `QJsonObject`.
-  Code that talks to Teams (`teamsclient`, `trouter`, `oauth`, `nativecall`, `callengine`)
-  is only tested through the pure modules it uses; separate the parsing from the request
-  and test the parsing.
+  The chat service calls of `teamsclient` are tested against a loopback fake server
+  (`FakeServer` in `tst_teamsclient.cpp`; no real network in tests). Endpoints with a
+  hard-coded Microsoft host (profiles, calendar, presence, search, images, sign-in) and
+  `oauth`, `nativecall`, `callengine` are only tested through the pure modules they use:
+  make the base URL injectable, or separate the parsing from the request, then test that.
 - CI: `.github/workflows/tests.yml` runs the suite with coverage in an Arch container on
   every push and pull request (the HTML report is an artifact); `flatpak.yml` builds the
   Flatpak. A red workflow means the branch is not ready.
