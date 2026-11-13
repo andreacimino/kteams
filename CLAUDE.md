@@ -46,7 +46,7 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 ## Tests: the regression suite
 
 Qt Test executables in `native/tests/` (`tst_content`, `tst_chatparser`, `tst_models`,
-`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_caches`, `tst_teamsclient`, `tst_backendlogic`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
+`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_backendlogic`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
 
     cmake -S native -B native/build && cmake --build native/build
     ctest --test-dir native/build --output-on-failure
@@ -66,11 +66,12 @@ Coverage (gcovr), in its own build directory because it changes the compiler fla
   executable fails to link on its vtable): a `\"` inside a raw string literal, and a `//`
   inside one (it is taken for a comment and the rest of the line disappears, braces
   included). Build such JSON with `QJsonObject`, or keep the raw string alone on its line.
-  The chat service calls of `teamsclient` are tested against a loopback fake server
-  (`FakeServer` in `tst_teamsclient.cpp`; no real network in tests). Endpoints with a
-  hard-coded Microsoft host (profiles, calendar, presence, search, images, sign-in) and
-  `oauth`, `nativecall`, `callengine` are only tested through the pure modules they use:
-  make the base URL injectable, or separate the parsing from the request, then test that.
+  Network clients are tested against `FakeServer` (`native/tests/fakeserver.h`, loopback; no
+  real network in tests): `teamsclient` takes `setTokens` (chat service) and `setHosts` (the
+  other Microsoft hosts), `oauth` takes `setAuthority` and `setTokenStore` (the tests never
+  touch the system keychain). A new service client gets the same injection points.
+  `callengine` and the HTTP parts of `nativecall` are only tested through the pure modules
+  they use (`calljson`, `trouterframes`).
 - CI: `.github/workflows/tests.yml` runs the suite with coverage in an Arch container on
   every push and pull request (the HTML report is an artifact); `flatpak.yml` builds the
   Flatpak. A red workflow means the branch is not ready.
