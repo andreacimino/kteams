@@ -28,9 +28,64 @@ int intField(const QJsonObject &o, const char *name)
     const QJsonValue v = o.value(QLatin1String(name));
     return v.isString() ? v.toString().toInt() : v.toInt();
 }
+
+// The system keychain (KWallet / Secret Service) through QtKeychain.
+class KeychainTokenStore : public TokenStore
+{
+public:
+    explicit KeychainTokenStore(QObject *owner) : m_owner(owner) {}
+
+    void read(std::function<void(const QString &)> done) override
+    {
+        auto *job = new QKeychain::ReadPasswordJob(QString::fromLatin1(kKeychainService), m_owner);
+        job->setKey(QString::fromLatin1(kKeychainKey));
+        QObject::connect(job, &QKeychain::Job::finished, m_owner, [this, job, done] {
+            const QString token = job->error() == QKeychain::NoError ? job->textData() : QString();
+            if (!token.isEmpty()) { done(token); return; }
+            // A session stored under the app's previous name (ac-teams-native): taken over.
+            auto *old = new QKeychain::ReadPasswordJob(QStringLiteral("ac-teams-native"), m_owner);
+            old->setKey(QString::fromLatin1(kKeychainKey));
+            QObject::connect(old, &QKeychain::Job::finished, m_owner, [this, old, done] {
+                const QString legacy = old->error() == QKeychain::NoError ? old->textData() : QString();
+                if (!legacy.isEmpty()) {
+                    write(legacy, [](const QString &) {});
+                    auto *remove = new QKeychain::DeletePasswordJob(QStringLiteral("ac-teams-native"), m_owner);
+                    remove->setKey(QString::fromLatin1(kKeychainKey));
+                    remove->setAutoDelete(true);
+                    remove->start();
+                }
+                done(legacy);
+            });
+            old->start();
+        });
+        job->start();
+    }
+
+    void write(const QString &token, std::function<void(const QString &)> done) override
+    {
+        auto *job = new QKeychain::WritePasswordJob(QString::fromLatin1(kKeychainService), m_owner);
+        job->setKey(QString::fromLatin1(kKeychainKey));
+        job->setTextData(token);
+        QObject::connect(job, &QKeychain::Job::finished, m_owner, [job, done] {
+            done(job->error() == QKeychain::NoError ? QString() : job->errorString());
+        });
+        job->start();
+    }
+
+    void remove() override
+    {
+        auto *job = new QKeychain::DeletePasswordJob(QString::fromLatin1(kKeychainService), m_owner);
+        job->setKey(QString::fromLatin1(kKeychainKey));
+        job->start();
+    }
+
+private:
+    QObject *m_owner;
+};
 }
 
-OAuth::OAuth(QObject *parent) : QObject(parent)
+OAuth::OAuth(QObject *parent)
+    : QObject(parent), m_store(std::make_unique<KeychainTokenStore>(this)), m_authority(QString::fromLatin1(kAuthority))
 {
     connect(&m_pollTimer, &QTimer::timeout, this, &OAuth::pollDeviceCode);
 }
@@ -40,61 +95,10 @@ QNetworkReply *OAuth::postForm(const QString &path, const QList<QPair<QString, Q
     QUrlQuery form;
     for (const auto &f : fields)
         form.addQueryItem(f.first, QString::fromLatin1(QUrl::toPercentEncoding(f.second)));
-    QNetworkRequest req(QUrl(QString::fromLatin1(kAuthority) + path));
+    QNetworkRequest req(QUrl(m_authority + path));
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-www-form-urlencoded"));
     req.setRawHeader("Accept", "application/json");
     return m_nam.post(req, form.toString(QUrl::FullyEncoded).toLatin1());
-}
-
-void OAuth::loadStoredSession()
-{
-    auto *job = new QKeychain::ReadPasswordJob(QString::fromLatin1(kKeychainService), this);
-    job->setKey(QString::fromLatin1(kKeychainKey));
-    connect(job, &QKeychain::Job::finished, this, [this, job] {
-        m_refreshToken = job->error() == QKeychain::NoError ? job->textData() : QString();
-        if (!m_refreshToken.isEmpty()) { emit ready(true); return; }
-        // A session stored under the app's previous name (ac-teams-native): taken over.
-        auto *old = new QKeychain::ReadPasswordJob(QStringLiteral("ac-teams-native"), this);
-        old->setKey(QString::fromLatin1(kKeychainKey));
-        connect(old, &QKeychain::Job::finished, this, [this, old] {
-            const QString token = old->error() == QKeychain::NoError ? old->textData() : QString();
-            if (!token.isEmpty()) {
-                storeRefreshToken(token);
-                auto *remove = new QKeychain::DeletePasswordJob(QStringLiteral("ac-teams-native"), this);
-                remove->setKey(QString::fromLatin1(kKeychainKey));
-                remove->setAutoDelete(true);
-                remove->start();
-            }
-            emit ready(!m_refreshToken.isEmpty());
-        });
-        old->start();
-    });
-    job->start();
-}
-
-void OAuth::storeRefreshToken(const QString &token)
-{
-    if (token.isEmpty() || token == m_refreshToken) return;
-    m_refreshToken = token;
-    auto *job = new QKeychain::WritePasswordJob(QString::fromLatin1(kKeychainService), this);
-    job->setKey(QString::fromLatin1(kKeychainKey));
-    job->setTextData(token);
-    connect(job, &QKeychain::Job::finished, this, [this, job] {
-        if (job->error() != QKeychain::NoError)
-            emit failed(tr("Cannot save the session in the keychain: %1").arg(job->errorString()), false);
-    });
-    job->start();
-}
-
-void OAuth::signOut()
-{
-    cancelDeviceLogin();
-    m_refreshToken.clear();
-    m_cache.clear();
-    m_pending.clear();
-    auto *job = new QKeychain::DeletePasswordJob(QString::fromLatin1(kKeychainService), this);
-    job->setKey(QString::fromLatin1(kKeychainKey));
-    job->start();
 }
 
 void OAuth::startDeviceLogin()
@@ -201,4 +205,34 @@ void OAuth::accessToken(const QString &resource, TokenCallback cb)
         m_cache.insert(resource, {access, QDateTime::currentDateTimeUtc().addSecs(intField(o, "expires_in") - kExpirySlackSecs)});
         for (const auto &cb : callbacks) cb(access);
     });
+}
+
+void OAuth::setTokenStore(std::unique_ptr<TokenStore> store) { m_store = std::move(store); }
+
+void OAuth::setAuthority(const QString &authority) { m_authority = authority; }
+
+void OAuth::loadStoredSession()
+{
+    m_store->read([this](const QString &token) {
+        m_refreshToken = token;
+        emit ready(!m_refreshToken.isEmpty());
+    });
+}
+
+void OAuth::storeRefreshToken(const QString &token)
+{
+    if (token.isEmpty() || token == m_refreshToken) return;
+    m_refreshToken = token;
+    m_store->write(token, [this](const QString &error) {
+        if (!error.isEmpty()) emit failed(tr("Cannot save the session in the keychain: %1").arg(error), false);
+    });
+}
+
+void OAuth::signOut()
+{
+    cancelDeviceLogin();
+    m_refreshToken.clear();
+    m_cache.clear();
+    m_pending.clear();
+    m_store->remove();
 }

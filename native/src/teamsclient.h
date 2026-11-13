@@ -21,6 +21,14 @@ struct TeamsTokens {
     QString chatServiceBase;
 };
 
+// Where the services other than the chat service live (the chat service's address is in TeamsTokens).
+// The defaults are Microsoft's; the tests point them at a fake server.
+struct TeamsHosts {
+    QString teams = QStringLiteral("https://teams.microsoft.com");                     // sign-in, CSA, profiles, calendar, search
+    QString presence = QStringLiteral("https://presence.teams.microsoft.com");
+    QString media = QStringLiteral("https://as-prod.asyncgw.teams.microsoft.com");     // picture upload
+};
+
 // Chat service client. Endpoints and headers follow purple-teams (work account build):
 // https://github.com/EionRobb/purple-teams (teams_messages.c, teams_connection.c).
 class TeamsClient : public QObject
@@ -31,6 +39,7 @@ public:
 
     void setTokens(const TeamsTokens &tokens);
     TeamsTokens tokens() const { return m_tokens; }
+    void setHosts(const TeamsHosts &hosts);
     bool canFetch() const { return !m_tokens.chatBearer.isEmpty() || !m_tokens.skypeToken.isEmpty(); }
 
     // Exchange an access token for api.spaces.skype.com for a skypetoken (authsvc).
@@ -120,4 +129,5 @@ private:
 
     QNetworkAccessManager m_nam;
     TeamsTokens m_tokens;
+    TeamsHosts m_hosts;
 };

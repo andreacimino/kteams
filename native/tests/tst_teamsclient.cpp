@@ -1,5 +1,6 @@
 // The chat service client (src/teamsclient.cpp) against a fake HTTP server on loopback:
 // what it sends (method, path, query, headers, body) and what it emits for the answers.
+#include "fakeserver.h"
 #include "teamsclient.h"
 
 #include <QJsonArray>
@@ -12,69 +13,6 @@
 #include <QtTest>
 
 namespace {
-struct Request {
-    QByteArray method;
-    QByteArray target;       // path and query, as sent
-    QByteArray body;
-    QHash<QByteArray, QByteArray> headers; // lower-case names
-    QUrl url() const { return QUrl(QString::fromLatin1(target)); }
-    QString path() const { return url().path(QUrl::FullyEncoded); }
-    QString query(const QString &name) const { return QUrlQuery(url()).queryItemValue(name, QUrl::FullyDecoded); }
-    QJsonObject json() const { return QJsonDocument::fromJson(body).object(); }
-};
-
-class FakeServer : public QObject
-{
-    Q_OBJECT
-public:
-    FakeServer() { connect(&m_server, &QTcpServer::newConnection, this, &FakeServer::accept); }
-    bool start() { return m_server.listen(QHostAddress::LocalHost, 0); }
-    void stop() { m_server.close(); }
-    QString base() const { return QStringLiteral("http://127.0.0.1:%1").arg(m_server.serverPort()); }
-    // What the next answers look like.
-    int status = 200;
-    QByteArray answer = "{}";
-    QByteArray extraHeaders;
-    QList<Request> requests;
-signals:
-    void requestReceived();
-private slots:
-    void accept()
-    {
-        QTcpSocket *socket = m_server.nextPendingConnection();
-        connect(socket, &QTcpSocket::readyRead, this, [this, socket] { read(socket); });
-        connect(socket, &QTcpSocket::disconnected, socket, &QObject::deleteLater);
-    }
-private:
-    void read(QTcpSocket *socket)
-    {
-        QByteArray &buffer = m_buffers[socket];
-        buffer += socket->readAll();
-        const int headerEnd = buffer.indexOf("\r\n\r\n");
-        if (headerEnd < 0) return;
-        const QList<QByteArray> lines = buffer.left(headerEnd).split('\n');
-        Request r;
-        const QList<QByteArray> first = lines.first().trimmed().split(' ');
-        r.method = first.value(0);
-        r.target = first.value(1);
-        for (int i = 1; i < lines.size(); ++i) {
-            const int colon = lines[i].indexOf(':');
-            if (colon > 0) r.headers.insert(lines[i].left(colon).trimmed().toLower(), lines[i].mid(colon + 1).trimmed());
-        }
-        const int length = r.headers.value("content-length", "0").toInt();
-        if (buffer.size() < headerEnd + 4 + length) return;
-        r.body = buffer.mid(headerEnd + 4, length);
-        m_buffers.remove(socket);
-        requests.append(r);
-        socket->write("HTTP/1.1 " + QByteArray::number(status) + " X\r\nContent-Type: application/json\r\nContent-Length: "
-                      + QByteArray::number(answer.size()) + "\r\n" + extraHeaders + "Connection: close\r\n\r\n" + answer);
-        socket->disconnectFromHost();
-        emit requestReceived();
-    }
-    QTcpServer m_server;
-    QHash<QTcpSocket *, QByteArray> m_buffers;
-};
-
 TeamsTokens bearerTokens(const QString &base)
 {
     TeamsTokens t;
@@ -91,15 +29,13 @@ class TeamsClientTest : public QObject
     FakeServer server;
     TeamsClient client;
 
-    // Runs `call`, waits for the server to see the request and for `signal` (when given).
+    // Runs `call`, waits for the server to see one more request and, when given, for `spy` to get a signal.
     template <typename Call> const Request &send(Call call, QSignalSpy *spy = nullptr)
     {
-        const qsizetype before = server.requests.size();
-        QSignalSpy seen(&server, &FakeServer::requestReceived);
+        const qsizetype expected = server.requests.size() + 1;
         call();
-        if (!seen.wait(5000)) QTest::qFail("the server saw no request", __FILE__, __LINE__);
+        if (!server.waitForRequests(expected)) QTest::qFail("the server saw no request", __FILE__, __LINE__);
         if (spy && spy->isEmpty()) spy->wait(5000);
-        Q_ASSERT(server.requests.size() == before + 1);
         return server.requests.last();
     }
 
@@ -108,11 +44,11 @@ private slots:
 
     void init()
     {
-        server.status = 200;
-        server.answer = "{}";
-        server.extraHeaders.clear();
-        server.requests.clear();
+        server.reset();
         client.setTokens(bearerTokens(server.base()));
+        TeamsHosts hosts;
+        hosts.teams = hosts.presence = hosts.media = server.base();
+        client.setHosts(hosts);
     }
 
     // --- authentication headers -----------------------------------------------------------
@@ -409,6 +345,234 @@ private slots:
         const Request &remove = send([&] { client.removeMember("19:g@thread.v2", "8:orgid:bob"); });
         QCOMPARE(remove.method, QByteArray("DELETE"));
         QCOMPARE(remove.path(), QStringLiteral("/v1/threads/19%3Ag%40thread.v2/members/8%3Aorgid%3Abob"));
+    }
+
+    // --- sign-in, CSA, profiles, calendar, search -----------------------------------------
+
+    void skypeTokenFromTheAuthService()
+    {
+        server.answer = R"({"tokens":{"skypeToken":"st","expiresIn":86400},"region":"emea"})";
+        QSignalSpy ready(&client, &TeamsClient::skypeTokenReady);
+        const Request &r = send([&] { client.fetchSkypeToken("spaces-access"); }, &ready);
+        QCOMPARE(r.method, QByteArray("POST"));
+        QCOMPARE(r.path(), QStringLiteral("/api/authsvc/v1.0/authz"));
+        QCOMPARE(r.headers.value("authorization"), QByteArray("Bearer spaces-access"));
+        QCOMPARE(ready.count(), 1);
+        QCOMPARE(ready[0].at(0).toString(), QStringLiteral("st"));
+        QCOMPARE(ready[0].at(1).toString(), QStringLiteral("emea"));
+        QCOMPARE(ready[0].at(2).toInt(), 86400);
+    }
+
+    void skypeTokenInTheOlderAnswerShape()
+    {
+        server.answer = R"({"skypeToken":{"skypetoken":"st2"},"region":"amer"})";
+        QSignalSpy ready(&client, &TeamsClient::skypeTokenReady);
+        send([&] { client.fetchSkypeToken("x"); }, &ready);
+        QCOMPARE(ready[0].at(0).toString(), QStringLiteral("st2"));
+        QCOMPARE(ready[0].at(1).toString(), QStringLiteral("amer"));
+    }
+
+    void anAnswerWithoutASkypeTokenIsAnError()
+    {
+        server.answer = R"({"region":"emea"})";
+        QSignalSpy ready(&client, &TeamsClient::skypeTokenReady);
+        QSignalSpy errors(&client, &TeamsClient::errorOccurred);
+        send([&] { client.fetchSkypeToken("x"); }, &errors);
+        QCOMPARE(ready.count(), 0);
+        QCOMPARE(errors[0].at(0).toString(), QStringLiteral("authsvc"));
+        QCOMPARE(errors[0].at(2).toString(), QStringLiteral("answer without skypeToken"));
+    }
+
+    void chatsAndTeamsNeedBothTokens()
+    {
+        server.answer = R"({"chats":[],"teams":[{"id":"t"}]})";
+        QSignalSpy spy(&client, &TeamsClient::chatsAndTeamsFetched);
+        const Request &r = send([&] { client.fetchChatsAndTeams("csa-bearer"); }, &spy);
+        QCOMPARE(r.path(), QStringLiteral("/api/csa/api/v1/teams/users/me"));
+        QCOMPARE(r.query("enableMembershipSummary"), QStringLiteral("true"));
+        QCOMPARE(r.headers.value("authorization"), QByteArray("Bearer csa-bearer"));
+        QCOMPARE(r.headers.value("x-skypetoken"), QByteArray("skype-token"));
+        QCOMPARE(spy[0].at(0).toJsonObject().value("teams").toArray().size(), 1);
+    }
+
+    void profilesAreRequestedInTheRegionAndReadFromEitherKey()
+    {
+        TeamsTokens t = bearerTokens(server.base());
+        t.region = "emea";
+        client.setTokens(t);
+        server.answer = R"({"value":[{"mri":"8:orgid:a"},{"mri":"8:orgid:b"}]})";
+        QSignalSpy spy(&client, &TeamsClient::profilesFetched);
+        const Request &r = send([&] { client.fetchProfiles({"8:orgid:a", "8:orgid:b"}, "spaces"); }, &spy);
+        QCOMPARE(r.method, QByteArray("POST"));
+        QCOMPARE(r.path(), QStringLiteral("/api/mt/emea/beta/users/fetchShortProfile"));
+        QCOMPARE(r.query("isMailAddress"), QStringLiteral("false"));
+        QCOMPARE(r.query("skypeTeamsInfo"), QStringLiteral("true"));
+        QCOMPARE(QJsonDocument::fromJson(r.body).array(), (QJsonArray{"8:orgid:a", "8:orgid:b"}));
+        QCOMPARE(spy[0].at(0).toJsonArray().size(), 2);
+
+        spy.clear();
+        server.answer = R"({"resolvedUsers":[{"mri":"8:orgid:c"}]})";
+        send([&] { client.fetchProfiles({"8:orgid:c"}, "spaces"); }, &spy);
+        QCOMPARE(spy[0].at(0).toJsonArray().size(), 1);
+    }
+
+    void withoutARegionTheDefaultOneIsUsed()
+    {
+        QSignalSpy spy(&client, &TeamsClient::profilesFetched);
+        const Request &r = send([&] { client.fetchProfiles({"8:orgid:a"}, "spaces"); }, &spy);
+        QVERIFY(r.path().startsWith(QStringLiteral("/api/mt/apac/")));
+    }
+
+    void calendarRangeIsSentWithTheUtcOffsetLikeStrftimeZ()
+    {
+        TeamsTokens t = bearerTokens(server.base());
+        t.region = "emea";
+        client.setTokens(t);
+        server.answer = R"({"value":[{"subject":"Standup"}]})";
+        QSignalSpy spy(&client, &TeamsClient::calendarFetched);
+        const QTimeZone plusOne = QTimeZone::fromSecondsAheadOfUtc(3600);
+        const QTimeZone minusThreeThirty = QTimeZone::fromSecondsAheadOfUtc(-(3 * 3600 + 30 * 60));
+        const Request &r = send([&] {
+            client.fetchCalendar(QDateTime(QDate(2026, 11, 9), QTime(0, 0), plusOne), QDateTime(QDate(2026, 11, 16), QTime(0, 0), minusThreeThirty), "spaces");
+        }, &spy);
+        QCOMPARE(r.method, QByteArray("GET"));
+        QCOMPARE(r.path(), QStringLiteral("/api/mt/emea/v2.0/me/calendars/default/calendarView"));
+        QCOMPARE(r.query("StartDate"), QStringLiteral("2026-11-09T00:00:00+0100"));
+        QCOMPARE(r.query("EndDate"), QStringLiteral("2026-11-16T00:00:00-0330"));
+        QCOMPARE(spy[0].at(0).toJsonArray().size(), 1);
+    }
+
+    void userSearchPostsTheRawTextAndReadsAnyOfThreeKeys_data()
+    {
+        QTest::addColumn<QByteArray>("answer");
+        QTest::newRow("results") << QByteArray(R"({"results":[{"mri":"8:orgid:a"}]})");
+        QTest::newRow("value") << QByteArray(R"({"value":[{"mri":"8:orgid:a"}]})");
+        QTest::newRow("values") << QByteArray(R"({"values":[{"mri":"8:orgid:a"}]})");
+    }
+    void userSearchPostsTheRawTextAndReadsAnyOfThreeKeys()
+    {
+        QFETCH(QByteArray, answer);
+        server.answer = answer;
+        QSignalSpy spy(&client, &TeamsClient::usersFound);
+        const Request &r = send([&] { client.searchUsers("ann", "spaces"); }, &spy);
+        QCOMPARE(r.method, QByteArray("POST"));
+        QCOMPARE(r.path(), QStringLiteral("/api/mt/apac/beta/users/searchV2"));
+        QCOMPARE(r.query("source"), QStringLiteral("newChat"));
+        QCOMPARE(r.body, QByteArray("ann"));
+        QCOMPARE(spy[0].at(0).toString(), QStringLiteral("ann"));
+        QCOMPARE(spy[0].at(1).toJsonArray().size(), 1);
+    }
+
+    // --- presence -------------------------------------------------------------------------
+
+    void presenceOfSeveralPeople()
+    {
+        server.answer = R"([{"mri":"8:orgid:a","presence":{"availability":"Available"}}])";
+        QSignalSpy spy(&client, &TeamsClient::presenceFetched);
+        const Request &r = send([&] { client.fetchPresence({"8:orgid:a", "8:orgid:b"}, "pres"); }, &spy);
+        QCOMPARE(r.method, QByteArray("POST"));
+        QCOMPARE(r.path(), QStringLiteral("/v1/presence/getpresence/"));
+        QCOMPARE(r.headers.value("authorization"), QByteArray("Bearer pres"));
+        QCOMPARE(r.headers.value("x-ms-client-user-agent"), QByteArray("Teams-V2-Desktop"));
+        const QJsonArray body = QJsonDocument::fromJson(r.body).array();
+        QCOMPARE(body.size(), 2);
+        QCOMPARE(body[1].toObject().value("mri").toString(), QStringLiteral("8:orgid:b"));
+        QCOMPARE(spy[0].at(0).toJsonArray().size(), 1);
+    }
+
+    void registeringTheDeviceAsAnEndpoint()
+    {
+        QSignalSpy registered(&client, &TeamsClient::presenceEndpointRegistered);
+        const Request &r = send([&] { client.registerPresenceEndpoint("endpoint-1", "pres"); }, &registered);
+        QCOMPARE(r.method, QByteArray("PUT"));
+        QCOMPARE(r.path(), QStringLiteral("/v1/me/endpoints/"));
+        QCOMPARE(r.json().value("id").toString(), QStringLiteral("endpoint-1"));
+        QCOMPARE(r.json().value("availability").toString(), QStringLiteral("Available"));
+        QCOMPARE(r.json().value("activityReporting").toString(), QStringLiteral("Transport"));
+        QCOMPARE(registered.count(), 1);
+    }
+
+    void activityAvailabilityAndNote()
+    {
+        const Request &activity = send([&] { client.reportActivity("endpoint-1", false, "pres"); });
+        QCOMPARE(activity.method, QByteArray("POST"));
+        QCOMPARE(activity.path(), QStringLiteral("/v1/me/reportmyactivity/"));
+        QCOMPARE(activity.json().value("endpointId").toString(), QStringLiteral("endpoint-1"));
+        QCOMPARE(activity.json().value("isActive").toBool(), false);
+
+        const Request &availability = send([&] { client.forceAvailability("DoNotDisturb", "pres"); });
+        QCOMPARE(availability.method, QByteArray("PUT"));
+        QCOMPARE(availability.path(), QStringLiteral("/v1/me/forceavailability/"));
+        QCOMPARE(availability.json().value("availability").toString(), QStringLiteral("DoNotDisturb"));
+
+        const Request &note = send([&] { client.publishNote("in <b>reunione</b> & co", "pres"); });
+        QCOMPARE(note.path(), QStringLiteral("/v1/me/publishnote"));
+        QCOMPARE(note.json().value("message").toString(), QStringLiteral("in &lt;b&gt;reunione&lt;/b&gt; &amp; co")); // the note is HTML
+        QVERIFY(note.json().value("expiry").toString().startsWith(QStringLiteral("9999-")));
+    }
+
+    // --- pictures -------------------------------------------------------------------------
+
+    void sendingAPictureCreatesUploadsAndThenPostsTheMessage()
+    {
+        server.respond = [](const Request &) { return QByteArray(R"({"id":"0-eu-d1-xyz"})"); };
+        QSignalSpy busy(&client, &TeamsClient::imageUploading);
+        QSignalSpy sent(&client, &TeamsClient::messageSent);
+        const QByteArray picture("\x89PNG-bytes", 10);
+        client.sendImage("19:a@thread.v2", picture, "pic.png", "Me");
+        QVERIFY(server.waitForRequests(3));
+        QVERIFY(sent.wait(2000) || sent.count() == 1);
+
+        const Request &create = server.requests[0];
+        QCOMPARE(create.method, QByteArray("POST"));
+        QCOMPARE(create.path(), QStringLiteral("/v1/objects/"));
+        QCOMPARE(create.headers.value("authorization"), QByteArray("skype_token skype-token"));
+        QCOMPARE(create.json().value("type").toString(), QStringLiteral("pish/image"));
+        QCOMPARE(create.json().value("filename").toString(), QStringLiteral("pic.png"));
+        QCOMPARE(create.json().value("permissions").toObject().value("19:a@thread.v2").toArray(), QJsonArray{"read"});
+
+        const Request &upload = server.requests[1];
+        QCOMPARE(upload.method, QByteArray("PUT"));
+        QCOMPARE(upload.path(), QStringLiteral("/v1/objects/0-eu-d1-xyz/content/imgpsh"));
+        QCOMPARE(upload.headers.value("content-type"), QByteArray("application/octet-stream"));
+        QCOMPARE(upload.body, picture);
+
+        const Request &message = server.requests[2];
+        QCOMPARE(message.path(), QStringLiteral("/v1/users/ME/conversations/19%3Aa%40thread.v2/messages"));
+        QVERIFY(message.json().value("content").toString().contains(QStringLiteral("0-eu-d1-xyz/views/imgo")));
+        QCOMPARE(busy.count(), 2);
+        QCOMPARE(busy[0].at(0).toBool(), true);
+        QCOMPARE(busy[1].at(0).toBool(), false);
+        QCOMPARE(sent.count(), 1);
+    }
+
+    void aFailedPictureCreationStopsThere()
+    {
+        server.status = 500;
+        server.answer = "no";
+        QSignalSpy busy(&client, &TeamsClient::imageUploading);
+        QSignalSpy errors(&client, &TeamsClient::errorOccurred);
+        client.sendImage("19:a", "x", "pic.png", "Me");
+        QVERIFY(errors.wait(5000));
+        QCOMPARE(errors[0].at(0).toString(), QStringLiteral("immagine"));
+        QCOMPARE(errors[0].at(1).toInt(), 500);
+        QCOMPARE(busy.count(), 2);
+        QCOMPARE(busy[1].at(0).toBool(), false);
+        QTest::qWait(150);
+        QCOMPARE(server.requests.size(), 1); // no upload, no message
+    }
+
+    void aPictureNeedsTheSkypeToken()
+    {
+        TeamsTokens t = bearerTokens(server.base());
+        t.skypeToken.clear();
+        client.setTokens(t);
+        QSignalSpy errors(&client, &TeamsClient::errorOccurred);
+        client.sendImage("19:a", "x", "pic.png", "Me");
+        QCOMPARE(errors.count(), 1);
+        QCOMPARE(errors[0].at(2).toString(), QStringLiteral("missing skypetoken"));
+        QTest::qWait(100);
+        QVERIFY(server.requests.isEmpty());
     }
 };
 

@@ -18,6 +18,8 @@ TeamsClient::TeamsClient(QObject *parent) : QObject(parent) {}
 
 void TeamsClient::setTokens(const TeamsTokens &tokens) { m_tokens = tokens; }
 
+void TeamsClient::setHosts(const TeamsHosts &hosts) { m_hosts = hosts; }
+
 QUrl TeamsClient::chatUrl(const QString &path) const
 {
     QString base = m_tokens.chatServiceBase;
@@ -80,7 +82,7 @@ void TeamsClient::chatSend(const QString &context, const QByteArray &verb, const
 void TeamsClient::fetchSkypeToken(const QString &accessTokenForSpaces)
 {
     // purple-teams: teams_login_get_api_skypetoken()
-    QNetworkRequest req(QUrl(QStringLiteral("https://teams.microsoft.com/api/authsvc/v1.0/authz")));
+    QNetworkRequest req(QUrl(m_hosts.teams + QStringLiteral("/api/authsvc/v1.0/authz")));
     req.setHeader(QNetworkRequest::UserAgentHeader, QString::fromLatin1(kUserAgent));
     req.setRawHeader("Authorization", QByteArray("Bearer ") + accessTokenForSpaces.toUtf8());
     req.setRawHeader("Accept", "application/json; ver=1.0");
@@ -172,7 +174,7 @@ QNetworkRequest TeamsClient::makeTeamsApiRequest(const QUrl &url, const QString 
 void TeamsClient::fetchChatsAndTeams(const QString &csaBearer)
 {
     // purple-teams: teams_get_friend_list() -> /api/csa/api/v1/teams/users/me
-    QUrl url(QStringLiteral("https://teams.microsoft.com/api/csa/api/v1/teams/users/me"));
+    QUrl url(m_hosts.teams + QStringLiteral("/api/csa/api/v1/teams/users/me"));
     QUrlQuery q;
     q.addQueryItem(QStringLiteral("isPrefetch"), QStringLiteral("false"));
     q.addQueryItem(QStringLiteral("enableMembershipSummary"), QStringLiteral("true"));
@@ -188,7 +190,7 @@ void TeamsClient::fetchProfiles(const QStringList &mris, const QString &spacesBe
 {
     // purple-teams: teams_get_friend_profiles(); body is a JSON array of MRIs.
     const QString region = m_tokens.region.isEmpty() ? QString::fromLatin1(kDefaultChatRegion) : m_tokens.region;
-    QUrl url(QStringLiteral("https://teams.microsoft.com/api/mt/%1/beta/users/fetchShortProfile").arg(region));
+    QUrl url(QStringLiteral("%1/api/mt/%2/beta/users/fetchShortProfile").arg(m_hosts.teams, region));
     QUrlQuery q;
     q.addQueryItem(QStringLiteral("isMailAddress"), QStringLiteral("false"));
     q.addQueryItem(QStringLiteral("canBeSmtpAddress"), QStringLiteral("false"));
@@ -214,7 +216,7 @@ void TeamsClient::fetchCalendar(const QDateTime &from, const QDateTime &to, cons
 {
     // purple-teams uses "/api/mt/part/<partition>/v2.0/...", the web app here "/api/mt/<region>/v2.0/...".
     const QString region = m_tokens.region.isEmpty() ? QString::fromLatin1(kDefaultChatRegion) : m_tokens.region;
-    QUrl url(QStringLiteral("https://teams.microsoft.com/api/mt/%1/v2.0/me/calendars/default/calendarView").arg(region));
+    QUrl url(QStringLiteral("%1/api/mt/%2/v2.0/me/calendars/default/calendarView").arg(m_hosts.teams, region));
     // "%Y-%m-%dT%H:%M:%S%z", as purple-teams sends it
     const auto stamp = [](const QDateTime &t) {
         const int offsetMin = t.offsetFromUtc() / 60;
@@ -291,7 +293,7 @@ void TeamsClient::fetchPresence(const QStringList &mris, const QString &presence
 {
     QJsonArray body;
     for (const QString &mri : mris) body.append(QJsonObject{{QStringLiteral("mri"), mri}});
-    QNetworkRequest req(QUrl(QStringLiteral("https://presence.teams.microsoft.com/v1/presence/getpresence/")));
+    QNetworkRequest req(QUrl(m_hosts.presence + QStringLiteral("/v1/presence/getpresence/")));
     req.setHeader(QNetworkRequest::UserAgentHeader, QString::fromLatin1(kUserAgent));
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
     req.setRawHeader("Authorization", QByteArray("Bearer ") + presenceBearer.toUtf8());
@@ -309,7 +311,7 @@ void TeamsClient::fetchPresence(const QStringList &mris, const QString &presence
 void TeamsClient::presenceCall(const QString &context, const QByteArray &verb, const QString &path, const QJsonObject &body,
                                const QString &presenceBearer, std::function<void()> onSuccess)
 {
-    QNetworkRequest req(QUrl(QStringLiteral("https://presence.teams.microsoft.com") + path));
+    QNetworkRequest req(QUrl(m_hosts.presence + path));
     req.setHeader(QNetworkRequest::UserAgentHeader, QString::fromLatin1(kUserAgent));
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
     req.setRawHeader("Authorization", QByteArray("Bearer ") + presenceBearer.toUtf8());
@@ -357,7 +359,7 @@ void TeamsClient::publishNote(const QString &message, const QString &presenceBea
 void TeamsClient::searchUsers(const QString &text, const QString &spacesBearer)
 {
     const QString region = m_tokens.region.isEmpty() ? QString::fromLatin1(kDefaultChatRegion) : m_tokens.region;
-    QUrl url(QStringLiteral("https://teams.microsoft.com/api/mt/%1/beta/users/searchV2").arg(region));
+    QUrl url(QStringLiteral("%1/api/mt/%2/beta/users/searchV2").arg(m_hosts.teams, region));
     QUrlQuery q;
     for (const auto &[k, v] : {std::pair{"includeDLs", "true"}, {"includeBots", "true"}, {"searchExternalContacts", "true"},
                                {"searchImplicitContacts", "false"}, {"enableGuest", "true"}, {"source", "newChat"},
@@ -406,7 +408,7 @@ void TeamsClient::sendImage(const QString &conversationId, const QByteArray &dat
 {
     if (!canFetch() || m_tokens.skypeToken.isEmpty()) { emit errorOccurred(QStringLiteral("immagine"), 0, QStringLiteral("missing skypetoken")); return; }
     const QByteArray auth = "skype_token " + m_tokens.skypeToken.toUtf8();
-    const QString base = QStringLiteral("https://as-prod.asyncgw.teams.microsoft.com/v1/objects/");
+    const QString base = m_hosts.media + QStringLiteral("/v1/objects/");
 
     const QJsonObject body{{QStringLiteral("type"), QStringLiteral("pish/image")},
                            {QStringLiteral("permissions"), QJsonObject{{conversationId, QJsonArray{QStringLiteral("read")}}}},

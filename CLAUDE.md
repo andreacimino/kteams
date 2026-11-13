@@ -62,8 +62,10 @@ Coverage (gcovr), in its own build directory because it changes the compiler fla
   mention was found this way).
 - New logic that does not need the network goes into a pure function or module (like
   `content.cpp`) and gets its `tst_<module>.cpp`; one slot per behaviour, named after it.
-  Not in a test file: raw string literals holding `\"` or `//` (moc misreads them and silently
-  drops the whole test class, which then fails to link); build the JSON with `QJsonObject`.
+  Two things moc misreads in a test file, and then silently drops the whole test class (the
+  executable fails to link on its vtable): a `\"` inside a raw string literal, and a `//`
+  inside one (it is taken for a comment and the rest of the line disappears, braces
+  included). Build such JSON with `QJsonObject`, or keep the raw string alone on its line.
   The chat service calls of `teamsclient` are tested against a loopback fake server
   (`FakeServer` in `tst_teamsclient.cpp`; no real network in tests). Endpoints with a
   hard-coded Microsoft host (profiles, calendar, presence, search, images, sign-in) and
