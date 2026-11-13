@@ -20,12 +20,14 @@ find_package(Qt6Keychain REQUIRED)
 # Desktop notifications for new messages.
 find_package(KF6Notifications REQUIRED)
 
-add_executable(kteams
-    src/main.cpp
+# Everything but main() is a static library, so the tests link the same code as the app.
+add_library(kteams_core STATIC
     src/backend.cpp
     src/backend.h
     src/avatarcache.cpp
     src/avatarcache.h
+    src/content.cpp
+    src/content.h
     src/mediacache.cpp
     src/mediacache.h
     src/trouter.cpp
@@ -43,14 +45,28 @@ add_executable(kteams
     src/nativecall.h
     src/oauth.cpp
     src/oauth.h
+    src/statecache.cpp
+    src/statecache.h
     src/teamsclient.cpp
     src/teamsclient.h
     src/models.cpp
     src/models.h
-    qml/qml.qrc
+)
+target_include_directories(kteams_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(kteams_core PUBLIC
+    Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2 Qt6::Network Qt6::WebSockets Qt6::Multimedia
+    ZLIB::ZLIB
+    Qt6Keychain::Qt6Keychain
+    KF6::Notifications
+    KF6::StatusNotifierItem
+    PkgConfig::GST
+    Qt6::DBus
 )
 
-target_include_directories(kteams PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+add_executable(kteams
+    src/main.cpp
+    qml/qml.qrc
+)
 
 # Source strings are English; translations/*.ts hold the other languages (Qt Linguist),
 # compiled and embedded at build time, picked by the system locale at start-up.
@@ -58,6 +74,7 @@ target_include_directories(kteams PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 # (the QML files are listed explicitly: lupdate does not look inside the .qrc)
 file(GLOB KTEAMS_QML_SOURCES CONFIGURE_DEPENDS qml/*.qml)
 qt_add_translations(kteams
+    SOURCE_TARGETS kteams kteams_core
     SOURCES ${KTEAMS_QML_SOURCES}
     TS_FILES
         translations/kteams_it.ts
@@ -73,15 +90,7 @@ qt_add_translations(kteams
         translations/kteams_pl.ts
     RESOURCE_PREFIX "/i18n")
 
-target_link_libraries(kteams PRIVATE
-    Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2 Qt6::Network Qt6::WebSockets Qt6::Multimedia
-    ZLIB::ZLIB
-    Qt6Keychain::Qt6Keychain
-    KF6::Notifications
-    KF6::StatusNotifierItem
-    PkgConfig::GST
-    Qt6::DBus
-)
+target_link_libraries(kteams PRIVATE kteams_core)
 
 # Developer tool, off by default: Teams web in a QtWebEngine window with "--capture",
 # which records the calling protocol (see docs/calling-protocol.md). Not used by the app.
@@ -111,6 +120,18 @@ install(FILES data/kteams.notifyrc DESTINATION ${CMAKE_INSTALL_DATADIR}/knotific
 install(FILES data/org.kteams.kteams.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
 
 # Media pipeline check without a call (not built by default): cmake --build native/build --target kteams-offer-test
-add_executable(kteams-offer-test EXCLUDE_FROM_ALL tests/offer_dump.cpp src/callengine.cpp src/callengine.h)
-target_include_directories(kteams-offer-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(kteams-offer-test PRIVATE Qt6::Core Qt6::Multimedia PkgConfig::GST)
+add_executable(kteams-offer-test EXCLUDE_FROM_ALL tests/offer_dump.cpp)
+target_link_libraries(kteams-offer-test PRIVATE kteams_core)
+
+# Regression tests (Qt Test, run by ctest): cmake -DBUILD_TESTING=ON, then ctest --test-dir native/build.
+# With -DKTEAMS_COVERAGE=ON the "coverage" target runs them and writes the gcovr report
+# (native/build/coverage/index.html, summary on the terminal); see tests/README.md.
+include(CTest)
+option(KTEAMS_COVERAGE "Compile with gcov instrumentation and add the coverage target" OFF)
+if(KTEAMS_COVERAGE)
+    target_compile_options(kteams_core PUBLIC --coverage -O0 -g)
+    target_link_options(kteams_core PUBLIC --coverage)
+endif()
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()

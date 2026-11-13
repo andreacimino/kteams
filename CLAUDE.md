@@ -7,9 +7,14 @@ uses ~1 GB.
 
 Chat in Italian with the developer; code, comments, commit messages, documentation and the
 interface's source strings in English. User-visible text goes through `qsTr()` (QML) or
-`tr()` (C++); Italian lives in `native/translations/kteams_it.ts` (after changing
-strings: `cmake --build native/build --target update_translations`, then fill the new
-entries; `lrelease` runs at build time).
+`tr()` (C++). Translations live in `native/translations/kteams_<lang>.ts` (Qt Linguist):
+Italian, German, French, Spanish, Brazilian Portuguese, Simplified Chinese, Japanese,
+Russian, Korean, Dutch, Polish. After changing strings: `cmake --build native/build --target
+update_translations` (lupdate; the QML files are passed explicitly, it does not read the
+.qrc), then fill the new `type="unfinished"` entries in every language (an unfinished entry
+shows English), keeping placeholders (`%1`) and using Microsoft Teams' official terms for
+Teams concepts; `lrelease` runs at build time. A new language: add its `.ts` to `TS_FILES`
+in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 
 ## Layout
 
@@ -26,11 +31,50 @@ entries; `lrelease` runs at build time).
     see `native/docs/calling-protocol.md`; `src/screencast.*`: the ScreenCast portal.
   - `tests/offer_dump.cpp` (`kteams-offer-test`): prints the SDP offer and runs the
     camera without calling anyone; the way to check the media pipeline.
-  - `src/backend.*`: state, models, notifications, everything QML sees as `backend`.
+  - `src/backend.*`: state, notifications, everything QML sees as `backend`.
+  - `src/content.*`: Teams message HTML to text/rich text, files, reactions (pure functions);
+    `src/models.*`: the list models; `src/statecache.*`: the local cache's JSON format.
+    Everything but `main.cpp` is the static library `kteams_core`, linked by the app and the tests.
   - `qml/`: Kirigami UI (chat list with tabs Chat/Team/Calendario, chat, channel threads).
   - `call/`: `kteams-capture`, Teams web in a QtWebEngine window, a developer tool only
     (`-DBUILD_CALL_HELPER=ON`): `--capture` records the calling protocol. The app never
     starts it.
+
+## Tests: the regression suite
+
+Qt Test executables in `native/tests/` (`tst_content`, `tst_models`, `tst_statecache`,
+`tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
+
+    cmake -S native -B native/build && cmake --build native/build
+    ctest --test-dir native/build --output-on-failure
+
+Coverage (gcovr), in its own build directory because it changes the compiler flags:
+`cmake -S native -B native/build-coverage -DBUILD_TESTING=ON -DKTEAMS_COVERAGE=ON` then
+`cmake --build native/build-coverage --target coverage`; the report is
+`native/build-coverage/coverage/index.html`, the summary `coverage/summary.txt`.
+
+- Run the tests before saying a change is done; a red test is never weakened, skipped or
+  deleted to make it pass.
+- Every bug fix comes with a test that fails without the fix (the unclosed `<b>` after a
+  mention was found this way).
+- New logic that does not need the network goes into a pure function or module (like
+  `content.cpp`) and gets its `tst_<module>.cpp`; one slot per behaviour, named after it.
+  Code that talks to Teams (`teamsclient`, `trouter`, `oauth`, `nativecall`) is not
+  unit-tested yet: separate the parsing from the request, then test the parsing.
+- CI: `.github/workflows/tests.yml` runs the suite with coverage in an Arch container on
+  every push and pull request (the HTML report is an artifact); `flatpak.yml` builds the
+  Flatpak. A red workflow means the branch is not ready.
+
+## Packaging
+
+- Arch and derivatives: `packaging/arch/kteams-git/` (PKGBUILD + .SRCINFO, the AUR package,
+  builds `develop` from GitHub) and `packaging/arch/PKGBUILD` with `build.sh` (the current
+  checkout). A new dependency goes into both PKGBUILDs, the Flatpak manifest and
+  `.github/workflows/tests.yml`.
+- Flatpak: `packaging/flatpak/org.kteams.kteams.yml` on the KDE 6.11 runtime; QtKeychain
+  and the x264 GStreamer element are built as modules. Sandbox permissions are listed there
+  with the reason for each. `native/data/org.kteams.kteams.metainfo.xml` is the AppStream
+  file. See `packaging/README.md`.
 
 ## How the protocol was learned
 

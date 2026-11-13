@@ -26,6 +26,8 @@ The calendar week, with meetings to join:
   pictures, files (send, drag and drop, download), reactions, mentions, edit and delete,
   reply quotes, "seen by", "is typing", read state and unread counts.
 - Chat management: pin, mute, hide; group chats renamed, people added, leaving.
+- Interface in English, Italian, German, French, Spanish, Brazilian Portuguese, Simplified
+  Chinese, Japanese, Russian, Korean, Dutch and Polish (the system language).
 - Audio calls: outgoing (one-to-one and group), incoming with ringtone, Teams' test call;
   echo cancellation and noise suppression; mute, hang up.
 - Presence (own and others'), status message, Do not disturb.
@@ -95,7 +97,11 @@ Then "KTeams" from the menu, or `kteams`.
 - `native/`: the client. `src/` C++ (backend, Teams HTTP client, Trouter push channel, calls:
   `nativecall.*` signaling, `callengine.*` media), `qml/` the Kirigami interface,
   `translations/` the Qt Linguist files (source strings are English; after changing strings:
-  `cmake --build native/build --target update_translations`, then fill the `.ts`).
+  `cmake --build native/build --target update_translations`, then fill every `.ts`).
+- Tests: Qt Test suites in `native/tests/` (message content, models, cache, demo mode),
+  built by default and run with `ctest --test-dir native/build --output-on-failure`;
+  coverage with `-DKTEAMS_COVERAGE=ON` and the `coverage` target (gcovr). GitHub Actions runs
+  them on every push (`.github/workflows/tests.yml`), next to the Flatpak build.
 - `native/docs/calling-protocol.md`: the Teams calling protocol as we understand it
   (Microsoft's SDP dialect, video source requests, meetings).
 - `native/tests/offer_dump.cpp` → `kteams-offer-test`: prints the SDP offer, turns the

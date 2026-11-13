@@ -1,0 +1,36 @@
+# Regression tests with coverage, in an Arch Linux container (the same packages as the
+# PKGBUILD). The gcovr HTML report is an artifact of the run; the summary is in the log.
+name: Tests
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    container: archlinux:base-devel
+    steps:
+      - name: Install the build dependencies
+        run: |
+          pacman -Syu --noconfirm --needed git cmake pkgconf gcovr \
+            qt6-base qt6-declarative qt6-websockets qt6-multimedia qt6-tools qtkeychain-qt6 \
+            kirigami kirigami-addons qqc2-desktop-style knotifications kstatusnotifieritem \
+            gstreamer gst-plugins-base libnice zlib
+      - uses: actions/checkout@v4
+      - name: Configure (tests and coverage on)
+        run: cmake -S native -B native/build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -DKTEAMS_COVERAGE=ON
+      - name: Build
+        run: cmake --build native/build -j"$(nproc)"
+      - name: Tests and coverage report
+        run: cmake --build native/build --target coverage
+      - name: Coverage summary
+        if: always()
+        run: cat native/build/coverage/summary.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: native/build/coverage/
