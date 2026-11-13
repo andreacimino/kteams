@@ -50,7 +50,7 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 ## Tests: the regression suite
 
 Qt Test executables in `native/tests/` (`tst_content`, `tst_chatparser`, `tst_models`,
-`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_sdpdialect`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_composer`, `tst_translations`, `tst_presence`, `tst_mediadevices`, `tst_settingspage`, `tst_callengine` (opt-in), `tst_backendlogic`, `tst_demo`, plus `qml_syntax`; see `native/tests/README.md`), run by ctest; built by default:
+`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_sdpdialect`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_composer`, `tst_translations`, `tst_presence`, `tst_mediadevices`, `tst_settingspage`, `tst_imageviewer`, `tst_callengine` (opt-in), `tst_backendlogic`, `tst_demo`, plus `qml_syntax`; see `native/tests/README.md`), run by ctest; built by default:
 
     cmake -S native -B native/build && cmake --build native/build
     ctest --test-dir native/build --output-on-failure

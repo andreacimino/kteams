@@ -288,7 +288,7 @@
         <translation>잘못된 재협상 오퍼</translation>
     </message>
     <message>
-        <location filename="../src/callengine.cpp" line="709"/>
+        <location filename="../src/callengine.cpp" line="723"/>
         <source>renegotiation answer not created</source>
         <translation>재협상 응답을 만들지 못했습니다</translation>
     </message>
@@ -812,6 +812,34 @@
     </message>
 </context>
 <context>
+    <name>ImageViewer</name>
+    <message>
+        <location filename="../qml/ImageViewer.qml" line="88"/>
+        <source>Zoom out</source>
+        <translation>축소</translation>
+    </message>
+    <message>
+        <location filename="../qml/ImageViewer.qml" line="94"/>
+        <source>Zoom in</source>
+        <translation>확대</translation>
+    </message>
+    <message>
+        <location filename="../qml/ImageViewer.qml" line="99"/>
+        <source>Fit to window</source>
+        <translation>창에 맞추기</translation>
+    </message>
+    <message>
+        <location filename="../qml/ImageViewer.qml" line="105"/>
+        <source>Save image</source>
+        <translation>이미지 저장</translation>
+    </message>
+    <message>
+        <location filename="../qml/ImageViewer.qml" line="110"/>
+        <source>Close</source>
+        <translation>닫기</translation>
+    </message>
+</context>
+<context>
     <name>LoginPage</name>
     <message>
         <location filename="../qml/LoginPage.qml" line="48"/>
@@ -857,117 +885,117 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../qml/Main.qml" line="61"/>
+        <location filename="../qml/Main.qml" line="63"/>
         <source>Edit message</source>
         <translation>메시지 편집</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="74"/>
+        <location filename="../qml/Main.qml" line="76"/>
         <source>Delete the message?</source>
         <translation>메시지를 삭제할까요?</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="75"/>
+        <location filename="../qml/Main.qml" line="77"/>
         <source>It will be deleted for everyone.</source>
         <translation>모든 사람에게서 삭제됩니다.</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="82"/>
+        <location filename="../qml/Main.qml" line="84"/>
         <source>Status message</source>
         <translation>상태 메시지</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="83"/>
+        <location filename="../qml/Main.qml" line="85"/>
         <source>Others see it next to your name. Empty to remove it.</source>
         <translation>다른 사람에게는 이름 옆에 표시됩니다. 비워 두면 제거됩니다.</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="85"/>
+        <location filename="../qml/Main.qml" line="87"/>
         <source>E.g. On holiday until Monday</source>
         <translation>예: 월요일까지 휴가</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="92"/>
+        <location filename="../qml/Main.qml" line="94"/>
         <source>Rename chat</source>
         <translation>채팅 이름 바꾸기</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="94"/>
+        <location filename="../qml/Main.qml" line="96"/>
         <source>Chat name</source>
         <translation>채팅 이름</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="100"/>
+        <location filename="../qml/Main.qml" line="102"/>
         <source>Leave the chat?</source>
         <translation>채팅에서 나갈까요?</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="101"/>
+        <location filename="../qml/Main.qml" line="103"/>
         <source>You will no longer receive this chat&apos;s messages.</source>
         <translation>이 채팅의 메시지를 더 이상 받지 않습니다.</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="107"/>
+        <location filename="../qml/Main.qml" line="109"/>
         <source>Leave &quot;%1&quot;?</source>
         <translation>&quot;%1&quot;에서 나갈까요?</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="179"/>
+        <location filename="../qml/Main.qml" line="181"/>
         <source>Reply</source>
         <translation>회신</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="186"/>
+        <location filename="../qml/Main.qml" line="188"/>
         <source>Decline</source>
         <translation>거절</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="194"/>
+        <location filename="../qml/Main.qml" line="196"/>
         <source>Unmute</source>
         <translation>음소거 해제</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="194"/>
+        <location filename="../qml/Main.qml" line="196"/>
         <source>Mute</source>
         <translation>음소거</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="200"/>
+        <location filename="../qml/Main.qml" line="202"/>
         <source>Camera off</source>
         <translation>카메라 끄기</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="200"/>
+        <location filename="../qml/Main.qml" line="202"/>
         <source>Camera</source>
         <translation>카메라</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="206"/>
+        <location filename="../qml/Main.qml" line="208"/>
         <source>Stop sharing</source>
         <translation>공유 중지</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="206"/>
+        <location filename="../qml/Main.qml" line="208"/>
         <source>Share screen</source>
         <translation>화면 공유</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="212"/>
+        <location filename="../qml/Main.qml" line="214"/>
         <source>Back to chat</source>
         <translation>채팅으로 돌아가기</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="212"/>
+        <location filename="../qml/Main.qml" line="214"/>
         <source>Video</source>
         <translation>비디오</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="218"/>
+        <location filename="../qml/Main.qml" line="220"/>
         <source>Chat</source>
         <translation>채팅</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="228"/>
+        <location filename="../qml/Main.qml" line="230"/>
         <source>Hang up</source>
         <translation>통화 종료</translation>
     </message>
@@ -991,7 +1019,7 @@
     </message>
     <message>
         <location filename="../qml/MessageBubble.qml" line="77"/>
-        <location filename="../qml/MessageBubble.qml" line="323"/>
+        <location filename="../qml/MessageBubble.qml" line="324"/>
         <source>Reply</source>
         <translation>회신</translation>
     </message>
@@ -1011,42 +1039,42 @@
         <translation>삭제</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="218"/>
+        <location filename="../qml/MessageBubble.qml" line="219"/>
         <source>Save image</source>
         <translation>이미지 저장</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="219"/>
+        <location filename="../qml/MessageBubble.qml" line="220"/>
         <source>Open</source>
         <translation>열기</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="278"/>
+        <location filename="../qml/MessageBubble.qml" line="279"/>
         <source>Download</source>
         <translation>다운로드</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="284"/>
+        <location filename="../qml/MessageBubble.qml" line="285"/>
         <source>Open in browser</source>
         <translation>브라우저에서 열기</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="311"/>
+        <location filename="../qml/MessageBubble.qml" line="312"/>
         <source>Download to Downloads</source>
         <translation>다운로드 폴더에 다운로드</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="315"/>
+        <location filename="../qml/MessageBubble.qml" line="316"/>
         <source>Download or open in browser</source>
         <translation>다운로드하거나 브라우저에서 열기</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="323"/>
+        <location filename="../qml/MessageBubble.qml" line="324"/>
         <source>1 reply</source>
         <translation>회신 1개</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="323"/>
+        <location filename="../qml/MessageBubble.qml" line="324"/>
         <source>%1 replies</source>
         <translation>회신 %1개</translation>
     </message>
@@ -1054,131 +1082,131 @@
 <context>
     <name>NativeCall</name>
     <message>
-        <location filename="../src/nativecall.cpp" line="63"/>
-        <location filename="../src/nativecall.cpp" line="602"/>
+        <location filename="../src/nativecall.cpp" line="66"/>
+        <location filename="../src/nativecall.cpp" line="625"/>
         <source>Connecting audio…</source>
         <translation>오디오 연결 중…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="79"/>
+        <location filename="../src/nativecall.cpp" line="82"/>
         <source>Audio error: </source>
         <translation>오디오 오류: </translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="103"/>
+        <location filename="../src/nativecall.cpp" line="110"/>
         <source>In a call</source>
         <translation>통화 중</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="104"/>
+        <location filename="../src/nativecall.cpp" line="112"/>
         <source>Media connection failed</source>
         <translation>미디어 연결 실패</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="248"/>
+        <location filename="../src/nativecall.cpp" line="263"/>
         <source>meeting</source>
         <translation>모임</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="278"/>
+        <location filename="../src/nativecall.cpp" line="296"/>
         <source>Trouter not connected: the answer could not be received</source>
         <translation>Trouter가 연결되지 않아 응답을 받을 수 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="290"/>
+        <location filename="../src/nativecall.cpp" line="308"/>
         <source>Preparing…</source>
         <translation>준비 중…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="294"/>
+        <location filename="../src/nativecall.cpp" line="312"/>
         <source>Starting audio…</source>
         <translation>오디오 시작 중…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="295"/>
-        <location filename="../src/nativecall.cpp" line="465"/>
+        <location filename="../src/nativecall.cpp" line="313"/>
+        <location filename="../src/nativecall.cpp" line="487"/>
         <source>Audio not started</source>
         <translation>오디오가 시작되지 않았습니다</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="310"/>
+        <location filename="../src/nativecall.cpp" line="328"/>
         <source>TURN credentials not obtained: %1</source>
         <translation>TURN 자격 증명을 가져오지 못했습니다: %1</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="365"/>
+        <location filename="../src/nativecall.cpp" line="387"/>
         <source>Incoming call from %1</source>
         <translation>%1님의 수신 통화</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="403"/>
+        <location filename="../src/nativecall.cpp" line="425"/>
         <source>Incoming call lost (attach HTTP %1)</source>
         <translation>수신 통화를 놓쳤습니다(attach HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="418"/>
+        <location filename="../src/nativecall.cpp" line="440"/>
         <source>Incoming call without a media offer</source>
         <translation>미디어 오퍼가 없는 수신 통화</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="433"/>
+        <location filename="../src/nativecall.cpp" line="455"/>
         <source>Connecting…</source>
         <translation>연결 중…</translation>
     </message>
     <message>
-        <location filename="../src/calljson.cpp" line="95"/>
-        <location filename="../src/nativecall.cpp" line="480"/>
+        <location filename="../src/calljson.cpp" line="122"/>
+        <location filename="../src/nativecall.cpp" line="502"/>
         <source>Call declined</source>
         <translation>통화 거절됨</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="486"/>
+        <location filename="../src/nativecall.cpp" line="508"/>
         <source>Calling…</source>
         <translation>전화 거는 중…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="575"/>
+        <location filename="../src/nativecall.cpp" line="597"/>
         <source>Call refused by the server (HTTP %1)</source>
         <translation>서버가 통화를 거부했습니다(HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="580"/>
+        <location filename="../src/nativecall.cpp" line="602"/>
         <source>Waiting for the answer…</source>
         <translation>응답 대기 중…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="581"/>
+        <location filename="../src/nativecall.cpp" line="603"/>
         <source>Joining %1…</source>
         <translation>%1에 참가하는 중…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="581"/>
+        <location filename="../src/nativecall.cpp" line="603"/>
         <source>Calling %1…</source>
         <translation>%1님에게 전화 거는 중…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="649"/>
+        <location filename="../src/nativecall.cpp" line="672"/>
         <source>Ringing…</source>
         <translation>벨 울리는 중…</translation>
     </message>
     <message>
-        <location filename="../src/calljson.cpp" line="100"/>
-        <location filename="../src/nativecall.cpp" line="680"/>
+        <location filename="../src/calljson.cpp" line="127"/>
+        <location filename="../src/nativecall.cpp" line="703"/>
         <source>Call ended</source>
         <translation>통화 종료됨</translation>
     </message>
     <message>
-        <location filename="../src/calljson.cpp" line="96"/>
+        <location filename="../src/calljson.cpp" line="123"/>
         <source>Busy</source>
         <translation>다른 용무 중</translation>
     </message>
     <message>
-        <location filename="../src/calljson.cpp" line="97"/>
+        <location filename="../src/calljson.cpp" line="124"/>
         <source>No answer</source>
         <translation>응답 없음</translation>
     </message>
     <message>
-        <location filename="../src/calljson.cpp" line="99"/>
+        <location filename="../src/calljson.cpp" line="126"/>
         <source>Call failed (%1)</source>
         <translation>통화 실패(%1)</translation>
     </message>

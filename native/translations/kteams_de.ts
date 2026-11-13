@@ -288,7 +288,7 @@
         <translation>ungültiges Neuverhandlungsangebot</translation>
     </message>
     <message>
-        <location filename="../src/callengine.cpp" line="709"/>
+        <location filename="../src/callengine.cpp" line="723"/>
         <source>renegotiation answer not created</source>
         <translation>Neuverhandlungsantwort nicht erstellt</translation>
     </message>
@@ -812,6 +812,34 @@
     </message>
 </context>
 <context>
+    <name>ImageViewer</name>
+    <message>
+        <location filename="../qml/ImageViewer.qml" line="88"/>
+        <source>Zoom out</source>
+        <translation>Verkleinern</translation>
+    </message>
+    <message>
+        <location filename="../qml/ImageViewer.qml" line="94"/>
+        <source>Zoom in</source>
+        <translation>Vergrößern</translation>
+    </message>
+    <message>
+        <location filename="../qml/ImageViewer.qml" line="99"/>
+        <source>Fit to window</source>
+        <translation>An Fenster anpassen</translation>
+    </message>
+    <message>
+        <location filename="../qml/ImageViewer.qml" line="105"/>
+        <source>Save image</source>
+        <translation>Bild speichern</translation>
+    </message>
+    <message>
+        <location filename="../qml/ImageViewer.qml" line="110"/>
+        <source>Close</source>
+        <translation>Schließen</translation>
+    </message>
+</context>
+<context>
     <name>LoginPage</name>
     <message>
         <location filename="../qml/LoginPage.qml" line="48"/>
@@ -857,117 +885,117 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../qml/Main.qml" line="61"/>
+        <location filename="../qml/Main.qml" line="63"/>
         <source>Edit message</source>
         <translation>Nachricht bearbeiten</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="74"/>
+        <location filename="../qml/Main.qml" line="76"/>
         <source>Delete the message?</source>
         <translation>Nachricht löschen?</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="75"/>
+        <location filename="../qml/Main.qml" line="77"/>
         <source>It will be deleted for everyone.</source>
         <translation>Sie wird für alle gelöscht.</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="82"/>
+        <location filename="../qml/Main.qml" line="84"/>
         <source>Status message</source>
         <translation>Statusmeldung</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="83"/>
+        <location filename="../qml/Main.qml" line="85"/>
         <source>Others see it next to your name. Empty to remove it.</source>
         <translation>Andere sehen sie neben Ihrem Namen. Leer lassen, um sie zu entfernen.</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="85"/>
+        <location filename="../qml/Main.qml" line="87"/>
         <source>E.g. On holiday until Monday</source>
         <translation>Z. B. Im Urlaub bis Montag</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="92"/>
+        <location filename="../qml/Main.qml" line="94"/>
         <source>Rename chat</source>
         <translation>Chat umbenennen</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="94"/>
+        <location filename="../qml/Main.qml" line="96"/>
         <source>Chat name</source>
         <translation>Chatname</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="100"/>
+        <location filename="../qml/Main.qml" line="102"/>
         <source>Leave the chat?</source>
         <translation>Chat verlassen?</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="101"/>
+        <location filename="../qml/Main.qml" line="103"/>
         <source>You will no longer receive this chat&apos;s messages.</source>
         <translation>Sie erhalten keine Nachrichten aus diesem Chat mehr.</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="107"/>
+        <location filename="../qml/Main.qml" line="109"/>
         <source>Leave &quot;%1&quot;?</source>
         <translation>„%1“ verlassen?</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="179"/>
+        <location filename="../qml/Main.qml" line="181"/>
         <source>Reply</source>
         <translation>Antworten</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="186"/>
+        <location filename="../qml/Main.qml" line="188"/>
         <source>Decline</source>
         <translation>Ablehnen</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="194"/>
+        <location filename="../qml/Main.qml" line="196"/>
         <source>Unmute</source>
         <translation>Stummschaltung aufheben</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="194"/>
+        <location filename="../qml/Main.qml" line="196"/>
         <source>Mute</source>
         <translation>Stummschalten</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="200"/>
+        <location filename="../qml/Main.qml" line="202"/>
         <source>Camera off</source>
         <translation>Kamera aus</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="200"/>
+        <location filename="../qml/Main.qml" line="202"/>
         <source>Camera</source>
         <translation>Kamera</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="206"/>
+        <location filename="../qml/Main.qml" line="208"/>
         <source>Stop sharing</source>
         <translation>Teilen beenden</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="206"/>
+        <location filename="../qml/Main.qml" line="208"/>
         <source>Share screen</source>
         <translation>Bildschirm teilen</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="212"/>
+        <location filename="../qml/Main.qml" line="214"/>
         <source>Back to chat</source>
         <translation>Zurück zum Chat</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="212"/>
+        <location filename="../qml/Main.qml" line="214"/>
         <source>Video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="218"/>
+        <location filename="../qml/Main.qml" line="220"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="228"/>
+        <location filename="../qml/Main.qml" line="230"/>
         <source>Hang up</source>
         <translation>Auflegen</translation>
     </message>
@@ -991,7 +1019,7 @@
     </message>
     <message>
         <location filename="../qml/MessageBubble.qml" line="77"/>
-        <location filename="../qml/MessageBubble.qml" line="323"/>
+        <location filename="../qml/MessageBubble.qml" line="324"/>
         <source>Reply</source>
         <translation>Antworten</translation>
     </message>
@@ -1011,42 +1039,42 @@
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="218"/>
+        <location filename="../qml/MessageBubble.qml" line="219"/>
         <source>Save image</source>
         <translation>Bild speichern</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="219"/>
+        <location filename="../qml/MessageBubble.qml" line="220"/>
         <source>Open</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="278"/>
+        <location filename="../qml/MessageBubble.qml" line="279"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="284"/>
+        <location filename="../qml/MessageBubble.qml" line="285"/>
         <source>Open in browser</source>
         <translation>Im Browser öffnen</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="311"/>
+        <location filename="../qml/MessageBubble.qml" line="312"/>
         <source>Download to Downloads</source>
         <translation>Nach „Downloads“ herunterladen</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="315"/>
+        <location filename="../qml/MessageBubble.qml" line="316"/>
         <source>Download or open in browser</source>
         <translation>Herunterladen oder im Browser öffnen</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="323"/>
+        <location filename="../qml/MessageBubble.qml" line="324"/>
         <source>1 reply</source>
         <translation>1 Antwort</translation>
     </message>
     <message>
-        <location filename="../qml/MessageBubble.qml" line="323"/>
+        <location filename="../qml/MessageBubble.qml" line="324"/>
         <source>%1 replies</source>
         <translation>%1 Antworten</translation>
     </message>
@@ -1054,131 +1082,131 @@
 <context>
     <name>NativeCall</name>
     <message>
-        <location filename="../src/nativecall.cpp" line="63"/>
-        <location filename="../src/nativecall.cpp" line="602"/>
+        <location filename="../src/nativecall.cpp" line="66"/>
+        <location filename="../src/nativecall.cpp" line="625"/>
         <source>Connecting audio…</source>
         <translation>Audio wird verbunden…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="79"/>
+        <location filename="../src/nativecall.cpp" line="82"/>
         <source>Audio error: </source>
         <translation>Audiofehler: </translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="103"/>
+        <location filename="../src/nativecall.cpp" line="110"/>
         <source>In a call</source>
         <translation>In einem Anruf</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="104"/>
+        <location filename="../src/nativecall.cpp" line="112"/>
         <source>Media connection failed</source>
         <translation>Medienverbindung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="248"/>
+        <location filename="../src/nativecall.cpp" line="263"/>
         <source>meeting</source>
         <translation>Besprechung</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="278"/>
+        <location filename="../src/nativecall.cpp" line="296"/>
         <source>Trouter not connected: the answer could not be received</source>
         <translation>Trouter nicht verbunden: Die Antwort konnte nicht empfangen werden</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="290"/>
+        <location filename="../src/nativecall.cpp" line="308"/>
         <source>Preparing…</source>
         <translation>Vorbereitung…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="294"/>
+        <location filename="../src/nativecall.cpp" line="312"/>
         <source>Starting audio…</source>
         <translation>Audio wird gestartet…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="295"/>
-        <location filename="../src/nativecall.cpp" line="465"/>
+        <location filename="../src/nativecall.cpp" line="313"/>
+        <location filename="../src/nativecall.cpp" line="487"/>
         <source>Audio not started</source>
         <translation>Audio nicht gestartet</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="310"/>
+        <location filename="../src/nativecall.cpp" line="328"/>
         <source>TURN credentials not obtained: %1</source>
         <translation>TURN-Anmeldedaten nicht erhalten: %1</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="365"/>
+        <location filename="../src/nativecall.cpp" line="387"/>
         <source>Incoming call from %1</source>
         <translation>Eingehender Anruf von %1</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="403"/>
+        <location filename="../src/nativecall.cpp" line="425"/>
         <source>Incoming call lost (attach HTTP %1)</source>
         <translation>Eingehender Anruf verloren (Attach HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="418"/>
+        <location filename="../src/nativecall.cpp" line="440"/>
         <source>Incoming call without a media offer</source>
         <translation>Eingehender Anruf ohne Medienangebot</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="433"/>
+        <location filename="../src/nativecall.cpp" line="455"/>
         <source>Connecting…</source>
         <translation>Verbindung wird hergestellt…</translation>
     </message>
     <message>
-        <location filename="../src/calljson.cpp" line="95"/>
-        <location filename="../src/nativecall.cpp" line="480"/>
+        <location filename="../src/calljson.cpp" line="122"/>
+        <location filename="../src/nativecall.cpp" line="502"/>
         <source>Call declined</source>
         <translation>Anruf abgelehnt</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="486"/>
+        <location filename="../src/nativecall.cpp" line="508"/>
         <source>Calling…</source>
         <translation>Anruf läuft…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="575"/>
+        <location filename="../src/nativecall.cpp" line="597"/>
         <source>Call refused by the server (HTTP %1)</source>
         <translation>Anruf vom Server abgelehnt (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="580"/>
+        <location filename="../src/nativecall.cpp" line="602"/>
         <source>Waiting for the answer…</source>
         <translation>Warten auf Antwort…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="581"/>
+        <location filename="../src/nativecall.cpp" line="603"/>
         <source>Joining %1…</source>
         <translation>Beitritt zu %1…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="581"/>
+        <location filename="../src/nativecall.cpp" line="603"/>
         <source>Calling %1…</source>
         <translation>%1 wird angerufen…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="649"/>
+        <location filename="../src/nativecall.cpp" line="672"/>
         <source>Ringing…</source>
         <translation>Es klingelt…</translation>
     </message>
     <message>
-        <location filename="../src/calljson.cpp" line="100"/>
-        <location filename="../src/nativecall.cpp" line="680"/>
+        <location filename="../src/calljson.cpp" line="127"/>
+        <location filename="../src/nativecall.cpp" line="703"/>
         <source>Call ended</source>
         <translation>Anruf beendet</translation>
     </message>
     <message>
-        <location filename="../src/calljson.cpp" line="96"/>
+        <location filename="../src/calljson.cpp" line="123"/>
         <source>Busy</source>
         <translation>Beschäftigt</translation>
     </message>
     <message>
-        <location filename="../src/calljson.cpp" line="97"/>
+        <location filename="../src/calljson.cpp" line="124"/>
         <source>No answer</source>
         <translation>Keine Antwort</translation>
     </message>
     <message>
-        <location filename="../src/calljson.cpp" line="99"/>
+        <location filename="../src/calljson.cpp" line="126"/>
         <source>Call failed (%1)</source>
         <translation>Anruf fehlgeschlagen (%1)</translation>
     </message>

@@ -53,6 +53,8 @@ Kirigami.ApplicationWindow {
 
     NewChatDialog { id: newChatDialog }
     PersonCard { id: personCard }
+    ImageViewer { id: imageViewer }
+    function showImage(url, remote) { imageViewer.show(url, remote) }
     function showPerson(mri) { if (mri) personCard.show(mri) }
 
     Kirigami.PromptDialog {

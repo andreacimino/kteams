@@ -9,6 +9,7 @@
     <file>Composer.qml</file>
     <file>PresenceAvatar.qml</file>
     <file>NewChatDialog.qml</file>
+    <file>ImageViewer.qml</file>
     <file>PersonCard.qml</file>
     <file>CallPage.qml</file>
     <file>SettingsPage.qml</file>

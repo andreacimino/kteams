@@ -169,6 +169,7 @@ Item {
             }
             Kirigami.SelectableLabel {
                 id: body
+                objectName: "messageBody"
                 Layout.fillWidth: true
                 visible: msg.content.length > 0
                 // richText is built by the backend from plain text: escaped, links only.
@@ -210,7 +211,7 @@ Item {
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
                         onClicked: mouse => {
                             if (mouse.button === Qt.RightButton) imageMenu.popup()
-                            else Qt.openUrlExternally(picture.localUrl)
+                            else applicationWindow().showImage(picture.localUrl, picture.modelData)
                         }
                     }
                     QQC2.Menu {
