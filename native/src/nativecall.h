@@ -36,6 +36,11 @@ public:
     void accept();
     void reject();
     bool isIncoming() const { return m_incoming; }
+    // The chat thread of the call (a chat, a group or a meeting); empty for the test call and
+    // for an incoming call, whose chat is found from the caller.
+    QString threadId() const { return m_threadId; }
+    // One-to-one calls: the other person's MRI (the caller of an incoming call).
+    QString peerMri() const { return m_callees.isEmpty() ? m_calleeMri : m_callees.first(); }
     QString peerName() const { return m_calleeName; }
     // Audio call to one person: their MRI and the one-to-one chat thread id.
     // Audio call to one person (one MRI) or a group (every other member of the chat); the

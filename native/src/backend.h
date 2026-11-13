@@ -82,6 +82,10 @@ private:
     Q_PROPERTY(QVariantList peopleResults READ peopleResults NOTIFY peopleResultsChanged)
     Q_PROPERTY(QString calendarTitle READ calendarTitle NOTIFY calendarChanged)
     Q_PROPERTY(int calendarWeekOffset READ calendarWeekOffset NOTIFY calendarChanged)
+    // The chat of the call in progress (the open one for a call started from it, the meeting's
+    // chat, the one-to-one chat with the caller): "" when there is none or no call.
+    Q_PROPERTY(QString callChatId READ callChatId NOTIFY nativeCallChanged)
+    Q_PROPERTY(QString callChatTitle READ callChatTitle NOTIFY nativeCallChanged)
     Q_PROPERTY(QString currentThreadId READ currentThreadId NOTIFY currentThreadChanged)
 
 public:
@@ -150,6 +154,8 @@ public:
     QString calendarTitle() const { return m_calendarTitle; }
     int calendarWeekOffset() const { return m_calendarWeekOffset; }
     QString currentThreadId() const { return m_currentThreadId; }
+    QString callChatId() const;
+    QString callChatTitle() const { return m_nativeCall.isActive() ? m_nativeCall.peerName() : QString(); }
 
     Q_INVOKABLE void startLogin();
     Q_INVOKABLE void cancelLogin();

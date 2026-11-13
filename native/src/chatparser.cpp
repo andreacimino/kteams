@@ -287,4 +287,16 @@ qint64 reminderDelayMsecs(const CalendarEvent &ev, const QDateTime &now, int min
     return msecs < 0 || msecs > 7LL * 24 * 3600 * 1000 ? -1 : msecs;
 }
 
+QString oneToOneChatWith(const QHash<QString, QStringList> &chatMembers, const std::function<bool(const QString &)> &isOneToOne,
+                         const QString &mri)
+{
+    if (mri.isEmpty()) return {};
+    QString found;
+    for (auto it = chatMembers.cbegin(); it != chatMembers.cend(); ++it) {
+        if (it.value().size() != 1 || it.value().first() != mri || !isOneToOne(it.key())) continue;
+        if (found.isEmpty() || it.key() < found) found = it.key();
+    }
+    return found;
+}
+
 }

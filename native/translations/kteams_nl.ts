@@ -70,13 +70,13 @@
     <message>
         <location filename="../src/backend.cpp" line="746"/>
         <location filename="../src/backend.cpp" line="1238"/>
-        <location filename="../src/backend.cpp" line="1412"/>
+        <location filename="../src/backend.cpp" line="1422"/>
         <source>Open</source>
         <translation>Openen</translation>
     </message>
     <message>
         <location filename="../src/backend.cpp" line="1023"/>
-        <location filename="../src/backend.h" line="115"/>
+        <location filename="../src/backend.h" line="119"/>
         <source>%1 is typing...</source>
         <translation>%1 is aan het typen...</translation>
     </message>
@@ -157,7 +157,7 @@
         <translation>Het delen begint zodra de oproep is verbonden.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1343"/>
+        <location filename="../src/backend.cpp" line="1353"/>
         <source>Open a chat with people to call them.</source>
         <translation>Open een chat met personen om ze te bellen.</translation>
     </message>
@@ -187,47 +187,47 @@
         <translation>voicemail</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1516"/>
+        <location filename="../src/backend.cpp" line="1526"/>
         <source>Meeting: invalid title or times.</source>
         <translation>Vergadering: ongeldige titel of tijden.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1541"/>
+        <location filename="../src/backend.cpp" line="1551"/>
         <source>Meeting not created (HTTP %1)</source>
         <translation>Vergadering niet gemaakt (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1572"/>
+        <location filename="../src/backend.cpp" line="1582"/>
         <source>In %1 minutes: %2</source>
         <translation>Over %1 minuten: %2</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1572"/>
+        <location filename="../src/backend.cpp" line="1582"/>
         <source>meeting</source>
         <translation>vergadering</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1573"/>
+        <location filename="../src/backend.cpp" line="1583"/>
         <source>Starts at %1</source>
         <translation>Begint om %1</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1580"/>
+        <location filename="../src/backend.cpp" line="1590"/>
         <source>Open chat</source>
         <translation>Chat openen</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1611"/>
+        <location filename="../src/backend.cpp" line="1621"/>
         <source>Event not found in the calendar (Graph).</source>
         <translation>Gebeurtenis niet gevonden in de agenda (Graph).</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1619"/>
+        <location filename="../src/backend.cpp" line="1629"/>
         <source>Replying to the invitation failed (HTTP %1)</source>
         <translation>Beantwoorden van de uitnodiging mislukt (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1701"/>
+        <location filename="../src/backend.cpp" line="1711"/>
         <source>Saved data: %1 conversations (refreshing)</source>
         <translation>Opgeslagen gegevens: %1 gesprekken (vernieuwen)</translation>
     </message>
@@ -688,72 +688,72 @@
 <context>
     <name>DesktopIntegration</name>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="48"/>
+        <location filename="../src/desktopintegration.cpp" line="49"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="51"/>
-        <location filename="../src/desktopintegration.cpp" line="76"/>
+        <location filename="../src/desktopintegration.cpp" line="52"/>
+        <location filename="../src/presenceinfo.cpp" line="30"/>
         <source>Available</source>
         <translation>Beschikbaar</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="51"/>
-        <location filename="../src/desktopintegration.cpp" line="76"/>
+        <location filename="../src/desktopintegration.cpp" line="52"/>
+        <location filename="../src/presenceinfo.cpp" line="30"/>
         <source>Busy</source>
         <translation>Bezet</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="52"/>
-        <location filename="../src/desktopintegration.cpp" line="77"/>
+        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/presenceinfo.cpp" line="31"/>
         <source>Do not disturb</source>
         <translation>Niet storen</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="52"/>
-        <location filename="../src/desktopintegration.cpp" line="77"/>
+        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/presenceinfo.cpp" line="31"/>
         <source>Be right back</source>
         <translation>Ben zo terug</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="53"/>
-        <location filename="../src/desktopintegration.cpp" line="78"/>
+        <location filename="../src/desktopintegration.cpp" line="54"/>
+        <location filename="../src/presenceinfo.cpp" line="32"/>
         <source>Away</source>
         <translation>Afwezig</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/desktopintegration.cpp" line="54"/>
         <source>Appear offline</source>
         <translation>Offline weergeven</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="78"/>
+        <location filename="../src/presenceinfo.cpp" line="32"/>
         <source>Offline</source>
         <translation>Offline</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="79"/>
+        <location filename="../src/presenceinfo.cpp" line="33"/>
         <source>In a call</source>
         <translation>In gesprek</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="79"/>
+        <location filename="../src/presenceinfo.cpp" line="33"/>
         <source>In a meeting</source>
         <translation>In een vergadering</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="80"/>
+        <location filename="../src/presenceinfo.cpp" line="34"/>
         <source>Presenting</source>
         <translation>Presenteert</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="132"/>
+        <location filename="../src/desktopintegration.cpp" line="83"/>
         <source>1 unread chat</source>
         <translation>1 ongelezen chat</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="132"/>
+        <location filename="../src/desktopintegration.cpp" line="83"/>
         <source>%1 unread chats</source>
         <translation>%1 ongelezen chats</translation>
     </message>
@@ -953,6 +953,11 @@
     </message>
     <message>
         <location filename="../qml/Main.qml" line="216"/>
+        <source>Chat</source>
+        <translation>Chat</translation>
+    </message>
+    <message>
+        <location filename="../qml/Main.qml" line="226"/>
         <source>Hang up</source>
         <translation>Ophangen</translation>
     </message>
@@ -1040,7 +1045,7 @@
     <name>NativeCall</name>
     <message>
         <location filename="../src/nativecall.cpp" line="63"/>
-        <location filename="../src/nativecall.cpp" line="600"/>
+        <location filename="../src/nativecall.cpp" line="602"/>
         <source>Connecting audio…</source>
         <translation>Audio verbinden…</translation>
     </message>
@@ -1081,7 +1086,7 @@
     </message>
     <message>
         <location filename="../src/nativecall.cpp" line="295"/>
-        <location filename="../src/nativecall.cpp" line="463"/>
+        <location filename="../src/nativecall.cpp" line="465"/>
         <source>Audio not started</source>
         <translation>Audio niet gestart</translation>
     </message>
@@ -1091,64 +1096,64 @@
         <translation>TURN-referenties niet verkregen: %1</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="363"/>
+        <location filename="../src/nativecall.cpp" line="365"/>
         <source>Incoming call from %1</source>
         <translation>Inkomende oproep van %1</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="401"/>
+        <location filename="../src/nativecall.cpp" line="403"/>
         <source>Incoming call lost (attach HTTP %1)</source>
         <translation>Inkomende oproep verloren (attach HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="416"/>
+        <location filename="../src/nativecall.cpp" line="418"/>
         <source>Incoming call without a media offer</source>
         <translation>Inkomende oproep zonder media-aanbod</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="431"/>
+        <location filename="../src/nativecall.cpp" line="433"/>
         <source>Connecting…</source>
         <translation>Verbinden…</translation>
     </message>
     <message>
         <location filename="../src/calljson.cpp" line="95"/>
-        <location filename="../src/nativecall.cpp" line="478"/>
+        <location filename="../src/nativecall.cpp" line="480"/>
         <source>Call declined</source>
         <translation>Oproep geweigerd</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="484"/>
+        <location filename="../src/nativecall.cpp" line="486"/>
         <source>Calling…</source>
         <translation>Bellen…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="573"/>
+        <location filename="../src/nativecall.cpp" line="575"/>
         <source>Call refused by the server (HTTP %1)</source>
         <translation>Oproep geweigerd door de server (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="578"/>
+        <location filename="../src/nativecall.cpp" line="580"/>
         <source>Waiting for the answer…</source>
         <translation>Wachten op antwoord…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="579"/>
+        <location filename="../src/nativecall.cpp" line="581"/>
         <source>Joining %1…</source>
         <translation>Deelnemen aan %1…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="579"/>
+        <location filename="../src/nativecall.cpp" line="581"/>
         <source>Calling %1…</source>
         <translation>%1 bellen…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="647"/>
+        <location filename="../src/nativecall.cpp" line="649"/>
         <source>Ringing…</source>
         <translation>Gaat over…</translation>
     </message>
     <message>
         <location filename="../src/calljson.cpp" line="100"/>
-        <location filename="../src/nativecall.cpp" line="678"/>
+        <location filename="../src/nativecall.cpp" line="680"/>
         <source>Call ended</source>
         <translation>Oproep beëindigd</translation>
     </message>

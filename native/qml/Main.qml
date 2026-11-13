@@ -211,6 +211,16 @@ Kirigami.ApplicationWindow {
                 onClicked: root.callPageShown ? root.hideCallPage() : root.showCallPage()
             }
             QQC2.ToolButton {
+                visible: backend.nativeCallActive && !backend.nativeCallIncoming && backend.callChatId !== ""
+                icon.name: "mail-message"
+                text: qsTr("Chat")
+                onClicked: {
+                    root.hideCallPage()
+                    backend.selectConversation(backend.callChatId, backend.callChatTitle)
+                    root.openChat()
+                }
+            }
+            QQC2.ToolButton {
                 visible: backend.nativeCallActive && !backend.nativeCallIncoming
                 icon.name: "call-stop"
                 text: qsTr("Hang up")

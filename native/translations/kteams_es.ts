@@ -70,13 +70,13 @@
     <message>
         <location filename="../src/backend.cpp" line="746"/>
         <location filename="../src/backend.cpp" line="1238"/>
-        <location filename="../src/backend.cpp" line="1412"/>
+        <location filename="../src/backend.cpp" line="1422"/>
         <source>Open</source>
         <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../src/backend.cpp" line="1023"/>
-        <location filename="../src/backend.h" line="115"/>
+        <location filename="../src/backend.h" line="119"/>
         <source>%1 is typing...</source>
         <translation>%1 está escribiendo...</translation>
     </message>
@@ -157,7 +157,7 @@
         <translation>El uso compartido empieza cuando la llamada está conectada.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1343"/>
+        <location filename="../src/backend.cpp" line="1353"/>
         <source>Open a chat with people to call them.</source>
         <translation>Abre un chat con personas para llamarlas.</translation>
     </message>
@@ -187,47 +187,47 @@
         <translation>correo de voz</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1516"/>
+        <location filename="../src/backend.cpp" line="1526"/>
         <source>Meeting: invalid title or times.</source>
         <translation>Reunión: título u horas no válidos.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1541"/>
+        <location filename="../src/backend.cpp" line="1551"/>
         <source>Meeting not created (HTTP %1)</source>
         <translation>Reunión no creada (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1572"/>
+        <location filename="../src/backend.cpp" line="1582"/>
         <source>In %1 minutes: %2</source>
         <translation>En %1 minutos: %2</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1572"/>
+        <location filename="../src/backend.cpp" line="1582"/>
         <source>meeting</source>
         <translation>reunión</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1573"/>
+        <location filename="../src/backend.cpp" line="1583"/>
         <source>Starts at %1</source>
         <translation>Empieza a las %1</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1580"/>
+        <location filename="../src/backend.cpp" line="1590"/>
         <source>Open chat</source>
         <translation>Abrir el chat</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1611"/>
+        <location filename="../src/backend.cpp" line="1621"/>
         <source>Event not found in the calendar (Graph).</source>
         <translation>Evento no encontrado en el calendario (Graph).</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1619"/>
+        <location filename="../src/backend.cpp" line="1629"/>
         <source>Replying to the invitation failed (HTTP %1)</source>
         <translation>Error al responder a la invitación (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1701"/>
+        <location filename="../src/backend.cpp" line="1711"/>
         <source>Saved data: %1 conversations (refreshing)</source>
         <translation>Datos guardados: %1 conversaciones (actualizando)</translation>
     </message>
@@ -688,72 +688,72 @@
 <context>
     <name>DesktopIntegration</name>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="48"/>
+        <location filename="../src/desktopintegration.cpp" line="49"/>
         <source>Status</source>
         <translation>Estado</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="51"/>
-        <location filename="../src/desktopintegration.cpp" line="76"/>
+        <location filename="../src/desktopintegration.cpp" line="52"/>
+        <location filename="../src/presenceinfo.cpp" line="30"/>
         <source>Available</source>
         <translation>Disponible</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="51"/>
-        <location filename="../src/desktopintegration.cpp" line="76"/>
+        <location filename="../src/desktopintegration.cpp" line="52"/>
+        <location filename="../src/presenceinfo.cpp" line="30"/>
         <source>Busy</source>
         <translation>Ocupado</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="52"/>
-        <location filename="../src/desktopintegration.cpp" line="77"/>
+        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/presenceinfo.cpp" line="31"/>
         <source>Do not disturb</source>
         <translation>No molestar</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="52"/>
-        <location filename="../src/desktopintegration.cpp" line="77"/>
+        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/presenceinfo.cpp" line="31"/>
         <source>Be right back</source>
         <translation>Vuelvo enseguida</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="53"/>
-        <location filename="../src/desktopintegration.cpp" line="78"/>
+        <location filename="../src/desktopintegration.cpp" line="54"/>
+        <location filename="../src/presenceinfo.cpp" line="32"/>
         <source>Away</source>
         <translation>Ausente</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/desktopintegration.cpp" line="54"/>
         <source>Appear offline</source>
         <translation>Aparecer sin conexión</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="78"/>
+        <location filename="../src/presenceinfo.cpp" line="32"/>
         <source>Offline</source>
         <translation>Desconectado</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="79"/>
+        <location filename="../src/presenceinfo.cpp" line="33"/>
         <source>In a call</source>
         <translation>En una llamada</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="79"/>
+        <location filename="../src/presenceinfo.cpp" line="33"/>
         <source>In a meeting</source>
         <translation>En una reunión</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="80"/>
+        <location filename="../src/presenceinfo.cpp" line="34"/>
         <source>Presenting</source>
         <translation>Presentando</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="132"/>
+        <location filename="../src/desktopintegration.cpp" line="83"/>
         <source>1 unread chat</source>
         <translation>1 chat sin leer</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="132"/>
+        <location filename="../src/desktopintegration.cpp" line="83"/>
         <source>%1 unread chats</source>
         <translation>%1 chats sin leer</translation>
     </message>
@@ -953,6 +953,11 @@
     </message>
     <message>
         <location filename="../qml/Main.qml" line="216"/>
+        <source>Chat</source>
+        <translation>Chat</translation>
+    </message>
+    <message>
+        <location filename="../qml/Main.qml" line="226"/>
         <source>Hang up</source>
         <translation>Colgar</translation>
     </message>
@@ -1040,7 +1045,7 @@
     <name>NativeCall</name>
     <message>
         <location filename="../src/nativecall.cpp" line="63"/>
-        <location filename="../src/nativecall.cpp" line="600"/>
+        <location filename="../src/nativecall.cpp" line="602"/>
         <source>Connecting audio…</source>
         <translation>Conectando el audio…</translation>
     </message>
@@ -1081,7 +1086,7 @@
     </message>
     <message>
         <location filename="../src/nativecall.cpp" line="295"/>
-        <location filename="../src/nativecall.cpp" line="463"/>
+        <location filename="../src/nativecall.cpp" line="465"/>
         <source>Audio not started</source>
         <translation>Audio no iniciado</translation>
     </message>
@@ -1091,64 +1096,64 @@
         <translation>Credenciales TURN no obtenidas: %1</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="363"/>
+        <location filename="../src/nativecall.cpp" line="365"/>
         <source>Incoming call from %1</source>
         <translation>Llamada entrante de %1</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="401"/>
+        <location filename="../src/nativecall.cpp" line="403"/>
         <source>Incoming call lost (attach HTTP %1)</source>
         <translation>Llamada entrante perdida (attach HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="416"/>
+        <location filename="../src/nativecall.cpp" line="418"/>
         <source>Incoming call without a media offer</source>
         <translation>Llamada entrante sin oferta multimedia</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="431"/>
+        <location filename="../src/nativecall.cpp" line="433"/>
         <source>Connecting…</source>
         <translation>Conectando…</translation>
     </message>
     <message>
         <location filename="../src/calljson.cpp" line="95"/>
-        <location filename="../src/nativecall.cpp" line="478"/>
+        <location filename="../src/nativecall.cpp" line="480"/>
         <source>Call declined</source>
         <translation>Llamada rechazada</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="484"/>
+        <location filename="../src/nativecall.cpp" line="486"/>
         <source>Calling…</source>
         <translation>Llamando…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="573"/>
+        <location filename="../src/nativecall.cpp" line="575"/>
         <source>Call refused by the server (HTTP %1)</source>
         <translation>Llamada rechazada por el servidor (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="578"/>
+        <location filename="../src/nativecall.cpp" line="580"/>
         <source>Waiting for the answer…</source>
         <translation>Esperando la respuesta…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="579"/>
+        <location filename="../src/nativecall.cpp" line="581"/>
         <source>Joining %1…</source>
         <translation>Uniéndose a %1…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="579"/>
+        <location filename="../src/nativecall.cpp" line="581"/>
         <source>Calling %1…</source>
         <translation>Llamando a %1…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="647"/>
+        <location filename="../src/nativecall.cpp" line="649"/>
         <source>Ringing…</source>
         <translation>Sonando…</translation>
     </message>
     <message>
         <location filename="../src/calljson.cpp" line="100"/>
-        <location filename="../src/nativecall.cpp" line="678"/>
+        <location filename="../src/nativecall.cpp" line="680"/>
         <source>Call ended</source>
         <translation>Llamada finalizada</translation>
     </message>

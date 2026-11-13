@@ -208,6 +208,32 @@ private slots:
         QCOMPARE(it.title, QStringLiteral("Group chat"));
     }
 
+    // --- the chat of a call -------------------------------------------------------------------
+
+    void theOneToOneChatWithAPerson()
+    {
+        const auto isOneToOne = [](const QString &id) { return id.contains("unq.gbl"); };
+        QCOMPARE(oneToOneChatWith(members, isOneToOne, kBob), QStringLiteral("19:one@unq.gbl.spaces"));
+        QVERIFY(oneToOneChatWith(members, isOneToOne, kAlice).isEmpty()); // only in groups
+        QVERIFY(oneToOneChatWith(members, isOneToOne, QString()).isEmpty());
+        QVERIFY(oneToOneChatWith(members, isOneToOne, "8:orgid:nobody").isEmpty());
+    }
+
+    void aGroupWithOnlyOneOtherMemberIsNotAOneToOneChat()
+    {
+        members.insert("19:alone@thread.v2", {kCarol});
+        const auto isOneToOne = [](const QString &id) { return id.contains("unq.gbl"); };
+        QVERIFY(oneToOneChatWith(members, isOneToOne, kCarol).isEmpty());
+    }
+
+    void withSeveralOneToOneChatsTheSmallestIdWins()
+    {
+        members.insert("19:a-first@unq.gbl.spaces", {kBob});
+        members.insert("19:z-last@unq.gbl.spaces", {kBob});
+        const auto isOneToOne = [](const QString &id) { return id.contains("unq.gbl"); };
+        for (int i = 0; i < 5; ++i) QCOMPARE(oneToOneChatWith(members, isOneToOne, kBob), QStringLiteral("19:a-first@unq.gbl.spaces"));
+    }
+
     // --- messages -------------------------------------------------------------------------
 
     void messagesKeepOnlyChatMessagesWithContent()

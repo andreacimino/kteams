@@ -70,13 +70,13 @@
     <message>
         <location filename="../src/backend.cpp" line="746"/>
         <location filename="../src/backend.cpp" line="1238"/>
-        <location filename="../src/backend.cpp" line="1412"/>
+        <location filename="../src/backend.cpp" line="1422"/>
         <source>Open</source>
         <translation>열기</translation>
     </message>
     <message>
         <location filename="../src/backend.cpp" line="1023"/>
-        <location filename="../src/backend.h" line="115"/>
+        <location filename="../src/backend.h" line="119"/>
         <source>%1 is typing...</source>
         <translation>%1님이 입력 중...</translation>
     </message>
@@ -157,7 +157,7 @@
         <translation>통화가 연결되면 공유가 시작됩니다.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1343"/>
+        <location filename="../src/backend.cpp" line="1353"/>
         <source>Open a chat with people to call them.</source>
         <translation>전화를 걸려면 상대방과의 채팅을 여세요.</translation>
     </message>
@@ -187,47 +187,47 @@
         <translation>음성 메일</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1516"/>
+        <location filename="../src/backend.cpp" line="1526"/>
         <source>Meeting: invalid title or times.</source>
         <translation>모임: 제목 또는 시간이 잘못되었습니다.</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1541"/>
+        <location filename="../src/backend.cpp" line="1551"/>
         <source>Meeting not created (HTTP %1)</source>
         <translation>모임을 만들지 못했습니다(HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1572"/>
+        <location filename="../src/backend.cpp" line="1582"/>
         <source>In %1 minutes: %2</source>
         <translation>%1분 후: %2</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1572"/>
+        <location filename="../src/backend.cpp" line="1582"/>
         <source>meeting</source>
         <translation>모임</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1573"/>
+        <location filename="../src/backend.cpp" line="1583"/>
         <source>Starts at %1</source>
         <translation>%1에 시작</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1580"/>
+        <location filename="../src/backend.cpp" line="1590"/>
         <source>Open chat</source>
         <translation>채팅 열기</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1611"/>
+        <location filename="../src/backend.cpp" line="1621"/>
         <source>Event not found in the calendar (Graph).</source>
         <translation>일정에서 이벤트를 찾을 수 없습니다(Graph).</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1619"/>
+        <location filename="../src/backend.cpp" line="1629"/>
         <source>Replying to the invitation failed (HTTP %1)</source>
         <translation>초대 회신에 실패했습니다(HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1701"/>
+        <location filename="../src/backend.cpp" line="1711"/>
         <source>Saved data: %1 conversations (refreshing)</source>
         <translation>저장된 데이터: 대화 %1개(새로 고치는 중)</translation>
     </message>
@@ -688,72 +688,72 @@
 <context>
     <name>DesktopIntegration</name>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="48"/>
+        <location filename="../src/desktopintegration.cpp" line="49"/>
         <source>Status</source>
         <translation>상태</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="51"/>
-        <location filename="../src/desktopintegration.cpp" line="76"/>
+        <location filename="../src/desktopintegration.cpp" line="52"/>
+        <location filename="../src/presenceinfo.cpp" line="30"/>
         <source>Available</source>
         <translation>대화 가능</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="51"/>
-        <location filename="../src/desktopintegration.cpp" line="76"/>
+        <location filename="../src/desktopintegration.cpp" line="52"/>
+        <location filename="../src/presenceinfo.cpp" line="30"/>
         <source>Busy</source>
         <translation>다른 용무 중</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="52"/>
-        <location filename="../src/desktopintegration.cpp" line="77"/>
+        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/presenceinfo.cpp" line="31"/>
         <source>Do not disturb</source>
         <translation>방해 금지</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="52"/>
-        <location filename="../src/desktopintegration.cpp" line="77"/>
+        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/presenceinfo.cpp" line="31"/>
         <source>Be right back</source>
         <translation>곧 돌아오겠음</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="53"/>
-        <location filename="../src/desktopintegration.cpp" line="78"/>
+        <location filename="../src/desktopintegration.cpp" line="54"/>
+        <location filename="../src/presenceinfo.cpp" line="32"/>
         <source>Away</source>
         <translation>자리 비움</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/desktopintegration.cpp" line="54"/>
         <source>Appear offline</source>
         <translation>오프라인으로 표시</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="78"/>
+        <location filename="../src/presenceinfo.cpp" line="32"/>
         <source>Offline</source>
         <translation>오프라인</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="79"/>
+        <location filename="../src/presenceinfo.cpp" line="33"/>
         <source>In a call</source>
         <translation>통화 중</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="79"/>
+        <location filename="../src/presenceinfo.cpp" line="33"/>
         <source>In a meeting</source>
         <translation>모임 중</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="80"/>
+        <location filename="../src/presenceinfo.cpp" line="34"/>
         <source>Presenting</source>
         <translation>프레젠테이션 중</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="132"/>
+        <location filename="../src/desktopintegration.cpp" line="83"/>
         <source>1 unread chat</source>
         <translation>읽지 않은 채팅 1개</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="132"/>
+        <location filename="../src/desktopintegration.cpp" line="83"/>
         <source>%1 unread chats</source>
         <translation>읽지 않은 채팅 %1개</translation>
     </message>
@@ -953,6 +953,11 @@
     </message>
     <message>
         <location filename="../qml/Main.qml" line="216"/>
+        <source>Chat</source>
+        <translation>채팅</translation>
+    </message>
+    <message>
+        <location filename="../qml/Main.qml" line="226"/>
         <source>Hang up</source>
         <translation>통화 종료</translation>
     </message>
@@ -1040,7 +1045,7 @@
     <name>NativeCall</name>
     <message>
         <location filename="../src/nativecall.cpp" line="63"/>
-        <location filename="../src/nativecall.cpp" line="600"/>
+        <location filename="../src/nativecall.cpp" line="602"/>
         <source>Connecting audio…</source>
         <translation>오디오 연결 중…</translation>
     </message>
@@ -1081,7 +1086,7 @@
     </message>
     <message>
         <location filename="../src/nativecall.cpp" line="295"/>
-        <location filename="../src/nativecall.cpp" line="463"/>
+        <location filename="../src/nativecall.cpp" line="465"/>
         <source>Audio not started</source>
         <translation>오디오가 시작되지 않았습니다</translation>
     </message>
@@ -1091,64 +1096,64 @@
         <translation>TURN 자격 증명을 가져오지 못했습니다: %1</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="363"/>
+        <location filename="../src/nativecall.cpp" line="365"/>
         <source>Incoming call from %1</source>
         <translation>%1님의 수신 통화</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="401"/>
+        <location filename="../src/nativecall.cpp" line="403"/>
         <source>Incoming call lost (attach HTTP %1)</source>
         <translation>수신 통화를 놓쳤습니다(attach HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="416"/>
+        <location filename="../src/nativecall.cpp" line="418"/>
         <source>Incoming call without a media offer</source>
         <translation>미디어 오퍼가 없는 수신 통화</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="431"/>
+        <location filename="../src/nativecall.cpp" line="433"/>
         <source>Connecting…</source>
         <translation>연결 중…</translation>
     </message>
     <message>
         <location filename="../src/calljson.cpp" line="95"/>
-        <location filename="../src/nativecall.cpp" line="478"/>
+        <location filename="../src/nativecall.cpp" line="480"/>
         <source>Call declined</source>
         <translation>통화 거절됨</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="484"/>
+        <location filename="../src/nativecall.cpp" line="486"/>
         <source>Calling…</source>
         <translation>전화 거는 중…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="573"/>
+        <location filename="../src/nativecall.cpp" line="575"/>
         <source>Call refused by the server (HTTP %1)</source>
         <translation>서버가 통화를 거부했습니다(HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="578"/>
+        <location filename="../src/nativecall.cpp" line="580"/>
         <source>Waiting for the answer…</source>
         <translation>응답 대기 중…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="579"/>
+        <location filename="../src/nativecall.cpp" line="581"/>
         <source>Joining %1…</source>
         <translation>%1에 참가하는 중…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="579"/>
+        <location filename="../src/nativecall.cpp" line="581"/>
         <source>Calling %1…</source>
         <translation>%1님에게 전화 거는 중…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="647"/>
+        <location filename="../src/nativecall.cpp" line="649"/>
         <source>Ringing…</source>
         <translation>벨 울리는 중…</translation>
     </message>
     <message>
         <location filename="../src/calljson.cpp" line="100"/>
-        <location filename="../src/nativecall.cpp" line="678"/>
+        <location filename="../src/nativecall.cpp" line="680"/>
         <source>Call ended</source>
         <translation>통화 종료됨</translation>
     </message>

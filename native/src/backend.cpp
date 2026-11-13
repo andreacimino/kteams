@@ -1336,6 +1336,16 @@ void Backend::stopScreenShare()
     emit nativeCallChanged();
 }
 
+QString Backend::callChatId() const
+{
+    if (!m_nativeCall.isActive()) return {};
+    if (!m_nativeCall.threadId().isEmpty()) return m_nativeCall.threadId();
+    return oneToOneChatWith(m_chatMembers, [this](const QString &id) {
+        const ConversationItem *c = m_conversations.find(id);
+        return c && c->type == QLatin1String("oneToOne");
+    }, m_nativeCall.peerMri());
+}
+
 void Backend::startNativeCall()
 {
     const ConversationItem *conv = m_conversations.find(m_currentConversationId);

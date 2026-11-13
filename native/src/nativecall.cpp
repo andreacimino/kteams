@@ -342,6 +342,8 @@ void NativeCall::incoming(const Identity &identity, const QJsonObject &notificat
     m_pendingSources.clear();
     m_screenSources.clear();
     m_videoSequence = 0;
+    m_threadId.clear(); // not the thread of an earlier call
+    m_callees.clear();
     const IncomingCall invite = parseIncomingCall(notification);
     m_calleeMri = invite.callerMri;
     m_calleeName = invite.callerName;

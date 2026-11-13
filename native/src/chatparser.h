@@ -39,6 +39,10 @@ bool mentionsSelf(const SelfContext &ctx, const QJsonObject &properties);
 // One entry of the conversations list. False for the ones not shown (system, hidden).
 // lastFromOther: the last message is a chat message from somebody else.
 bool parseConversation(const SelfContext &ctx, const QJsonObject &o, ConversationItem &it, bool &lastFromOther);
+// The one-to-one chat with a person (their MRI), from the members of every chat; empty when
+// there is none. With several, the smallest id, so the answer does not depend on hash order.
+QString oneToOneChatWith(const QHash<QString, QStringList> &chatMembers, const std::function<bool(const QString &)> &isOneToOne,
+                         const QString &mri);
 // A page of messages (newest first, as the API returns them). oldestRaw: earliest time seen,
 // system events included, for paging.
 QVector<MessageItem> parseMessages(const SelfContext &ctx, const QJsonArray &arr, qint64 *oldestRaw);

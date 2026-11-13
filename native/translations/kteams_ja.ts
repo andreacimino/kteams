@@ -70,13 +70,13 @@
     <message>
         <location filename="../src/backend.cpp" line="746"/>
         <location filename="../src/backend.cpp" line="1238"/>
-        <location filename="../src/backend.cpp" line="1412"/>
+        <location filename="../src/backend.cpp" line="1422"/>
         <source>Open</source>
         <translation>開く</translation>
     </message>
     <message>
         <location filename="../src/backend.cpp" line="1023"/>
-        <location filename="../src/backend.h" line="115"/>
+        <location filename="../src/backend.h" line="119"/>
         <source>%1 is typing...</source>
         <translation>%1 が入力しています…</translation>
     </message>
@@ -157,7 +157,7 @@
         <translation>共有は通話が接続されると開始されます。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1343"/>
+        <location filename="../src/backend.cpp" line="1353"/>
         <source>Open a chat with people to call them.</source>
         <translation>通話するには、相手とのチャットを開いてください。</translation>
     </message>
@@ -187,47 +187,47 @@
         <translation>ボイスメール</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1516"/>
+        <location filename="../src/backend.cpp" line="1526"/>
         <source>Meeting: invalid title or times.</source>
         <translation>会議：タイトルまたは時刻が無効です。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1541"/>
+        <location filename="../src/backend.cpp" line="1551"/>
         <source>Meeting not created (HTTP %1)</source>
         <translation>会議を作成できませんでした (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1572"/>
+        <location filename="../src/backend.cpp" line="1582"/>
         <source>In %1 minutes: %2</source>
         <translation>%1 分後：%2</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1572"/>
+        <location filename="../src/backend.cpp" line="1582"/>
         <source>meeting</source>
         <translation>会議</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1573"/>
+        <location filename="../src/backend.cpp" line="1583"/>
         <source>Starts at %1</source>
         <translation>%1 に開始</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1580"/>
+        <location filename="../src/backend.cpp" line="1590"/>
         <source>Open chat</source>
         <translation>チャットを開く</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1611"/>
+        <location filename="../src/backend.cpp" line="1621"/>
         <source>Event not found in the calendar (Graph).</source>
         <translation>予定表にイベントが見つかりません (Graph)。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1619"/>
+        <location filename="../src/backend.cpp" line="1629"/>
         <source>Replying to the invitation failed (HTTP %1)</source>
         <translation>招待への返信に失敗しました (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1701"/>
+        <location filename="../src/backend.cpp" line="1711"/>
         <source>Saved data: %1 conversations (refreshing)</source>
         <translation>保存済みデータ：%1 件の会話 (更新中)</translation>
     </message>
@@ -688,72 +688,72 @@
 <context>
     <name>DesktopIntegration</name>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="48"/>
+        <location filename="../src/desktopintegration.cpp" line="49"/>
         <source>Status</source>
         <translation>ステータス</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="51"/>
-        <location filename="../src/desktopintegration.cpp" line="76"/>
+        <location filename="../src/desktopintegration.cpp" line="52"/>
+        <location filename="../src/presenceinfo.cpp" line="30"/>
         <source>Available</source>
         <translation>連絡可能</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="51"/>
-        <location filename="../src/desktopintegration.cpp" line="76"/>
+        <location filename="../src/desktopintegration.cpp" line="52"/>
+        <location filename="../src/presenceinfo.cpp" line="30"/>
         <source>Busy</source>
         <translation>取り込み中</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="52"/>
-        <location filename="../src/desktopintegration.cpp" line="77"/>
+        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/presenceinfo.cpp" line="31"/>
         <source>Do not disturb</source>
         <translation>応答不可</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="52"/>
-        <location filename="../src/desktopintegration.cpp" line="77"/>
+        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/presenceinfo.cpp" line="31"/>
         <source>Be right back</source>
         <translation>一時退席中</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="53"/>
-        <location filename="../src/desktopintegration.cpp" line="78"/>
+        <location filename="../src/desktopintegration.cpp" line="54"/>
+        <location filename="../src/presenceinfo.cpp" line="32"/>
         <source>Away</source>
         <translation>退席中</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="53"/>
+        <location filename="../src/desktopintegration.cpp" line="54"/>
         <source>Appear offline</source>
         <translation>オフラインで表示</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="78"/>
+        <location filename="../src/presenceinfo.cpp" line="32"/>
         <source>Offline</source>
         <translation>オフライン</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="79"/>
+        <location filename="../src/presenceinfo.cpp" line="33"/>
         <source>In a call</source>
         <translation>通話中</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="79"/>
+        <location filename="../src/presenceinfo.cpp" line="33"/>
         <source>In a meeting</source>
         <translation>会議中</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="80"/>
+        <location filename="../src/presenceinfo.cpp" line="34"/>
         <source>Presenting</source>
         <translation>発表中</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="132"/>
+        <location filename="../src/desktopintegration.cpp" line="83"/>
         <source>1 unread chat</source>
         <translation>未読のチャット 1 件</translation>
     </message>
     <message>
-        <location filename="../src/desktopintegration.cpp" line="132"/>
+        <location filename="../src/desktopintegration.cpp" line="83"/>
         <source>%1 unread chats</source>
         <translation>未読のチャット %1 件</translation>
     </message>
@@ -953,6 +953,11 @@
     </message>
     <message>
         <location filename="../qml/Main.qml" line="216"/>
+        <source>Chat</source>
+        <translation>チャット</translation>
+    </message>
+    <message>
+        <location filename="../qml/Main.qml" line="226"/>
         <source>Hang up</source>
         <translation>退出</translation>
     </message>
@@ -1040,7 +1045,7 @@
     <name>NativeCall</name>
     <message>
         <location filename="../src/nativecall.cpp" line="63"/>
-        <location filename="../src/nativecall.cpp" line="600"/>
+        <location filename="../src/nativecall.cpp" line="602"/>
         <source>Connecting audio…</source>
         <translation>音声を接続しています…</translation>
     </message>
@@ -1081,7 +1086,7 @@
     </message>
     <message>
         <location filename="../src/nativecall.cpp" line="295"/>
-        <location filename="../src/nativecall.cpp" line="463"/>
+        <location filename="../src/nativecall.cpp" line="465"/>
         <source>Audio not started</source>
         <translation>音声を開始できませんでした</translation>
     </message>
@@ -1091,64 +1096,64 @@
         <translation>TURN 資格情報を取得できませんでした：%1</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="363"/>
+        <location filename="../src/nativecall.cpp" line="365"/>
         <source>Incoming call from %1</source>
         <translation>%1 からの着信</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="401"/>
+        <location filename="../src/nativecall.cpp" line="403"/>
         <source>Incoming call lost (attach HTTP %1)</source>
         <translation>着信を受けられませんでした (attach HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="416"/>
+        <location filename="../src/nativecall.cpp" line="418"/>
         <source>Incoming call without a media offer</source>
         <translation>メディア オファーのない着信</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="431"/>
+        <location filename="../src/nativecall.cpp" line="433"/>
         <source>Connecting…</source>
         <translation>接続しています…</translation>
     </message>
     <message>
         <location filename="../src/calljson.cpp" line="95"/>
-        <location filename="../src/nativecall.cpp" line="478"/>
+        <location filename="../src/nativecall.cpp" line="480"/>
         <source>Call declined</source>
         <translation>通話が拒否されました</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="484"/>
+        <location filename="../src/nativecall.cpp" line="486"/>
         <source>Calling…</source>
         <translation>発信しています…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="573"/>
+        <location filename="../src/nativecall.cpp" line="575"/>
         <source>Call refused by the server (HTTP %1)</source>
         <translation>サーバーが通話を拒否しました (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="578"/>
+        <location filename="../src/nativecall.cpp" line="580"/>
         <source>Waiting for the answer…</source>
         <translation>応答を待っています…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="579"/>
+        <location filename="../src/nativecall.cpp" line="581"/>
         <source>Joining %1…</source>
         <translation>%1 に参加しています…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="579"/>
+        <location filename="../src/nativecall.cpp" line="581"/>
         <source>Calling %1…</source>
         <translation>%1 に発信しています…</translation>
     </message>
     <message>
-        <location filename="../src/nativecall.cpp" line="647"/>
+        <location filename="../src/nativecall.cpp" line="649"/>
         <source>Ringing…</source>
         <translation>呼び出し中…</translation>
     </message>
     <message>
         <location filename="../src/calljson.cpp" line="100"/>
-        <location filename="../src/nativecall.cpp" line="678"/>
+        <location filename="../src/nativecall.cpp" line="680"/>
         <source>Call ended</source>
         <translation>通話が終了しました</translation>
     </message>
