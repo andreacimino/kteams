@@ -4,8 +4,10 @@ A **native** Microsoft Teams client for KDE Plasma (work / school accounts), wri
 Qt 6 / Kirigami. No embedded browser: it talks to the Teams services directly, as the
 official client does, and uses about 120 MB of memory against ~1 GB for Teams web.
 
-The interface is in English, with an Italian translation picked automatically from the
-system language. Status as of November 2026, honestly:
+The interface is translated into Italian, German, French, Spanish, Brazilian Portuguese,
+Simplified Chinese, Japanese, Russian, Korean, Dutch and Polish; the translation is picked
+automatically from the system language, and English is used for any other. Status as of
+November 2026, honestly:
 
 ## Screenshots
 
