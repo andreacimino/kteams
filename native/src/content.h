@@ -23,8 +23,13 @@ QString sanitizeTeamsHtml(const QString &html);
 QString linkify(const QString &text);
 // HTML -> plain text (entities decoded, inline images removed).
 QString htmlToText(const QString &html);
-// Plain text -> the HTML Teams expects for a message body.
+// What the user typed -> the HTML Teams expects for a message body. Markdown, as far as it goes:
+// **bold**, *italic* or _italic_, ~~strike~~, `code`, ``` code blocks ```, "- " and "1. " lists and
+// "> " quotes; everything else is text (escaped), one <p> with <br> for the line breaks.
 QString textToHtml(const QString &text);
+// The opposite, for editing a message: the HTML of a message (as our own and the sanitized
+// ones are) back to the markup above, so editing does not lose the formatting.
+QString htmlToMarkdown(const QString &html);
 // properties.files (a JSON array, often encoded as a string) -> [{name, type, url, shareUrl}].
 QVariantList parseFiles(const QJsonObject &properties);
 // Reaction key ("like", "1f602_facewithtearsofjoy") -> emoji; unknown keys come back as they are.

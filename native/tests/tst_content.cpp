@@ -88,6 +88,154 @@ private slots:
                  QStringLiteral("<a href=\"mailto:a@b.c\">mail</a> <a>no</a>"));
     }
 
+    // --- what the user types: Markdown -----------------------------------------------------------
+
+    void markdownInlineFormatting_data()
+    {
+        QTest::addColumn<QString>("typed");
+        QTest::addColumn<QString>("html");
+        QTest::newRow("bold") << "say **hello** now" << "<p>say <b>hello</b> now</p>";
+        QTest::newRow("italic with stars") << "say *hello* now" << "<p>say <i>hello</i> now</p>";
+        QTest::newRow("italic with underscores") << "say _hello_ now" << "<p>say <i>hello</i> now</p>";
+        QTest::newRow("strike") << "~~gone~~" << "<p><s>gone</s></p>";
+        QTest::newRow("code") << "run `ls -la` here" << "<p>run <code>ls -la</code> here</p>";
+        QTest::newRow("bold and italic together") << "***both***" << "<p><b><i>both</i></b></p>";
+        QTest::newRow("italic inside bold") << "**a *b* c**" << "<p><b>a <i>b</i> c</b></p>";
+        QTest::newRow("several on one line") << "**a** and ~~b~~ and `c`" << "<p><b>a</b> and <s>b</s> and <code>c</code></p>";
+        QTest::newRow("markers inside code are not formatting") << "`a*b*c` and `**x**`" << "<p><code>a*b*c</code> and <code>**x**</code></p>";
+        QTest::newRow("markup in code is escaped") << "`<div>&`" << "<p><code>&lt;div&gt;&amp;</code></p>";
+        QTest::newRow("markup around bold is escaped") << "**<b>x</b>**" << "<p><b>&lt;b&gt;x&lt;/b&gt;</b></p>";
+    }
+    void markdownInlineFormatting()
+    {
+        QFETCH(QString, typed);
+        QFETCH(QString, html);
+        QCOMPARE(textToHtml(typed), html);
+    }
+
+    void thingsThatLookLikeMarkersButAreNot_data()
+    {
+        QTest::addColumn<QString>("typed");
+        QTest::newRow("a product") << "2 * 3 * 4 = 24";
+        QTest::newRow("stars inside words") << "5*3 and 2*4";
+        QTest::newRow("snake case") << "use my_variable_name here";
+        QTest::newRow("a path with underscores") << "see https://example.com/a_b_c/d_e_f";
+        QTest::newRow("markers with spaces inside") << "** not bold ** and * not italic *";
+        QTest::newRow("a single marker") << "a * b and c_ and ~ d";
+        QTest::newRow("an empty pair") << "**** and ``";
+    }
+    void thingsThatLookLikeMarkersButAreNot()
+    {
+        QFETCH(QString, typed);
+        const QString html = textToHtml(typed);
+        QVERIFY2(!html.contains("<b>") && !html.contains("<i>") && !html.contains("<s>") && !html.contains("<code>"), qPrintable(html));
+        QCOMPARE(html, "<p>" + typed.toHtmlEscaped() + "</p>");
+    }
+
+    void markersThatCrossAreLeftAsTyped()
+    {
+        QCOMPARE(textToHtml("**a *b** c*"), QStringLiteral("<p>**a *b** c*</p>"));
+    }
+
+    void bulletedAndNumberedLists()
+    {
+        QCOMPARE(textToHtml("- one\n- two\n- **three**"), QStringLiteral("<ul><li>one</li><li>two</li><li><b>three</b></li></ul>"));
+        QCOMPARE(textToHtml("* one\n* two"), QStringLiteral("<ul><li>one</li><li>two</li></ul>"));
+        QCOMPARE(textToHtml("1. one\n2. two\n10) ten"), QStringLiteral("<ol><li>one</li><li>two</li><li>ten</li></ol>"));
+    }
+
+    void aListBetweenParagraphs()
+    {
+        QCOMPARE(textToHtml("intro\n- a\n- b\noutro"), QStringLiteral("<p>intro</p><ul><li>a</li><li>b</li></ul><p>outro</p>"));
+        QCOMPARE(textToHtml("- a\n\n- b"), QStringLiteral("<ul><li>a</li></ul><ul><li>b</li></ul>")); // an empty line ends a list
+    }
+
+    void aDashIsNotAListWithoutASpaceAndText()
+    {
+        QCOMPARE(textToHtml("-no list"), QStringLiteral("<p>-no list</p>"));
+        QCOMPARE(textToHtml("- "), QStringLiteral("<p>-</p>")); // trimmed: a lone dash
+        QCOMPARE(textToHtml("*word* is italic"), QStringLiteral("<p><i>word</i> is italic</p>")); // not a bullet
+    }
+
+    void quotes()
+    {
+        QCOMPARE(textToHtml("> first\n> **second**"), QStringLiteral("<blockquote>first<br><b>second</b></blockquote>"));
+        QCOMPARE(textToHtml("before\n> quoted\nafter"), QStringLiteral("<p>before</p><blockquote>quoted</blockquote><p>after</p>"));
+        QCOMPARE(textToHtml("a > b"), QStringLiteral("<p>a &gt; b</p>")); // only at the start of a line
+    }
+
+    void codeBlocks()
+    {
+        QCOMPARE(textToHtml("```\nint a = 1;\nif (a < 2) {}\n```"), QStringLiteral("<pre>int a = 1;\nif (a &lt; 2) {}</pre>"));
+        QCOMPARE(textToHtml("text\n```cpp\nx\n```\nmore"), QStringLiteral("<p>text</p><pre>x</pre><p>more</p>")); // the language is ignored
+        QCOMPARE(textToHtml("```\nnever closed\n**not bold**"), QStringLiteral("<pre>never closed\n**not bold**</pre>"));
+    }
+
+    void lineBreaksOfPlainTextAreAsBefore()
+    {
+        QCOMPARE(textToHtml("a\n\nb"), QStringLiteral("<p>a<br><br>b</p>"));
+        QCOMPARE(textToHtml("  \n hello \n  "), QStringLiteral("<p>hello</p>"));
+        QCOMPARE(textToHtml("one line"), QStringLiteral("<p>one line</p>"));
+    }
+
+    // --- and back, for editing ---------------------------------------------------------------------
+
+    void htmlToMarkdownInline_data()
+    {
+        QTest::addColumn<QString>("html");
+        QTest::addColumn<QString>("markdown");
+        QTest::newRow("bold, italic, strike, code") << "<p>a <b>b</b> <i>c</i> <s>d</s> <code>e</code></p>" << "a **b** *c* ~~d~~ `e`";
+        QTest::newRow("strong and em") << "<strong>x</strong> <em>y</em>" << "**x** *y*";
+        QTest::newRow("a line break") << "<p>a<br>b</p>" << "a\nb";
+        QTest::newRow("two paragraphs") << "<p>a</p><p>b</p>" << "a\nb";
+        QTest::newRow("entities") << "<p>&lt;tag&gt; &amp; co</p>" << "<tag> & co";
+        QTest::newRow("a link with a label") << "<a href=\"https://x.org/p?a=1&amp;b=2\">the page</a>" << "the page (https://x.org/p?a=1&b=2)";
+        QTest::newRow("a link that is its own label") << "<a href=\"https://x.org\">https://x.org</a>" << "https://x.org";
+        QTest::newRow("a mention") << "<p>hi <at id=\"0\">Bob</at></p>" << "hi Bob";
+        QTest::newRow("unknown tags are dropped") << "<p>a <span class=\"x\">b</span></p>" << "a b";
+        QTest::newRow("whitespace between blocks") << "<p>a</p>  \n  <p>b</p>" << "a\nb";
+    }
+    void htmlToMarkdownInline()
+    {
+        QFETCH(QString, html);
+        QFETCH(QString, markdown);
+        QCOMPARE(htmlToMarkdown(html), markdown);
+    }
+
+    void htmlToMarkdownBlocks()
+    {
+        QCOMPARE(htmlToMarkdown("<ul><li>x</li><li>y</li></ul>"), QStringLiteral("- x\n- y"));
+        QCOMPARE(htmlToMarkdown("<ol><li>x</li><li>y</li></ol>"), QStringLiteral("1. x\n2. y"));
+        QCOMPARE(htmlToMarkdown("<p>before</p><ul><li>x</li></ul><p>after</p>"), QStringLiteral("before\n- x\nafter"));
+        QCOMPARE(htmlToMarkdown("<blockquote>q1<br>q2</blockquote>"), QStringLiteral("> q1\n> q2"));
+        QCOMPARE(htmlToMarkdown("<pre>line1\nline &lt;2&gt;</pre>"), QStringLiteral("```\nline1\nline <2>\n```"));
+        QCOMPARE(htmlToMarkdown("<pre>a</pre><p>b</p>"), QStringLiteral("```\na\n```\nb"));
+        QCOMPARE(htmlToMarkdown(QString()), QString());
+    }
+
+    void editingDoesNotLoseTheFormatting_data()
+    {
+        QTest::addColumn<QString>("typed");
+        QTest::newRow("inline") << "**bold** and *italic* and ~~strike~~ and `code`";
+        QTest::newRow("bullets") << "- a\n- b";
+        QTest::newRow("numbers") << "1. a\n2. b";
+        QTest::newRow("quote") << "> quoted";
+        QTest::newRow("code block") << "```\nx = 1\n```";
+        QTest::newRow("plain lines") << "one\ntwo\nthree";
+        QTest::newRow("a mix") << "intro\n- a\n- b\n> q\nend";
+        QTest::newRow("accents and symbols") << "è così: 5 < 6 & \"quoted\"";
+    }
+    void editingDoesNotLoseTheFormatting()
+    {
+        QFETCH(QString, typed);
+        // Typed -> HTML sent -> HTML shown -> text in the edit box: the same text, and sending it
+        // again gives the same HTML.
+        const QString html = textToHtml(typed);
+        const QString back = htmlToMarkdown(html);
+        QCOMPARE(back, typed);
+        QCOMPARE(textToHtml(back), html);
+    }
+
     void linkify_data()
     {
         QTest::addColumn<QString>("text");

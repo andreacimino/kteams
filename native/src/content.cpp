@@ -23,11 +23,107 @@ QString htmlToText(const QString &html)
     return text.trimmed();
 }
 
+namespace {
+// Inline markup of one line, on text that is already HTML-escaped: `code`, **bold**, ~~strike~~,
+// *italic* and _italic_. A marker must touch the text it wraps (so "2 * 3 * 4" stays as it is) and
+// the single ones must not touch a word character outside (so snake_case_names stay as they are).
+QString inlineMarkdown(const QString &escaped)
+{
+    static const QRegularExpression code(QStringLiteral("`([^`\\n]+)`"));
+    static const QRegularExpression boldItalic(QStringLiteral("\\*\\*\\*(?=[^\\s*])(.+?)(?<=[^\\s*])\\*\\*\\*"));
+    static const QRegularExpression bold(QStringLiteral("\\*\\*(?=\\S)(.+?)(?<=\\S)\\*\\*"));
+    static const QRegularExpression strike(QStringLiteral("~~(?=\\S)(.+?)(?<=\\S)~~"));
+    static const QRegularExpression italicStar(QStringLiteral("(?<![\\w*])\\*(?=[^\\s*])(.+?)(?<=[^\\s*])\\*(?![\\w*])"));
+    static const QRegularExpression italicUnderscore(QStringLiteral("(?<!\\w)_(?=[^\\s_])(.+?)(?<=[^\\s_])_(?!\\w)"));
+    // Code spans are set aside first, so what is inside them is not formatted.
+    QStringList codes;
+    QString text;
+    qsizetype last = 0;
+    for (auto it = code.globalMatch(escaped); it.hasNext() && codes.size() < 1000;) {
+        const auto m = it.next();
+        text += escaped.mid(last, m.capturedStart() - last) + QChar(char16_t(0xE000 + codes.size()));
+        codes << m.captured(1);
+        last = m.capturedEnd();
+    }
+    text += escaped.mid(last);
+    text.replace(boldItalic, QStringLiteral("<b><i>\\1</i></b>"));
+    text.replace(bold, QStringLiteral("<b>\\1</b>"));
+    text.replace(strike, QStringLiteral("<s>\\1</s>"));
+    text.replace(italicStar, QStringLiteral("<i>\\1</i>"));
+    text.replace(italicUnderscore, QStringLiteral("<i>\\1</i>"));
+    for (int i = 0; i < codes.size(); ++i) text.replace(QChar(char16_t(0xE000 + i)), QStringLiteral("<code>%1</code>").arg(codes[i]));
+    // Markers that cross each other ("**a *b** c*") would give tags in the wrong order: then the
+    // line is left as it was typed.
+    static const QRegularExpression markup(QStringLiteral("<(/?)(b|i|s|code)>"));
+    QStringList open;
+    for (auto it = markup.globalMatch(text); it.hasNext();) {
+        const auto m = it.next();
+        if (m.captured(1).isEmpty()) open << m.captured(2);
+        else if (open.isEmpty() || open.takeLast() != m.captured(2)) return escaped;
+    }
+    return open.isEmpty() ? text : escaped;
+}
+}
+
 QString textToHtml(const QString &text)
 {
-    QString html = text.trimmed().toHtmlEscaped();
-    html.replace(QLatin1Char('\n'), QStringLiteral("<br>"));
-    return QStringLiteral("<p>%1</p>").arg(html);
+    static const QRegularExpression bullet(QStringLiteral("^[-*] +(\\S.*)$"));
+    static const QRegularExpression numbered(QStringLiteral("^\\d{1,3}[.)] +(\\S.*)$"));
+    static const QRegularExpression quote(QStringLiteral("^> ?(.*)$"));
+    const QStringList lines = text.trimmed().split(QLatin1Char('\n'));
+    QString html;
+    QStringList plain; // a run of ordinary lines: one paragraph, lines joined by <br>
+    const auto flushPlain = [&] {
+        while (!plain.isEmpty() && plain.first().trimmed().isEmpty()) plain.removeFirst();
+        while (!plain.isEmpty() && plain.last().trimmed().isEmpty()) plain.removeLast();
+        if (!plain.isEmpty()) {
+            QStringList converted;
+            for (const QString &l : std::as_const(plain)) converted << inlineMarkdown(l.toHtmlEscaped());
+            html += QStringLiteral("<p>%1</p>").arg(converted.join(QStringLiteral("<br>")));
+        }
+        plain.clear();
+    };
+    for (qsizetype i = 0; i < lines.size(); ++i) {
+        const QString line = lines[i];
+        if (line.trimmed().startsWith(QLatin1String("```"))) {
+            flushPlain();
+            QStringList code;
+            for (++i; i < lines.size() && !lines[i].trimmed().startsWith(QLatin1String("```")); ++i) code << lines[i];
+            html += QStringLiteral("<pre>%1</pre>").arg(code.join(QLatin1Char('\n')).toHtmlEscaped());
+            continue;
+        }
+        QRegularExpressionMatch m;
+        const bool isBullet = (m = bullet.match(line)).hasMatch();
+        const bool isNumbered = !isBullet && (m = numbered.match(line)).hasMatch();
+        if (isBullet || isNumbered) {
+            flushPlain();
+            const QRegularExpression &same = isBullet ? bullet : numbered;
+            QString items;
+            for (; i < lines.size(); ++i) {
+                const auto item = same.match(lines[i]);
+                if (!item.hasMatch()) break;
+                items += QStringLiteral("<li>%1</li>").arg(inlineMarkdown(item.captured(1).toHtmlEscaped()));
+            }
+            --i;
+            html += isBullet ? QStringLiteral("<ul>%1</ul>").arg(items) : QStringLiteral("<ol>%1</ol>").arg(items);
+            continue;
+        }
+        if (quote.match(line).hasMatch()) {
+            flushPlain();
+            QStringList quoted;
+            for (; i < lines.size(); ++i) {
+                const auto q = quote.match(lines[i]);
+                if (!q.hasMatch()) break;
+                quoted << inlineMarkdown(q.captured(1).toHtmlEscaped());
+            }
+            --i;
+            html += QStringLiteral("<blockquote>%1</blockquote>").arg(quoted.join(QStringLiteral("<br>")));
+            continue;
+        }
+        plain << line;
+    }
+    flushPlain();
+    return html;
 }
 
 // A link marker inside the plain text: one private-use character per <a href> found.
@@ -244,6 +340,88 @@ QString replyQuoteHtml(const QString &messageId, const QString &authorMri, const
                           "<strong itemprop=\"mri\" itemid=\"%2\">%3</strong><span itemprop=\"time\" itemid=\"%1\"></span>"
                           "<p itemprop=\"preview\">%4</p></blockquote>")
         .arg(messageId, authorMri.toHtmlEscaped(), authorName.toHtmlEscaped(), preview.toHtmlEscaped());
+}
+
+QString htmlToMarkdown(const QString &html)
+{
+    // The subset our own messages and the sanitizer produce: b, i, s, code, pre, lists, quotes, br, p, links.
+    static const QRegularExpression tag(QStringLiteral("<(/?)([a-zA-Z][a-zA-Z0-9]*)([^>]*)>"));
+    static const QRegularExpression hrefAttr(QStringLiteral("\\bhref\\s*=\\s*\"([^\"]*)\""), QRegularExpression::CaseInsensitiveOption);
+    QString out;
+    bool lineStart = true;
+    int quoteDepth = 0;
+    struct List { bool ordered; int count; };
+    QList<List> lists;
+    QString pendingLink;      // href of the <a> being read
+    QString linkLabel;
+    bool inLink = false;
+    bool inPre = false;
+    const auto put = [&](const QString &text) {
+        if (inLink) { linkLabel += text; return; }
+        if (text.isEmpty() || (lineStart && !inPre && !inLink && text.trimmed().isEmpty())) return; // no blank text at the start of a line
+        if (lineStart && !inPre) out += QString(quoteDepth, QLatin1Char('>')).replace(QLatin1Char('>'), QStringLiteral("> "));
+        lineStart = false;
+        out += text;
+    };
+    const auto newline = [&] { if (!lineStart) { out += QLatin1Char('\n'); lineStart = true; } };
+    qsizetype last = 0;
+    const auto text = [&](const QString &raw) {
+        if (raw.isEmpty()) return;
+        // pre-wrap keeps the spaces and line breaks of the text node, entities decoded.
+        QString decoded = QTextDocumentFragment::fromHtml(QStringLiteral("<span style=\"white-space:pre-wrap\">%1</span>").arg(raw)).toPlainText();
+        if (!inPre) {
+            static const QRegularExpression whitespace(QStringLiteral("\\s+"));
+            decoded.replace(whitespace, QStringLiteral(" "));
+        }
+        put(decoded);
+    };
+    for (auto it = tag.globalMatch(html); it.hasNext();) {
+        const auto m = it.next();
+        text(html.mid(last, m.capturedStart() - last));
+        last = m.capturedEnd();
+        const bool closing = !m.captured(1).isEmpty();
+        const QString name = m.captured(2).toLower();
+        if (name == QLatin1String("b") || name == QLatin1String("strong")) put(QStringLiteral("**"));
+        else if (name == QLatin1String("i") || name == QLatin1String("em")) put(QStringLiteral("*"));
+        else if (name == QLatin1String("s") || name == QLatin1String("strike") || name == QLatin1String("del")) put(QStringLiteral("~~"));
+        else if (name == QLatin1String("code") && !inPre) put(QStringLiteral("`"));
+        else if (name == QLatin1String("pre")) {
+            newline();
+            if (!closing) { put(QStringLiteral("```")); newline(); inPre = true; }
+            else { inPre = false; newline(); put(QStringLiteral("```")); newline(); }
+        } else if (name == QLatin1String("br")) {
+            if (inPre) out += QLatin1Char('\n'); else newline();
+        } else if (name == QLatin1String("p") || name == QLatin1String("div")) {
+            newline();
+        } else if (name == QLatin1String("ul") || name == QLatin1String("ol")) {
+            newline();
+            if (!closing) lists.append({name == QLatin1String("ol"), 0}); else if (!lists.isEmpty()) lists.removeLast();
+        } else if (name == QLatin1String("li")) {
+            if (!closing) {
+                newline();
+                const bool ordered = !lists.isEmpty() && lists.last().ordered;
+                if (!lists.isEmpty()) ++lists.last().count;
+                put(ordered ? QStringLiteral("%1. ").arg(lists.last().count) : QStringLiteral("- "));
+            } else newline();
+        } else if (name == QLatin1String("blockquote")) {
+            newline();
+            quoteDepth = closing ? qMax(0, quoteDepth - 1) : quoteDepth + 1;
+        } else if (name == QLatin1String("a")) {
+            if (!closing) {
+                const auto h = hrefAttr.match(m.captured(3));
+                pendingLink = h.hasMatch() ? QTextDocumentFragment::fromHtml(h.captured(1)).toPlainText() : QString();
+                inLink = true;
+                linkLabel.clear();
+            } else if (inLink) {
+                inLink = false;
+                const QString label = linkLabel.trimmed();
+                put(pendingLink.isEmpty() || label == pendingLink ? label : QStringLiteral("%1 (%2)").arg(label, pendingLink));
+            }
+        }
+    }
+    text(html.mid(last));
+    while (out.endsWith(QLatin1Char('\n'))) out.chop(1);
+    return out;
 }
 
 }
