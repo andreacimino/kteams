@@ -10,6 +10,7 @@ separate developer tool that exercises the media pipeline without calling anyone
 | `tst_trouterframes.cpp` | `src/trouterframes.cpp`: socket.io frames, gzip/base64 push bodies, routing of pushes, message-loss repeats |
 | `tst_calljson.cpp` | `src/calljson.cpp`: SDP lookup, media controller links, roster streams of a call |
 | `tst_caches.cpp` | `src/mediacache.cpp`, `src/avatarcache.cpp`: which pictures get the session token, served from disk, stale and "no picture" entries (offline, in a temporary cache home) |
+| `tst_backendlogic.cpp` | what used to sit inside Backend: team channels, calendar events, activity feed, reminder timing, download file names (no path escapes), reply quotes (escaping) |
 | `tst_models.cpp` | `src/models.cpp`: the list models (conversations, messages, channels, activity, calendar) |
 | `tst_statecache.cpp` | `src/statecache.cpp`: the local cache's JSON format, old and new |
 | `tst_demo.cpp` | `src/demo.h`: demo mode hides real names, titles and texts |

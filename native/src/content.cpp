@@ -1,6 +1,9 @@
 #include "content.h"
 
 #include <QDateTime>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QHash>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -219,6 +222,28 @@ qint64 parseTime(const QString &iso)
 bool isChatMessage(const QString &type)
 {
     return type == QLatin1String("Text") || type.startsWith(QLatin1String("RichText"));
+}
+
+
+QString uniqueFilePath(const QString &dir, const QString &fileName)
+{
+    // Never trust a name from the network as a path.
+    QString safe = QFileInfo(fileName).fileName();
+    if (safe.isEmpty() || safe.startsWith(QLatin1Char('.'))) safe = QStringLiteral("allegato") + safe;
+    const QFileInfo base(safe);
+    QString candidate = dir + QLatin1Char('/') + safe;
+    for (int i = 1; QFile::exists(candidate); ++i)
+        candidate = dir + QLatin1Char('/') + base.completeBaseName() + QStringLiteral(" (%1)").arg(i)
+            + (base.suffix().isEmpty() ? QString() : QLatin1Char('.') + base.suffix());
+    return candidate;
+}
+
+QString replyQuoteHtml(const QString &messageId, const QString &authorMri, const QString &authorName, const QString &preview)
+{
+    return QStringLiteral("<blockquote itemscope=\"\" itemtype=\"http://schema.skype.com/Reply\" itemid=\"%1\">"
+                          "<strong itemprop=\"mri\" itemid=\"%2\">%3</strong><span itemprop=\"time\" itemid=\"%1\"></span>"
+                          "<p itemprop=\"preview\">%4</p></blockquote>")
+        .arg(messageId, authorMri.toHtmlEscaped(), authorName.toHtmlEscaped(), preview.toHtmlEscaped());
 }
 
 }

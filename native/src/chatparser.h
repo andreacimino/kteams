@@ -2,7 +2,9 @@
 
 #include "models.h"
 
+#include <QDateTime>
 #include <QHash>
+#include <functional>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QString>
@@ -40,5 +42,19 @@ bool parseConversation(const SelfContext &ctx, const QJsonObject &o, Conversatio
 // A page of messages (newest first, as the API returns them). oldestRaw: earliest time seen,
 // system events included, for paging.
 QVector<MessageItem> parseMessages(const SelfContext &ctx, const QJsonArray &arr, qint64 *oldestRaw);
+
+
+// "teams" of the chats-and-teams summary -> channels, archived/deleted ones and those the user
+// is not a member of left out; General first in each team, then by name.
+QVector<ChannelItem> parseChannels(const QJsonArray &teams);
+// Calendar events of the calendar service, sorted by start; entries without a valid start are dropped.
+QVector<CalendarEvent> parseCalendar(const QJsonArray &events);
+// Entries of the activity feed (mentions, replies, reactions, missed calls...), in feed order.
+// `where` names the chat or channel a thread id belongs to ("" when it is a one-to-one chat or unknown).
+using WhereResolver = std::function<QString(const QString &threadId)>;
+QVector<ActivityItem> parseActivity(const QJsonArray &arr, const WhereResolver &where);
+// Milliseconds from `now` until the reminder of an event (`minutesBefore` before it starts),
+// or -1 when there should be none: no id, declined, already due, or more than a week away.
+qint64 reminderDelayMsecs(const CalendarEvent &ev, const QDateTime &now, int minutesBefore);
 
 }

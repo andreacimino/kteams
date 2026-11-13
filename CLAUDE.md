@@ -33,8 +33,8 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
     camera without calling anyone; the way to check the media pipeline.
   - `src/backend.*`: state, notifications, everything QML sees as `backend`.
   - `src/content.*`: Teams message HTML to text/rich text, files (pure functions);
-    `src/chatparser.*`: chat service JSON to conversations, messages and reactions (a
-    `SelfContext` carries who we are and the known people); `src/models.*`: the list models;
+    `src/chatparser.*`: chat service JSON to conversations, messages, reactions, team channels,
+    calendar events and the activity feed (a `SelfContext` carries who we are and the known people); `src/models.*`: the list models;
     `src/statecache.*`: the local cache's JSON format; `src/trouterframes.*`: Trouter's frames,
     gzip bodies and routing; `src/calljson.*`: SDP, media links and roster streams of a call.
     Everything but `main.cpp` is the static library `kteams_core`, linked by the app and the tests.
@@ -46,7 +46,7 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 ## Tests: the regression suite
 
 Qt Test executables in `native/tests/` (`tst_content`, `tst_chatparser`, `tst_models`,
-`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_caches`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
+`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_caches`, `tst_backendlogic`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
 
     cmake -S native -B native/build && cmake --build native/build
     ctest --test-dir native/build --output-on-failure

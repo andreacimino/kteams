@@ -34,4 +34,11 @@ qint64 parseTime(const QString &iso);
 // Messages worth showing: text and rich text; not typing, call events, thread changes.
 bool isChatMessage(const QString &type);
 
+// A file name from the network -> a path in `dir` that does not exist yet: only the last
+// component is used (never a path), a hidden name gets a prefix, "name (1).ext" when taken.
+QString uniqueFilePath(const QString &dir, const QString &fileName);
+// Teams' reply quote: a blockquote of schema.skype.com/Reply naming the message, its author
+// (MRI and name) and a preview; Teams clients show it as a quoted bubble.
+QString replyQuoteHtml(const QString &messageId, const QString &authorMri, const QString &authorName, const QString &preview);
+
 }

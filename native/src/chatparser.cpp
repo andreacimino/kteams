@@ -3,6 +3,7 @@
 #include "content.h"
 
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -183,6 +184,107 @@ QVector<MessageItem> parseMessages(const SelfContext &ctx, const QJsonArray &arr
         if (!m.content.isEmpty() || !m.images.isEmpty() || !m.files.isEmpty()) items.push_back(m);
     }
     return items;
+}
+
+
+QVector<ChannelItem> parseChannels(const QJsonArray &teams)
+{
+    QVector<ChannelItem> items;
+    for (const auto &tv : teams) {
+        const QJsonObject team = tv.toObject();
+        if (team.value(QLatin1String("isArchived")).toBool() || team.value(QLatin1String("isDeleted")).toBool()) continue;
+        QVector<ChannelItem> channels;
+        for (const auto &cv : team.value(QLatin1String("channels")).toArray()) {
+            const QJsonObject ch = cv.toObject();
+            if (ch.value(QLatin1String("isDeleted")).toBool() || ch.value(QLatin1String("isArchived")).toBool()) continue;
+            if (ch.value(QLatin1String("isMember")).isBool() && !ch.value(QLatin1String("isMember")).toBool()) continue;
+            ChannelItem c;
+            c.id = ch.value(QLatin1String("id")).toString();
+            c.general = ch.value(QLatin1String("isGeneral")).toBool();
+            c.name = c.general ? QStringLiteral("Generale") : ch.value(QLatin1String("displayName")).toString();
+            c.teamId = team.value(QLatin1String("id")).toString();
+            c.teamName = team.value(QLatin1String("displayName")).toString();
+            c.groupId = ch.value(QLatin1String("groupId")).toString();
+            c.unread = ch.value(QLatin1String("isMessageRead")).isBool() && !ch.value(QLatin1String("isMessageRead")).toBool();
+            const QJsonObject last = ch.value(QLatin1String("lastMessage")).toObject();
+            c.lastActivity = parseTime(last.value(QLatin1String("composeTime")).toString(last.value(QLatin1String("composetime")).toString()));
+            if (!c.id.isEmpty()) channels.push_back(c);
+        }
+        // As in Teams: General first, then by name.
+        std::stable_sort(channels.begin(), channels.end(), [](const ChannelItem &a, const ChannelItem &b) {
+            if (a.general != b.general) return a.general;
+            return a.name.localeAwareCompare(b.name) < 0;
+        });
+        for (const auto &c : channels) items.push_back(c);
+    }
+    return items;
+}
+
+QVector<CalendarEvent> parseCalendar(const QJsonArray &events)
+{
+    QVector<CalendarEvent> items;
+    items.reserve(events.size());
+    for (const auto &v : events) {
+        const QJsonObject e = v.toObject();
+        CalendarEvent ev;
+        ev.id = e.value(QLatin1String("objectId")).toString(e.value(QLatin1String("iCalUID")).toString());
+        ev.subject = e.value(QLatin1String("subject")).toString();
+        // "2026-11-12T14:00:00+01:00": the offset is part of the string.
+        ev.start = QDateTime::fromString(e.value(QLatin1String("startTime")).toString(), Qt::ISODate);
+        ev.end = QDateTime::fromString(e.value(QLatin1String("endTime")).toString(), Qt::ISODate);
+        ev.location = e.value(QLatin1String("location")).toString();
+        ev.organizer = e.value(QLatin1String("organizerName")).toString();
+        ev.online = e.value(QLatin1String("isOnlineMeeting")).toBool();
+        ev.chatId = e.value(QLatin1String("skypeTeamsDataObject")).toObject().value(QLatin1String("cid")).toString();
+        ev.showAs = e.value(QLatin1String("showAs")).toString();
+        ev.joinUrl = e.value(QLatin1String("skypeTeamsMeetingUrl")).toString();
+        ev.iCalUid = e.value(QLatin1String("iCalUID")).toString();
+        ev.myResponse = e.value(QLatin1String("myResponseType")).toString();
+        if (ev.start.isValid()) items.push_back(ev);
+    }
+    std::sort(items.begin(), items.end(), [](const CalendarEvent &a, const CalendarEvent &b) { return a.start < b.start; });
+    return items;
+}
+
+QVector<ActivityItem> parseActivity(const QJsonArray &arr, const WhereResolver &where)
+{
+    QVector<ActivityItem> items;
+    for (const auto &v : arr) {
+        const QJsonObject o = v.toObject();
+        const QJsonObject props = o.value(QLatin1String("properties")).toObject();
+        const QJsonValue av = props.value(QLatin1String("activity"));
+        const QJsonObject a = av.isString() ? QJsonDocument::fromJson(av.toString().toUtf8()).object() : av.toObject();
+        if (a.isEmpty()) continue;
+        ActivityItem it;
+        it.id = o.value(QLatin1String("id")).toString();
+        it.type = a.value(QLatin1String("activityType")).toString();
+        it.subtype = a.value(QLatin1String("activitySubtype")).toString();
+        it.who = a.value(QLatin1String("sourceUserImDisplayName")).toString();
+        it.whoMri = a.value(QLatin1String("sourceUserId")).toString();
+        it.preview = htmlToText(a.value(QLatin1String("messagePreview")).toString()).simplified();
+        it.threadId = a.value(QLatin1String("sourceThreadId")).toString();
+        it.messageId = a.value(QLatin1String("sourceMessageId")).toVariant().toString();
+        it.timestamp = parseTime(a.value(QLatin1String("activityTimestamp")).toString(o.value(QLatin1String("composetime")).toString()));
+        it.read = props.value(QLatin1String("isread")).toVariant().toBool();
+        // What happened, in words.
+        const QString t = it.type.toLower();
+        if (t.contains(QLatin1String("mention"))) it.text = QCoreApplication::translate("Backend", "mentioned you");
+        else if (t.contains(QLatin1String("reaction"))) it.text = QCoreApplication::translate("Backend", "reacted %1 to your message").arg(emojiForKey(it.subtype));
+        else if (t.contains(QLatin1String("reply"))) it.text = QCoreApplication::translate("Backend", "replied");
+        else if (t.contains(QLatin1String("missedcall"))) it.text = QCoreApplication::translate("Backend", "missed call");
+        else if (t.contains(QLatin1String("voicemail"))) it.text = QCoreApplication::translate("Backend", "voicemail");
+        else it.text = it.type;
+        it.where = where(it.threadId);
+        items.push_back(it);
+    }
+    return items;
+}
+
+qint64 reminderDelayMsecs(const CalendarEvent &ev, const QDateTime &now, int minutesBefore)
+{
+    if (ev.id.isEmpty() || ev.myResponse == QLatin1String("Declined")) return -1;
+    const qint64 msecs = now.msecsTo(ev.start.addSecs(-qint64(minutesBefore) * 60));
+    return msecs < 0 || msecs > 7LL * 24 * 3600 * 1000 ? -1 : msecs;
 }
 
 }

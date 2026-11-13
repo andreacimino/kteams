@@ -808,35 +808,9 @@ void Backend::applyMemberTitles()
 
 void Backend::parseTeams(const QJsonArray &teams)
 {
-    QVector<ChannelItem> items;
+    const QVector<ChannelItem> items = parseChannels(teams);
     QSet<QString> ids;
-    for (const auto &tv : teams) {
-        const QJsonObject team = tv.toObject();
-        if (team.value(QLatin1String("isArchived")).toBool() || team.value(QLatin1String("isDeleted")).toBool()) continue;
-        QVector<ChannelItem> channels;
-        for (const auto &cv : team.value(QLatin1String("channels")).toArray()) {
-            const QJsonObject ch = cv.toObject();
-            if (ch.value(QLatin1String("isDeleted")).toBool() || ch.value(QLatin1String("isArchived")).toBool()) continue;
-            if (ch.value(QLatin1String("isMember")).isBool() && !ch.value(QLatin1String("isMember")).toBool()) continue;
-            ChannelItem c;
-            c.id = ch.value(QLatin1String("id")).toString();
-            c.general = ch.value(QLatin1String("isGeneral")).toBool();
-            c.name = c.general ? QStringLiteral("Generale") : ch.value(QLatin1String("displayName")).toString();
-            c.teamId = team.value(QLatin1String("id")).toString();
-            c.teamName = team.value(QLatin1String("displayName")).toString();
-            c.groupId = ch.value(QLatin1String("groupId")).toString();
-            c.unread = ch.value(QLatin1String("isMessageRead")).isBool() && !ch.value(QLatin1String("isMessageRead")).toBool();
-            const QJsonObject last = ch.value(QLatin1String("lastMessage")).toObject();
-            c.lastActivity = parseTime(last.value(QLatin1String("composeTime")).toString(last.value(QLatin1String("composetime")).toString()));
-            if (!c.id.isEmpty()) channels.push_back(c);
-        }
-        // As in Teams: General first, then by name.
-        std::stable_sort(channels.begin(), channels.end(), [](const ChannelItem &a, const ChannelItem &b) {
-            if (a.general != b.general) return a.general;
-            return a.name.localeAwareCompare(b.name) < 0;
-        });
-        for (const auto &c : channels) { items.push_back(c); ids.insert(c.id); }
-    }
+    for (const ChannelItem &c : items) ids.insert(c.id);
     m_channelIds = ids;
     m_channels.setItems(items);
     // Channels also come with the conversation list: they belong in the Team view only.
@@ -866,27 +840,7 @@ void Backend::loadCalendarWeek(int weekOffset)
 
 void Backend::handleCalendar(const QJsonArray &events)
 {
-    QVector<CalendarEvent> items;
-    items.reserve(events.size());
-    for (const auto &v : events) {
-        const QJsonObject e = v.toObject();
-        CalendarEvent ev;
-        ev.id = e.value(QLatin1String("objectId")).toString(e.value(QLatin1String("iCalUID")).toString());
-        ev.subject = e.value(QLatin1String("subject")).toString();
-        // "2026-11-12T14:00:00+01:00": the offset is part of the string.
-        ev.start = QDateTime::fromString(e.value(QLatin1String("startTime")).toString(), Qt::ISODate);
-        ev.end = QDateTime::fromString(e.value(QLatin1String("endTime")).toString(), Qt::ISODate);
-        ev.location = e.value(QLatin1String("location")).toString();
-        ev.organizer = e.value(QLatin1String("organizerName")).toString();
-        ev.online = e.value(QLatin1String("isOnlineMeeting")).toBool();
-        ev.chatId = e.value(QLatin1String("skypeTeamsDataObject")).toObject().value(QLatin1String("cid")).toString();
-        ev.showAs = e.value(QLatin1String("showAs")).toString();
-        ev.joinUrl = e.value(QLatin1String("skypeTeamsMeetingUrl")).toString();
-        ev.iCalUid = e.value(QLatin1String("iCalUID")).toString();
-        ev.myResponse = e.value(QLatin1String("myResponseType")).toString();
-        if (ev.start.isValid()) items.push_back(ev);
-    }
-    std::sort(items.begin(), items.end(), [](const CalendarEvent &a, const CalendarEvent &b) { return a.start < b.start; });
+    const QVector<CalendarEvent> items = parseCalendar(events);
     m_calendar.setItems(items);
     if (m_calendarWeekOffset == 0) scheduleReminders(items);
 }
@@ -1201,15 +1155,7 @@ QString freeDownloadPath(const QString &fileName)
 {
     const QString dir = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     QDir().mkpath(dir);
-    // Never trust a name from the network as a path.
-    QString safe = QFileInfo(fileName).fileName();
-    if (safe.isEmpty() || safe.startsWith(QLatin1Char('.'))) safe = QStringLiteral("allegato") + safe;
-    const QFileInfo base(safe);
-    QString candidate = dir + QLatin1Char('/') + safe;
-    for (int i = 1; QFile::exists(candidate); ++i)
-        candidate = dir + QLatin1Char('/') + base.completeBaseName() + QStringLiteral(" (%1)").arg(i)
-            + (base.suffix().isEmpty() ? QString() : QLatin1Char('.') + base.suffix());
-    return candidate;
+    return uniqueFilePath(dir, fileName);
 }
 }
 
@@ -1376,37 +1322,11 @@ void Backend::sendMessageWithMentions(const QString &text, const QVariantList &m
 
 void Backend::handleActivity(const QJsonArray &arr)
 {
-    QVector<ActivityItem> items;
-    for (const auto &v : arr) {
-        const QJsonObject o = v.toObject();
-        const QJsonObject props = o.value(QLatin1String("properties")).toObject();
-        const QJsonValue av = props.value(QLatin1String("activity"));
-        const QJsonObject a = av.isString() ? QJsonDocument::fromJson(av.toString().toUtf8()).object() : av.toObject();
-        if (a.isEmpty()) continue;
-        ActivityItem it;
-        it.id = o.value(QLatin1String("id")).toString();
-        it.type = a.value(QLatin1String("activityType")).toString();
-        it.subtype = a.value(QLatin1String("activitySubtype")).toString();
-        it.who = a.value(QLatin1String("sourceUserImDisplayName")).toString();
-        it.whoMri = a.value(QLatin1String("sourceUserId")).toString();
-        it.preview = htmlToText(a.value(QLatin1String("messagePreview")).toString()).simplified();
-        it.threadId = a.value(QLatin1String("sourceThreadId")).toString();
-        it.messageId = a.value(QLatin1String("sourceMessageId")).toVariant().toString();
-        it.timestamp = parseTime(a.value(QLatin1String("activityTimestamp")).toString(o.value(QLatin1String("composetime")).toString()));
-        it.read = props.value(QLatin1String("isread")).toVariant().toBool();
-        // What happened, in words.
-        const QString t = it.type.toLower();
-        if (t.contains(QLatin1String("mention"))) it.text = tr("mentioned you");
-        else if (t.contains(QLatin1String("reaction"))) it.text = tr("reacted %1 to your message").arg(emojiForKey(it.subtype));
-        else if (t.contains(QLatin1String("reply"))) it.text = tr("replied");
-        else if (t.contains(QLatin1String("missedcall"))) it.text = tr("missed call");
-        else if (t.contains(QLatin1String("voicemail"))) it.text = tr("voicemail");
-        else it.text = it.type;
-        // Where: a known chat or channel name, if we have it.
-        if (const ChannelItem *ch = m_channels.find(it.threadId)) it.where = ch->teamName + QStringLiteral(" › ") + ch->name;
-        else if (const ConversationItem *c = m_conversations.find(it.threadId)) it.where = c->type == QLatin1String("oneToOne") ? QString() : c->title;
-        items.push_back(it);
-    }
+    const QVector<ActivityItem> items = parseActivity(arr, [this](const QString &threadId) -> QString {
+        if (const ChannelItem *ch = m_channels.find(threadId)) return ch->teamName + QStringLiteral(" › ") + ch->name;
+        if (const ConversationItem *c = m_conversations.find(threadId)) return c->type == QLatin1String("oneToOne") ? QString() : c->title;
+        return {};
+    });
     // New unread entries since the last look (not on the first load): a notification each,
     // unless do-not-disturb.
     for (const ActivityItem &it : std::as_const(items)) {
@@ -1515,13 +1435,9 @@ void Backend::clearQuote()
 
 QString Backend::quoteHtml()
 {
-    // Teams' reply quote: a blockquote of schema.skype.com/Reply naming the message, the
-    // author and a preview; Teams clients show it as a quoted bubble.
+    // Teams' reply quote: see replyQuoteHtml().
     if (m_quoteId.isEmpty()) return {};
-    const QString html = QStringLiteral("<blockquote itemscope=\"\" itemtype=\"http://schema.skype.com/Reply\" itemid=\"%1\">"
-                                        "<strong itemprop=\"mri\" itemid=\"%2\">%3</strong><span itemprop=\"time\" itemid=\"%1\"></span>"
-                                        "<p itemprop=\"preview\">%4</p></blockquote>")
-                             .arg(m_quoteId, m_quoteMri.toHtmlEscaped(), m_quoteWho.toHtmlEscaped(), m_quoteText.toHtmlEscaped());
+    const QString html = replyQuoteHtml(m_quoteId, m_quoteMri, m_quoteWho, m_quoteText);
     clearQuote();
     return html;
 }
@@ -1575,9 +1491,9 @@ void Backend::scheduleReminders(const QVector<CalendarEvent> &events)
     constexpr int kMinutesBefore = 5;
     const QDateTime now = QDateTime::currentDateTime();
     for (const CalendarEvent &ev : events) {
-        if (ev.id.isEmpty() || m_reminded.contains(ev.id) || ev.myResponse == QLatin1String("Declined")) continue;
-        const qint64 msecs = now.msecsTo(ev.start.addSecs(-kMinutesBefore * 60));
-        if (msecs < 0 || msecs > 7LL * 24 * 3600 * 1000) continue;
+        if (m_reminded.contains(ev.id)) continue;
+        const qint64 msecs = reminderDelayMsecs(ev, now, kMinutesBefore);
+        if (msecs < 0) continue;
         m_reminded.insert(ev.id);
         const QString subject = ev.subject, joinUrl = ev.joinUrl, chatId = ev.chatId;
         const QString when = QLocale().toString(ev.start.toLocalTime().time(), QLocale::ShortFormat);
