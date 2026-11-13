@@ -92,6 +92,7 @@ configure_file(data/org.kteams.kteams.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/org
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kteams.kteams.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
 install(FILES data/org.kteams.kteams.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
 install(FILES data/kteams.notifyrc DESTINATION ${CMAKE_INSTALL_DATADIR}/knotifications6)
+install(FILES data/org.kteams.kteams.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
 
 # Media pipeline check without a call (not built by default): cmake --build native/build --target kteams-offer-test
 add_executable(kteams-offer-test EXCLUDE_FROM_ALL tests/offer_dump.cpp src/callengine.cpp src/callengine.h)

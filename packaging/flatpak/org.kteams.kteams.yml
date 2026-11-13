@@ -1,0 +1,93 @@
+# Flatpak manifest. Built by .github/workflows/flatpak.yml on every push; by hand:
+#   flatpak-builder --user --install --force-clean build-dir packaging/flatpak/org.kteams.kteams.yml
+# The KDE runtime brings Qt 6, Kirigami (+ addons), KNotifications, KStatusNotifierItem and
+# GStreamer with webrtcbin, libnice and the PipeWire/PulseAudio elements. Built here: QtKeychain
+# (not in the runtime) and x264, which the runtime's gst-plugins-ugly leaves out (GPL).
+id: org.kteams.kteams
+runtime: org.kde.Platform
+runtime-version: '6.11'
+sdk: org.kde.Sdk
+command: kteams
+
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+  # Microphone and speakers: pulsesrc/pulsesink on PipeWire's PulseAudio server.
+  - --socket=pulseaudio
+  - --device=dri
+  # Camera: v4l2src reads /dev/video* directly (no camera portal yet).
+  - --device=all
+  # Received files are saved in the Downloads folder.
+  - --filesystem=xdg-download
+  # Files dragged into a chat arrive as plain paths, which the sandbox must be able to read.
+  - --filesystem=home:ro
+  # Notifications, tray icon, refresh token in the wallet / Secret Service.
+  - --talk-name=org.freedesktop.Notifications
+  - --talk-name=org.kde.StatusNotifierWatcher
+  - --talk-name=org.freedesktop.secrets
+  - --talk-name=org.kde.kwalletd6
+  # The x264 plugin built below lives in /app.
+  - --env=GST_PLUGIN_PATH=/app/lib/gstreamer-1.0
+
+cleanup:
+  - /include
+  - /lib/cmake
+  - /lib/pkgconfig
+  - /lib/*.a
+  - /lib/*.la
+  - /mkspecs
+  - /share/man
+
+modules:
+  - name: qtkeychain
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_TRANSLATIONS=OFF
+    sources:
+      - type: archive
+        url: https://github.com/frankosterfeld/qtkeychain/archive/0.18.0.tar.gz
+        sha256: 837af59f2b950760a73eff81ccae817f7d3051183b447438dc610bb984a41691
+
+  - name: x264
+    buildsystem: autotools
+    config-opts:
+      - --enable-shared
+      - --enable-pic
+      - --disable-cli
+    cleanup:
+      - /lib/libx264.a
+    sources:
+      - type: git
+        url: https://code.videolan.org/videolan/x264.git
+        commit: b35605ace3ddf7c1a5d67a2eb553f034aef41d55
+
+  # Only the x264 element: the rest of gst-plugins-ugly is already in the runtime.
+  - name: gst-plugins-ugly-x264
+    buildsystem: meson
+    config-opts:
+      - -Dauto_features=disabled
+      - -Dgpl=enabled
+      - -Dx264=enabled
+    sources:
+      - type: archive
+        url: https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.26.11.tar.xz
+        sha256: bf9c9f72ee374825cfd43868c285bcb01700df2584069e75d7af455fe48244f8
+
+  - name: kteams
+    buildsystem: cmake-ninja
+    builddir: true
+    subdir: native
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+    sources:
+      - type: dir
+        path: ../..
+        skip:
+          - .git
+          - build
+          - native/build
+          - packaging

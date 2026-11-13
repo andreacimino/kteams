@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.kteams.kteams</id>
+  <name>KTeams</name>
+  <summary>Native Microsoft Teams client for KDE</summary>
+  <developer id="io.github.andreacimino">
+    <name>Andrea Cimino</name>
+  </developer>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <description>
+    <p>
+      A Qt/Kirigami client for a work or school Microsoft Teams account, without an embedded
+      browser: chats and channels, files, reactions, presence, calendar, notifications, and
+      native audio and video calls with screen sharing. It runs in a fraction of the memory the
+      web client needs.
+    </p>
+  </description>
+  <launchable type="desktop-id">org.kteams.kteams.desktop</launchable>
+  <url type="homepage">https://github.com/andreacimino/kteams</url>
+  <url type="bugtracker">https://github.com/andreacimino/kteams/issues</url>
+  <categories>
+    <category>Network</category>
+    <category>InstantMessaging</category>
+  </categories>
+  <content_rating type="oars-1.1" />
+</component>
