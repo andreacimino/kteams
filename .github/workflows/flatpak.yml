@@ -1,5 +1,9 @@
 # Builds the Flatpak on every push and pull request; the bundle (kteams.flatpak) is an
 # artifact of the run, and on a "v*" tag it is attached to the GitHub release.
+#
+# flatpak-builder runs on the runner itself, with the KDE runtime installed for the user:
+# inside the flathub-infra container image, updating a runtime newer than the image's fails
+# ("Invalid cross-device link") and flatpak-builder then crashes.
 name: Flatpak
 
 on:
@@ -12,18 +16,31 @@ on:
 jobs:
   flatpak:
     runs-on: ubuntu-24.04
-    container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:kde-6.11
-      options: --privileged
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      - name: Install flatpak-builder and the KDE runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+          # Ubuntu 24.04 restricts unprivileged user namespaces, which bubblewrap needs.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak install --user --noninteractive flathub org.kde.Platform//6.11 org.kde.Sdk//6.11
+      - uses: actions/cache@v4
         with:
-          manifest-path: packaging/flatpak/org.kteams.kteams.yml
-          bundle: kteams.flatpak
-          cache-key: flatpak-builder-${{ hashFiles('packaging/flatpak/org.kteams.kteams.yml') }}
+          path: .flatpak-builder
+          key: flatpak-builder-${{ hashFiles('packaging/flatpak/org.kteams.kteams.yml') }}
+      - name: Build
+        run: |
+          flatpak-builder --user --disable-rofiles-fuse --force-clean --repo=repo \
+            --default-branch=master build-dir packaging/flatpak/org.kteams.kteams.yml
+          flatpak build-bundle repo kteams.flatpak org.kteams.kteams master
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kteams-flatpak
+          path: kteams.flatpak
       - name: Attach the bundle to the release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
