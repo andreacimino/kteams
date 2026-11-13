@@ -20,6 +20,18 @@ kteams_test(tst_teamsclient)
 kteams_test(tst_oauth)
 kteams_test(tst_fileuploader)
 kteams_test(tst_composer)
+kteams_test(tst_translations)
+target_compile_definitions(tst_translations PRIVATE KTEAMS_TRANSLATIONS_DIR="${CMAKE_SOURCE_DIR}/translations")
+
+# Every QML file must at least parse (qmllint fails on syntax errors; its many
+# unqualified-access warnings about the `backend` context object are tolerated).
+find_program(QMLLINT_EXECUTABLE NAMES qmllint qmllint6 HINTS "${QT6_INSTALL_PREFIX}/${QT6_INSTALL_BINS}" /usr/lib/qt6/bin)
+if(QMLLINT_EXECUTABLE)
+    file(GLOB KTEAMS_QML_FILES ${CMAKE_SOURCE_DIR}/qml/*.qml)
+    add_test(NAME qml_syntax COMMAND ${QMLLINT_EXECUTABLE} -I ${CMAKE_SOURCE_DIR}/qml ${KTEAMS_QML_FILES})
+else()
+    message(STATUS "qmllint not found: the qml_syntax test is not registered")
+endif()
 kteams_test(tst_backendlogic)
 kteams_test(tst_models)
 kteams_test(tst_statecache)
@@ -40,7 +52,7 @@ if(KTEAMS_COVERAGE)
                     --xml ${CMAKE_BINARY_DIR}/coverage/coverage.xml
                     ${CMAKE_BINARY_DIR}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS tst_content tst_chatparser tst_trouterframes tst_calljson tst_sdpdialect tst_caches tst_teamsclient tst_oauth tst_fileuploader tst_composer tst_backendlogic tst_models tst_statecache tst_demo
+            DEPENDS tst_content tst_chatparser tst_trouterframes tst_calljson tst_sdpdialect tst_caches tst_teamsclient tst_oauth tst_fileuploader tst_composer tst_translations tst_backendlogic tst_models tst_statecache tst_demo
             COMMENT "Running the tests and writing coverage/index.html")
     endif()
 endif()

@@ -13,7 +13,8 @@ Russian, Korean, Dutch, Polish. After changing strings: `cmake --build native/bu
 update_translations` (lupdate; the QML files are passed explicitly, it does not read the
 .qrc), then fill the new `type="unfinished"` entries in every language (an unfinished entry
 shows English), keeping placeholders (`%1`) and using Microsoft Teams' official terms for
-Teams concepts; `lrelease` runs at build time. A new language: add its `.ts` to `TS_FILES`
+Teams concepts; `lrelease` runs at build time. `tst_translations` fails on an unfinished or empty entry, a lost `%1`, or a string missing in one language,
+so a changed string cannot ship half translated. A new language: add its `.ts` to `TS_FILES`
 in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 
 ## Layout
@@ -47,7 +48,7 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 ## Tests: the regression suite
 
 Qt Test executables in `native/tests/` (`tst_content`, `tst_chatparser`, `tst_models`,
-`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_sdpdialect`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_composer`, `tst_backendlogic`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
+`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_sdpdialect`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_composer`, `tst_translations`, `tst_backendlogic`, `tst_demo`, plus `qml_syntax`; see `native/tests/README.md`), run by ctest; built by default:
 
     cmake -S native -B native/build && cmake --build native/build
     ctest --test-dir native/build --output-on-failure
