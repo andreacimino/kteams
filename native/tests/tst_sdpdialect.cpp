@@ -59,7 +59,7 @@ private slots:
         QVERIFY(out.contains("a=label:main-video"));
         QVERIFY(out.indexOf("a=label:main-video") < out.indexOf("a=mid:video1"));
         QVERIFY(out.contains("a=x-signaling-fb:* x-message app send:src recv:src,vc"));
-        const QStringList withScreen = linesOf(toTeams(webrtcbinOffer() + sdp({"m=video 0 UDP/TLS/RTP/SAVPF 108", "c=IN IP4 0.0.0.0", "a=mid:video2"}), {kHostCandidate}, {}));
+        const QStringList withScreen = linesOf(toTeams(webrtcbinOffer() + sdp({"m=video 0 UDP/TLS/RTP/SAVPF 108", "c=IN IP4 0.0.0.0", "a=bundle-only", "a=mid:video2"}), {kHostCandidate}, {}));
         QVERIFY(withScreen.contains("a=label:applicationsharing-video")); // the second video section is the screen
     }
 
@@ -130,6 +130,45 @@ private slots:
         QVERIFY(toTeams(webrtcbinOffer(), {}, {}).endsWith(QLatin1String("\r\n")));
     }
 
+    void aSectionWebrtcbinRejectedStaysRejected()
+    {
+        // What webrtcbin answered to a Teams renegotiation offer it could not match: the video sections
+        // come back with port 0, no bundle-only, and the offer's attributes (remote address included).
+        const QString answer = sdp({"v=0", "o=- 287374 1 IN IP4 0.0.0.0", "s=-", "t=0 0", "a=group:BUNDLE audio0",
+            "m=audio 9 UDP/TLS/RTP/SAVPF 102", "c=IN IP4 0.0.0.0", "a=setup:active", "a=ice-ufrag:u", "a=ice-pwd:p", "a=rtcp-mux",
+            "a=mid:audio0", "a=rtpmap:102 OPUS/48000/2", "a=ssrc:111 cname:u@h", "a=fingerprint:sha-256 AA",
+            "m=video 0 UDP/TLS/RTP/SAVPF 114 122 107 123", "c=IN IP4 52.112.227.237", "a=setup:passive", "a=mid:video1",
+            "a=rtpmap:114 H265v2/90000", "a=x-ssrc-range:1001-1100", "a=ssrc:1001 cname:teams", "a=sendrecv", "a=fingerprint:sha-256 BB",
+            "m=video 0 UDP/TLS/RTP/SAVPF 114 122 107 116 123", "c=IN IP4 52.112.227.237", "a=setup:passive", "a=mid:video2",
+            "a=rtpmap:116 AV1/90000"});
+        const QStringList out = linesOf(toTeams(answer, {kHostCandidate}, {}));
+        QVERIFY(out.contains("m=audio 37465 RTP/SAVP 102")); // the accepted section gets the real port as before
+        const int first = out.indexOf("m=video 0 RTP/SAVP 114 122 107 123");
+        QVERIFY(first > 0);
+        QCOMPARE(out.mid(first + 1, 3), (QStringList{"c=IN IP4 192.168.1.138", "a=mid:video1", "a=inactive"}));
+        const int second = out.indexOf("m=video 0 RTP/SAVP 114 122 107 116 123");
+        QVERIFY(second > first);
+        QCOMPARE(out.mid(second + 1, 3), (QStringList{"c=IN IP4 192.168.1.138", "a=mid:video2", "a=inactive"}));
+        // Nothing of what the rejected sections copied from the offer is left.
+        const QString text = out.join('\n');
+        QVERIFY(!text.contains("52.112.227.237"));
+        QVERIFY(!text.contains("H265v2"));
+        QVERIFY(!text.contains("a=setup:passive"));
+        QVERIFY(!text.contains("x-ssrc-range:1001"));
+        QVERIFY(!text.contains("a=sendrecv\n") || out.indexOf("a=sendrecv") < first); // none inside the rejected ones
+    }
+
+    void aRejectedSectionKeepsTheLabelCountOfTheVideoSections()
+    {
+        const QString answer = sdp({"v=0", "o=- 1 1 IN IP4 0.0.0.0", "s=-", "t=0 0",
+            "m=audio 9 UDP/TLS/RTP/SAVPF 102", "c=IN IP4 0.0.0.0", "a=mid:audio0",
+            "m=video 0 UDP/TLS/RTP/SAVPF 107", "c=IN IP4 1.2.3.4", "a=mid:video1",
+            "m=video 9 UDP/TLS/RTP/SAVPF 107", "c=IN IP4 0.0.0.0", "a=mid:video2"});
+        const QStringList out = linesOf(toTeams(answer, {kHostCandidate}, {}));
+        QVERIFY(out.contains("a=label:applicationsharing-video")); // the second video section is still the screen
+        QVERIFY(!out.contains("a=label:main-video")); // the first one was rejected: no label
+    }
+
     // --- Teams -> webrtcbin ---------------------------------------------------------------
 
     void theSecureProfileBecomesWhatWebrtcbinReads()
@@ -176,20 +215,20 @@ private slots:
         QVERIFY(out.filter("a=simulcast:").isEmpty());
     }
 
-    void inAnAnswerTheProfileIsTheOneWeOffered_data()
+    void theProfileIsTheOneWeOfferedWhenItIsAligned_data()
     {
-        QTest::addColumn<bool>("answer");
+        QTest::addColumn<bool>("align");
         QTest::addColumn<QString>("expected");
-        QTest::newRow("answer") << true << "a=fmtp:107 packetization-mode=1;profile-level-id=42e01f";
-        QTest::newRow("offer") << false << "a=fmtp:107 packetization-mode=1;profile-level-id=640c1f";
+        QTest::newRow("aligned: Teams' answer, or its offer while we are the offerer") << true << "a=fmtp:107 packetization-mode=1;profile-level-id=42e01f";
+        QTest::newRow("not aligned: we answer, the profile follows the remote one") << false << "a=fmtp:107 packetization-mode=1;profile-level-id=640c1f";
     }
-    void inAnAnswerTheProfileIsTheOneWeOffered()
+    void theProfileIsTheOneWeOfferedWhenItIsAligned()
     {
-        QFETCH(bool, answer);
+        QFETCH(bool, align);
         QFETCH(QString, expected);
         const QString teams = sdp({"v=0", "m=audio 1 RTP/SAVP 102", "a=mid:0", "a=fmtp:102 profile-level-id=111111",
                                    "m=video 1 RTP/SAVP 107", "a=mid:1", "a=fmtp:107 packetization-mode=1;profile-level-id=640c1f"});
-        const QStringList out = linesOf(fromTeams(teams, answer, 107, "42e01f").sdp);
+        const QStringList out = linesOf(fromTeams(teams, align, 107, "42e01f").sdp);
         QVERIFY(out.contains(expected));
         QVERIFY(out.contains("a=fmtp:102 profile-level-id=111111")); // only the video payload is touched
     }

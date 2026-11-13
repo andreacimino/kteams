@@ -19,6 +19,7 @@ separate developer tool that exercises the media pipeline without calling anyone
 | `tst_translations.cpp` | `translations/*.ts`: nothing unfinished or empty, the same `%1`/`%n` placeholders as the source, the same strings in every language, each file declaring its own language |
 | `qml_syntax` (ctest) | every `qml/*.qml` parses (`qmllint`; its warnings about the `backend` context object are tolerated, syntax errors fail) |
 | `tst_presence.cpp` | `src/presenceinfo.cpp`: theme icon, dot colour and words for every presence, and the tray icon drawn and checked pixel by pixel (dot position at six sizes, the Do Not Disturb bar, the white ring) |
+| `tst_callengine.cpp` | opt-in (`KTEAMS_TEST_ENGINE=1`, opens the microphone): the real webrtcbin answering the renegotiation of a call that ended with SdpParsingFailure, from the SDPs in `tests/data/` |
 | `tst_models.cpp` | `src/models.cpp`: the list models (conversations, messages, channels, activity, calendar) |
 | `tst_statecache.cpp` | `src/statecache.cpp`: the local cache's JSON format, old and new |
 | `tst_demo.cpp` | `src/demo.h`: demo mode hides real names, titles and texts |

@@ -629,9 +629,9 @@ void CallEngine::sendPending()
     }
 }
 
-QString CallEngine::fromTeamsDialect(const QString &sdp, bool answer)
+QString CallEngine::fromTeamsDialect(const QString &sdp, bool alignProfile)
 {
-    SdpDialect::FromTeams result = SdpDialect::fromTeams(sdp, answer, m_videoPt, m_videoProfile);
+    SdpDialect::FromTeams result = SdpDialect::fromTeams(sdp, alignProfile, m_videoPt, m_videoProfile);
     m_rejectedSections = result.rejected;
     if (!m_rejectedSections.isEmpty()) qCInfo(lcCallEngine) << "offer sections set aside:" << m_rejectedSections.size();
     return result.sdp;
@@ -669,7 +669,10 @@ void CallEngine::setRemoteAnswer(const QString &sdp)
 void CallEngine::setRemoteOffer(const QString &sdp)
 {
     if (!m_webrtc) return;
-    const QString text = fromTeamsDialect(sdp);
+    // A renegotiation offer while we are the offerer lists Teams' own H.264 profile: ours is
+    // put in its place, or webrtcbin rejects the video sections (SdpParsingFailure ends the call).
+    // As the answerer the profile follows what the remote offered, so it is left alone.
+    const QString text = fromTeamsDialect(sdp, !m_answerer);
     {
         static const QRegularExpression secret(QStringLiteral("(ice-pwd:|ice-ufrag:|fingerprint:sha-256 )\\S+"));
         QString masked = text;

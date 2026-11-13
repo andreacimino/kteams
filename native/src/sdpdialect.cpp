@@ -51,16 +51,43 @@ QString toTeams(const QString &input, const QStringList &candidates, const Rejec
     // Every media section (an incoming offer may carry video, screen sharing and data too)
     // gets the real address; the audio one also its label.
     QStringList lines = input.split(QLatin1String("\r\n"), Qt::SkipEmptyParts);
+    // A section webrtcbin rejected in an answer comes with port 0 and no a=bundle-only (the
+    // bundled ones have it) and a copy of the offer's attributes, remote address included.
+    // It must stay rejected: made "active" like a bundled one it claims media nobody
+    // negotiated, and Teams ends the call with SdpParsingFailure.
+    struct Section { bool rejected = false; QString mid; };
+    QList<Section> sections;
+    for (const QString &l : std::as_const(lines)) {
+        if (l.startsWith(QLatin1String("m="))) {
+            const QStringList f = l.split(QLatin1Char(' '));
+            sections.append({f.value(1) == QLatin1String("0"), QString()});
+        } else if (!sections.isEmpty()) {
+            if (l == QLatin1String("a=bundle-only")) sections.last().rejected = false;
+            else if (l.startsWith(QLatin1String("a=mid:"))) sections.last().mid = l.mid(6);
+        }
+    }
     QStringList out;
     QString kind;
     int videoSections = 0;
+    int sectionIndex = -1;
+    bool skipping = false;
     // Port 9 (Chrome) or 0 with a=bundle-only (webrtcbin's bundled sections): Teams reads
     // both as disabled media, so every section gets the real port.
     static const QRegularExpression mline(QStringLiteral("^m=(\\w+) [09] "));
     for (QString l : lines) {
+        if (skipping && !l.startsWith(QLatin1String("m="))) continue; // the body of a rejected section
         if (l.startsWith(QLatin1String("m="))) {
             kind = l.section(QLatin1Char(' '), 0, 0).mid(2);
             if (kind == QLatin1String("video")) ++videoSections;
+            skipping = sections.value(++sectionIndex).rejected;
+            if (skipping) {
+                QStringList f = l.split(QLatin1Char(' '));
+                if (f.size() > 2) f[2].replace(QLatin1String("UDP/TLS/RTP/SAVPF"), QLatin1String("RTP/SAVP"));
+                out << f.join(QLatin1Char(' ')) << QStringLiteral("c=IN IP4 %1").arg(ip.isEmpty() ? QStringLiteral("0.0.0.0") : ip);
+                if (!sections[sectionIndex].mid.isEmpty()) out << QStringLiteral("a=mid:%1").arg(sections[sectionIndex].mid);
+                out << QStringLiteral("a=inactive");
+                continue;
+            }
             if (!ip.isEmpty()) l.replace(mline, QStringLiteral("m=\\1 %1 ").arg(port));
             l.replace(QLatin1String("UDP/TLS/RTP/SAVPF"), QLatin1String("RTP/SAVP"));
         } else if (l == QLatin1String("a=bundle-only")) {
@@ -132,7 +159,7 @@ QString toTeams(const QString &input, const QStringList &candidates, const Rejec
     return lines.join(QLatin1String("\r\n")) + QLatin1String("\r\n");
 }
 
-FromTeams fromTeams(const QString &sdp, bool answer, int videoPt, const QString &videoProfile)
+FromTeams fromTeams(const QString &sdp, bool alignProfile, int videoPt, const QString &videoProfile)
 {
     FromTeams result;
     // Back from Microsoft's dialect to what webrtcbin understands:
@@ -142,7 +169,9 @@ FromTeams fromTeams(const QString &sdp, bool answer, int videoPt, const QString 
     //   extension, which libnice does not parse; the UDP relay candidates are what matter;
     // - video: RTX payload types (we offer none; a PT without rtpmap confuses the mapping),
     //   rid/simulcast lines, and in an answer the H.264 profile-level-id becomes the one we
-    //   advertised (level asymmetry is allowed; webrtcbin compares the strings).
+    //   advertised (level asymmetry is allowed; webrtcbin compares the strings). That holds
+    //   for an offer too when we are the offerer: a renegotiation offer from Teams lists the
+    //   profile of its own encoder, which would make webrtcbin reject the section.
     QStringList lines = sdp.split(QLatin1String("\r\n"), Qt::SkipEmptyParts);
     static const QRegularExpression rtxMap(QStringLiteral("^a=rtpmap:(\\d+) rtx/"), QRegularExpression::CaseInsensitiveOption);
     QStringList rtxPts;
@@ -186,7 +215,7 @@ FromTeams fromTeams(const QString &sdp, bool answer, int videoPt, const QString 
             continue;
         } else if (const auto m = ptLine.match(l); m.hasMatch()) {
             if (rtxPts.contains(m.captured(2))) continue;
-            if (answer && inVideo && m.captured(1) == QLatin1String("fmtp") && m.captured(2).toInt() == videoPt)
+            if (alignProfile && inVideo && m.captured(1) == QLatin1String("fmtp") && m.captured(2).toInt() == videoPt)
                 l.replace(profile, QStringLiteral("profile-level-id=") + videoProfile);
         }
         out << l;

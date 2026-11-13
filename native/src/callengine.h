@@ -93,7 +93,7 @@ private:
     void sendPending();
     static void onAnswerCreated(GstPromise *promise, gpointer self);
     QString toTeamsDialect(const QString &sdp) const;
-    QString fromTeamsDialect(const QString &sdp, bool answer = false);
+    QString fromTeamsDialect(const QString &sdp, bool alignProfile = false);
     // A decoded frame (I420) for one of the sinks, from a GStreamer thread.
     void deliverFrame(GstSample *sample, Frame which);
     // The H.264 RTP caps as the SDP must show them: agreed profile, no parameter sets.
