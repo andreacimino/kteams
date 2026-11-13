@@ -1,4 +1,5 @@
 #include "trouter.h"
+#include "trouterframes.h"
 
 #include <QJsonDocument>
 #include <QNetworkReply>
@@ -21,26 +22,6 @@ constexpr auto kDefaultSocketIo = "https://go.trouter.teams.microsoft.com/";
 constexpr auto kRegistrar = "https://teams.microsoft.com/registrar/prod/V2/registrations";
 constexpr int kTtlSecs = 86400;
 constexpr int kPingSecs = 30;
-
-// gzip (not zlib) stream -> bytes. Trouter bodies may be gzip + base64.
-QByteArray gunzip(const QByteArray &data)
-{
-    z_stream s{};
-    if (inflateInit2(&s, 16 + MAX_WBITS) != Z_OK) return {};
-    s.next_in = reinterpret_cast<Bytef *>(const_cast<char *>(data.constData()));
-    s.avail_in = uInt(data.size());
-    QByteArray out;
-    char buffer[16384];
-    int rc = Z_OK;
-    while (rc == Z_OK) {
-        s.next_out = reinterpret_cast<Bytef *>(buffer);
-        s.avail_out = sizeof(buffer);
-        rc = inflate(&s, Z_NO_FLUSH);
-        out.append(buffer, int(sizeof(buffer) - s.avail_out));
-    }
-    inflateEnd(&s);
-    return rc == Z_STREAM_END ? out : QByteArray();
-}
 
 // Correlation vector, as purple-teams' teams_generate_correlation_vector().
 QString correlationVector()
@@ -271,72 +252,56 @@ void Trouter::onText(const QString &frame)
 {
     // Frames (socket.io v1): "1::" connected, "3:::{...}" request from the server,
     // "5:..." event, "6:..." ack.
-    if (frame.startsWith(QLatin1Char('1'))) {
+    const TrouterFrames::Frame parsed = TrouterFrames::parseFrame(frame);
+    if (parsed.kind == TrouterFrames::Frame::Kind::Connected) {
         qCInfo(lcTrouter) << "socket connected";
         m_ping.start();
         authenticate();
         return;
     }
-    const auto payloadAfterThirdColon = [&frame]() -> QString {
-        int colons = 0;
-        for (int i = 0; i < frame.size(); ++i)
-            if (frame.at(i) == QLatin1Char(':') && ++colons == 3) return frame.mid(i + 1);
-        return {};
-    };
-    if (!frame.startsWith(QLatin1Char('3'))) qCDebug(lcTrouter).noquote() << "frame" << frame.left(160);
-    if (frame.startsWith(QLatin1Char('3'))) {
-        const QJsonObject request = QJsonDocument::fromJson(payloadAfterThirdColon().toUtf8()).object();
+    if (parsed.kind != TrouterFrames::Frame::Kind::Request) qCDebug(lcTrouter).noquote() << "frame" << frame.left(160);
+    if (parsed.kind == TrouterFrames::Frame::Kind::Request) {
         // Acknowledge first, as purple-teams does.
-        const QJsonObject response{{QStringLiteral("id"), request.value(QLatin1String("id"))},
-                                   {QStringLiteral("status"), 200}, {QStringLiteral("body"), QString()}};
-        sendFrame(QStringLiteral("3:::") + QString::fromUtf8(QJsonDocument(response).toJson(QJsonDocument::Compact)));
-        handleRequest(request);
-    } else if (frame.startsWith(QLatin1Char('5'))) {
-        const QJsonObject event = QJsonDocument::fromJson(payloadAfterThirdColon().toUtf8()).object();
-        if (event.value(QLatin1String("name")).toString() == QLatin1String("trouter.message_loss")) {
-            // purple-teams registers again on every report, but each registration makes the server
-            // repeat the same report: only a new loss (different etags) is worth it.
-            const QByteArray indicators = QJsonDocument(event.value(QLatin1String("args")).toArray()).toJson(QJsonDocument::Compact);
-            if (indicators != m_lastLoss) {
-                m_lastLoss = indicators;
-                qCDebug(lcTrouter) << "message loss, registering again";
-                registerEndpoint();
-            }
+        sendFrame(TrouterFrames::ackFrame(parsed.payload));
+        handleRequest(parsed.payload);
+    } else if (parsed.kind == TrouterFrames::Frame::Kind::Event) {
+        // purple-teams registers again on every report, but each registration makes the server
+        // repeat the same report: only a new loss (different etags) is worth it.
+        const QByteArray indicators = TrouterFrames::lossIndicators(parsed.payload);
+        if (!indicators.isNull() && indicators != m_lastLoss) {
+            m_lastLoss = indicators;
+            qCDebug(lcTrouter) << "message loss, registering again";
+            registerEndpoint();
         }
     }
 }
 
 void Trouter::handleRequest(const QJsonObject &request)
 {
-    QByteArray body = request.value(QLatin1String("body")).toString().toUtf8();
-    const QJsonObject headers = request.value(QLatin1String("headers")).toObject();
-    // gzip+base64 bodies: announced by a header, or recognisable by the gzip magic ("H4sI").
-    if (headers.value(QLatin1String("X-Microsoft-Skype-Content-Encoding")).toString() == QLatin1String("gzip")
-        || body.startsWith("H4sI"))
-        body = gunzip(QByteArray::fromBase64(body));
-    QJsonObject content = QJsonDocument::fromJson(body).object();
-    const int evt = content.value(QLatin1String("evt")).toInt();
-    // purple-teams: compressed ("cp", gzip+base64) or plain ("gp", base64) payloads
-    if (content.contains(QLatin1String("cp")))
-        content = QJsonDocument::fromJson(gunzip(QByteArray::fromBase64(content.value(QLatin1String("cp")).toString().toUtf8()))).object();
-    else if (content.contains(QLatin1String("gp")))
-        content = QJsonDocument::fromJson(QByteArray::fromBase64(content.value(QLatin1String("gp")).toString().toUtf8())).object();
-
+    const TrouterFrames::Decoded decoded = TrouterFrames::decodeRequest(request);
+    const QJsonObject &content = decoded.content;
     const QString url = request.value(QLatin1String("url")).toString();
     qCDebug(lcTrouter).noquote() << "push" << url.section(QLatin1Char('/'), -1)
                                  << content.value(QLatin1String("resourceType")).toString();
-    if (url.contains(QLatin1String("/callAgent/"))) {
-        if (content.isEmpty()) qCInfo(lcTrouter).noquote() << "callAgent raw body (" << body.size() << "bytes):" << QString::fromUtf8(body.left(300));
+    switch (TrouterFrames::routeOf(url)) {
+    case TrouterFrames::Route::CallAgent:
+        if (content.isEmpty()) qCInfo(lcTrouter).noquote() << "callAgent raw body (" << decoded.body.size() << "bytes):" << QString::fromUtf8(decoded.body.left(300));
         emit callAgentRequest(url, content);
-    } else if (url.endsWith(QLatin1String("/messaging"))) {
+        break;
+    case TrouterFrames::Route::Messaging:
         if (content.value(QLatin1String("type")).toString() == QLatin1String("EventMessage")) emit eventMessage(content);
-    } else if (url.endsWith(QLatin1String("/NGCallManagerWin"))) {
+        break;
+    case TrouterFrames::Route::CallManager:
         // purple-teams (teams_trouter.c): evt 107 = incoming call; "cp" holds callNotification.
-        if (evt == 107) {
-            const QJsonObject from = content.value(QLatin1String("callNotification")).toObject().value(QLatin1String("from")).toObject();
-            emit incomingCall(from.value(QLatin1String("id")).toString(), from.value(QLatin1String("displayName")).toString(), content);
+        if (decoded.evt == 107) {
+            const TrouterFrames::Caller caller = TrouterFrames::callerOf(content);
+            emit incomingCall(caller.mri, caller.name, content);
         }
-    } else if (url.endsWith(QLatin1String("/TeamsUnifiedPresenceService")) || url.endsWith(QLatin1String("/unifiedPresenceService"))) {
+        break;
+    case TrouterFrames::Route::Presence:
         emit presence(content.value(QLatin1String("presence")).toArray());
+        break;
+    case TrouterFrames::Route::Other:
+        break;
     }
 }

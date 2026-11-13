@@ -1,4 +1,5 @@
 #include "nativecall.h"
+#include "calljson.h"
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -10,6 +11,8 @@
 #include <QUuid>
 
 Q_LOGGING_CATEGORY(lcNativeCall, "kteams.nativecall", QtInfoMsg)
+
+using namespace CallJson;
 
 namespace {
 constexpr auto kConversationService = "https://api.flightproxy.teams.microsoft.com/api/v2/epconv";
@@ -26,35 +29,6 @@ const QStringList kRelays{QStringLiteral("turn://%1:%2@gateway-eu.az.relay.teams
                           QStringLiteral("turns://%1:%2@gateway-eu.az.relay.teams.cloud.microsoft:443?transport=tcp")};
 
 QString hex8() { return QString::number(QRandomGenerator::global()->generate(), 16).rightJustified(8, QLatin1Char('0')); }
-
-// The SDP inside a callback, wherever it is ("blob" of a mediaContent, usually).
-QString findSdp(const QJsonValue &v)
-{
-    if (v.isString()) return v.toString().startsWith(QLatin1String("v=0")) ? v.toString() : QString();
-    if (v.isObject()) {
-        const QJsonObject o = v.toObject();
-        for (auto it = o.begin(); it != o.end(); ++it)
-            if (const QString s = findSdp(it.value()); !s.isEmpty()) return s;
-    }
-    if (v.isArray())
-        for (const auto &x : v.toArray())
-            if (const QString s = findSdp(x); !s.isEmpty()) return s;
-    return {};
-}
-
-// Field names only, for the log: the protocol is still being learned.
-QString shape(const QJsonValue &v, int depth = 0)
-{
-    if (depth > 2) return QStringLiteral("…");
-    if (v.isObject()) {
-        QStringList p;
-        const QJsonObject o = v.toObject();
-        for (auto it = o.begin(); it != o.end(); ++it) p << it.key() + QLatin1Char(':') + shape(it.value(), depth + 1);
-        return QLatin1Char('{') + p.join(QLatin1Char(',')) + QLatin1Char('}');
-    }
-    if (v.isArray()) return QStringLiteral("[%1]").arg(v.toArray().size());
-    return v.isString() ? QStringLiteral("s") : QStringLiteral("v");
-}
 }
 
 NativeCall::NativeCall(QObject *parent) : QObject(parent)
@@ -181,27 +155,15 @@ void NativeCall::postJson(const QString &context, const QByteArray &verb, const 
 
 void NativeCall::rememberMediaLinks(const QJsonValue &v)
 {
-    if (v.isArray()) { for (const auto &x : v.toArray()) rememberMediaLinks(x); return; }
-    if (!v.isObject()) return;
-    const QJsonObject o = v.toObject();
-    for (auto it = o.begin(); it != o.end(); ++it) {
-        if (it.value().isString()) {
-            const QString url = it.value().toString();
-            // Our own callback links (clientContentForMediaController) point at our Trouter.
-            if ((it.key() == QLatin1String("applyChannelParameters") || it.key() == QLatin1String("controlVideoStreaming") || it.key() == QLatin1String("mediaRenegotiation"))
-                && url.startsWith(QLatin1String("https://")) && !url.startsWith(m_id.trouterUrl)) {
-                if (m_mediaLinks.value(it.key()).toString() != url) {
-                    qCInfo(lcNativeCall) << "media controller link" << it.key() << url.section(QLatin1Char('/'), 0, 4);
-                    m_mediaLinks.insert(it.key(), url);
-                    if (it.key() == QLatin1String("applyChannelParameters")) {
-                        const QSet<int> pending = m_pendingSources;
-                        m_pendingSources.clear();
-                        for (int id : pending) requestRemoteVideo(id, m_screenSources.contains(id));
-                    }
-                }
-            }
-        } else {
-            rememberMediaLinks(it.value());
+    // Our own callback links (clientContentForMediaController) point at our Trouter: skipped.
+    for (const auto &[key, url] : CallJson::mediaControllerLinks(v, m_id.trouterUrl)) {
+        if (m_mediaLinks.value(key).toString() == url) continue;
+        qCInfo(lcNativeCall) << "media controller link" << key << url.section(QLatin1Char('/'), 0, 4);
+        m_mediaLinks.insert(key, url);
+        if (key == QLatin1String("applyChannelParameters")) {
+            const QSet<int> pending = m_pendingSources;
+            m_pendingSources.clear();
+            for (int id : pending) requestRemoteVideo(id, m_screenSources.contains(id));
         }
     }
 }
@@ -243,33 +205,15 @@ void NativeCall::parseRosterStreams(const QJsonObject &body)
 {
     // participants[mri].endpoints[...].mediaStreams[{type, label, sourceId, direction}] (as
     // Teams web's participant manager reads them); logged whole while the shape is learned.
-    const QJsonObject participants = body.value(QLatin1String("participants")).toObject();
-    std::function<void(const QString &, const QJsonValue &)> scan = [&](const QString &who, const QJsonValue &v) {
-        if (v.isArray()) { for (const auto &x : v.toArray()) scan(who, x); return; }
-        if (!v.isObject()) return;
-        const QJsonObject o = v.toObject();
-        for (auto it = o.begin(); it != o.end(); ++it) {
-            if (it.key() == QLatin1String("mediaStreams") && it.value().isArray()) {
-                for (const auto &s : it.value().toArray()) {
-                    const QJsonObject stream = s.toObject();
-                    const QString type = stream.value(QLatin1String("type")).toString().toLower();
-                    const QString label = stream.value(QLatin1String("label")).toString();
-                    const QString direction = stream.value(QLatin1String("direction")).toString().toLower();
-                    const int sourceId = stream.value(QLatin1String("sourceId")).toInt(stream.value(QLatin1String("sourceId")).toString().toInt());
-                    qCInfo(lcNativeCall) << "  stream of" << who.section(QLatin1Char(':'), -1).left(8) << type << label << direction << "source" << sourceId;
-                    // One source per section: the first camera seen (meetings list many) and the screen.
-                    if (type == QLatin1String("video") && direction.contains(QLatin1String("send")) && sourceId > 0) {
-                        const bool screen = label == QLatin1String("applicationsharing-video");
-                        if (screen || m_requestedSources.isEmpty() || m_requestedSources == m_screenSources) requestRemoteVideo(sourceId, screen);
-                    }
-                }
-            } else {
-                scan(who, it.value());
-            }
+    for (const CallJson::RosterStream &stream : CallJson::rosterStreams(body, m_id.selfMri)) {
+        qCInfo(lcNativeCall) << "  stream of" << stream.who.section(QLatin1Char(':'), -1).left(8) << stream.type << stream.label
+                             << stream.direction << "source" << stream.sourceId;
+        // One source per section: the first camera seen (meetings list many) and the screen.
+        if (stream.type == QLatin1String("video") && stream.direction.contains(QLatin1String("send")) && stream.sourceId > 0) {
+            const bool screen = stream.label == QLatin1String("applicationsharing-video");
+            if (screen || m_requestedSources.isEmpty() || m_requestedSources == m_screenSources) requestRemoteVideo(stream.sourceId, screen);
         }
-    };
-    for (auto it = participants.begin(); it != participants.end(); ++it)
-        if (it.key() != m_id.selfMri) scan(it.key(), it.value());
+    }
 }
 
 void NativeCall::addTestBot()

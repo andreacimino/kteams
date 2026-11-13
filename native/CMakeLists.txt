@@ -34,6 +34,8 @@ add_library(kteams_core STATIC
     src/mediacache.h
     src/trouter.cpp
     src/trouter.h
+    src/trouterframes.cpp
+    src/trouterframes.h
     src/fileuploader.cpp
     src/fileuploader.h
     src/desktopintegration.cpp
@@ -43,6 +45,8 @@ add_library(kteams_core STATIC
     src/demo.h
     src/callengine.cpp
     src/callengine.h
+    src/calljson.cpp
+    src/calljson.h
     src/nativecall.cpp
     src/nativecall.h
     src/oauth.cpp
