@@ -144,6 +144,41 @@ private slots:
         QCOMPARE(callEndText(body), text);
     }
 
+    // --- starting a call ----------------------------------------------------------------------
+
+    void aCallToOnePersonHasNoGroupChat()
+    {
+        // The callee then gets an ordinary one-to-one call (evt 107), not a group-chat one (evt 109).
+        QVERIFY(groupChatFor(false, false, {"8:orgid:bob"}, "19:one@unq.gbl.spaces").isNull());
+        QVERIFY(groupChatFor(false, false, {}, "19:one@unq.gbl.spaces").isNull());
+    }
+
+    void theTestCallHasNoGroupChat()
+    {
+        QVERIFY(groupChatFor(true, false, {}, "").isNull());
+        QVERIFY(groupChatFor(true, false, {}, "19:x").isNull());
+    }
+
+    void aGroupCallNamesItsChat()
+    {
+        const QJsonValue chat = groupChatFor(false, false, {"8:orgid:a", "8:orgid:b"}, "19:group@thread.v2");
+        QVERIFY(chat.isObject());
+        QCOMPARE(chat.toObject().value("threadId").toString(), QStringLiteral("19:group@thread.v2"));
+        QVERIFY(chat.toObject().value("messageId").isNull());
+    }
+
+    void aMeetingNamesItsThreadEvenWithoutCallees()
+    {
+        const QJsonValue chat = groupChatFor(false, true, {}, "19:meeting_abc@thread.v2");
+        QCOMPARE(chat.toObject().value("threadId").toString(), QStringLiteral("19:meeting_abc@thread.v2"));
+    }
+
+    void withoutAThreadThereIsNoGroupChat()
+    {
+        QVERIFY(groupChatFor(false, false, {"8:orgid:a", "8:orgid:b"}, QString()).isNull());
+        QVERIFY(groupChatFor(false, true, {}, QString()).isNull());
+    }
+
     // --- incoming calls -------------------------------------------------------------------
 
     void incomingNotificationFields()

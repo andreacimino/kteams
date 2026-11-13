@@ -87,6 +87,13 @@ QList<RosterStream> rosterStreams(const QJsonObject &body, const QString &selfMr
     return streams;
 }
 
+QJsonValue groupChatFor(bool testCall, bool meeting, const QStringList &callees, const QString &threadId)
+{
+    if (testCall || threadId.isEmpty()) return QJsonValue::Null;
+    if (!meeting && callees.size() <= 1) return QJsonValue::Null;
+    return QJsonObject{{QStringLiteral("threadId"), threadId}, {QStringLiteral("messageId"), QJsonValue::Null}};
+}
+
 QString callEndText(const QJsonObject &body)
 {
     const QJsonObject end = body.value(QLatin1String("callEnd")).toObject();

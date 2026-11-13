@@ -514,7 +514,8 @@ void NativeCall::onOffer(const QString &sdp)
         callLinks.insert(QString::fromLatin1(n), link(QStringLiteral("call"), QString::fromLatin1(n)));
 
     // Body as Teams web sends it (captured test call); a call to a person names the callee in
-    // "to", the one-to-one chat in groupChat and has no scenario (Teams sets it only for the bot).
+    // "to" and has no scenario (Teams sets it only for the bot). groupChat stays null for a call to
+    // one person, so the callee receives an ordinary one-to-one call; see groupChatFor().
     const bool test = m_calleeMri.isEmpty();
     QJsonArray to;
     for (const QString &mri : std::as_const(m_callees)) to.append(QJsonObject{{QStringLiteral("id"), mri}});
@@ -537,8 +538,7 @@ void NativeCall::onOffer(const QString &sdp)
         {QStringLiteral("clientEndpointCapabilities"), 248477418},
         {QStringLiteral("endpointMetadata"), QJsonObject{{QStringLiteral("holographicCapabilities"), 3}}},
         {QStringLiteral("groupContext"), QJsonValue::Null},
-        {QStringLiteral("groupChat"), test ? QJsonValue(QJsonValue::Null)
-                                           : QJsonValue(QJsonObject{{QStringLiteral("threadId"), m_threadId}, {QStringLiteral("messageId"), QJsonValue::Null}})},
+        {QStringLiteral("groupChat"), groupChatFor(test, m_meeting, m_callees, m_threadId)},
         {QStringLiteral("meetingInfo"), m_meeting ? QJsonValue(QJsonObject{{QStringLiteral("tenantId"), m_tenantId}, {QStringLiteral("organizerId"), m_organizerId}})
                                                   : QJsonValue(QJsonValue::Null)},
         {QStringLiteral("meetingData"), QJsonValue::Null},

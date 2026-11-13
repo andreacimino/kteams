@@ -5,6 +5,7 @@
 #include <QList>
 #include <QPair>
 #include <QString>
+#include <QStringList>
 
 // Reading the JSON of Teams' calling service: where the SDP is, which callback links the
 // media controller gave us, which streams the roster lists. Pure functions (see tests/tst_calljson.cpp).
@@ -34,6 +35,11 @@ QList<RosterStream> rosterStreams(const QJsonObject &body, const QString &selfMr
 // What to show when a call ends, from the body of call/end or conversation/conversationEnd:
 // declined, busy, no answer, failed (with the server's phrase), or just "Call ended".
 QString callEndText(const QJsonObject &body);
+
+// The "groupChat" of the request that starts a call: null for the test call and for a call to one
+// person (as Teams sends it, so the callee gets an ordinary one-to-one call), the chat's thread
+// for a group call and for a meeting.
+QJsonValue groupChatFor(bool testCall, bool meeting, const QStringList &callees, const QString &threadId);
 
 struct IncomingCall {
     QString callerMri;
