@@ -179,6 +179,23 @@ private slots:
         QVERIFY(groupChatFor(false, true, {}, QString()).isNull());
     }
 
+    // --- where the media controller links are (for the log) ------------------------------------
+
+    void describeKeyFindsTheKeyAnywhereAndNeverTheWholeValue()
+    {
+        const QJsonObject response{{"callInvitation", QJsonObject{{"mediaContent", QJsonObject{
+            {"applyChannelParameters", "https://api.flightproxy.teams.microsoft.com/api/v2/cc/v1/mcProxy/abc/secret-token-part"},
+            {"blob", "v=0"}}}}},
+            {"list", QJsonArray{QJsonObject{{"applyChannelParameters", QJsonObject{{"url", "https://x"}, {"method", "POST"}}}}}}};
+        const QStringList found = describeKey(response, "applyChannelParameters");
+        QCOMPARE(found.size(), 2);
+        QVERIFY(found.contains("string https://api.flightproxy.teams.microsoft.com/api/v2/…")); // the first path segments only
+        QVERIFY(found.filter("secret-token-part").isEmpty());
+        QVERIFY(found.contains("shape {method:s,url:s}"));
+        QVERIFY(describeKey(response, "controlVideoStreaming").isEmpty());
+        QVERIFY(describeKey(QJsonValue(), "x").isEmpty());
+    }
+
     // --- incoming calls -------------------------------------------------------------------
 
     void incomingNotificationFields()

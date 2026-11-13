@@ -34,6 +34,26 @@ QString shape(const QJsonValue &v, int depth)
     return v.isString() ? QStringLiteral("s") : QStringLiteral("v");
 }
 
+QStringList describeKey(const QJsonValue &v, const QString &key)
+{
+    QStringList found;
+    if (v.isArray()) {
+        for (const auto &x : v.toArray()) found += describeKey(x, key);
+    } else if (v.isObject()) {
+        const QJsonObject o = v.toObject();
+        for (auto it = o.begin(); it != o.end(); ++it) {
+            if (it.key() == key) {
+                const QJsonValue value = it.value();
+                found << (value.isString() ? QStringLiteral("string ") + value.toString().section(QLatin1Char('/'), 0, 4) + QLatin1Char('/') + QStringLiteral("…")
+                                            : QStringLiteral("shape ") + shape(value, 1));
+            } else {
+                found += describeKey(it.value(), key);
+            }
+        }
+    }
+    return found;
+}
+
 QList<QPair<QString, QString>> mediaControllerLinks(const QJsonValue &v, const QString &ownTrouterUrl)
 {
     QList<QPair<QString, QString>> found;

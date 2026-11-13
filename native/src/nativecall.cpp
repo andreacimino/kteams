@@ -166,6 +166,10 @@ void NativeCall::postJson(const QString &context, const QByteArray &verb, const 
 
 void NativeCall::rememberMediaLinks(const QJsonValue &v)
 {
+    // What is there, whether or not it is picked up below (the incoming call's links are not yet known).
+    for (const char *name : {"applyChannelParameters", "controlVideoStreaming", "mediaRenegotiation"})
+        for (const QString &what : describeKey(v, QString::fromLatin1(name)))
+            qCInfo(lcNativeCall).noquote() << "media link candidate" << name << "->" << what << "ours:" << (what.contains(m_id.trouterUrl.section(QLatin1Char('/'), 2, 2)));
     // Our own callback links (clientContentForMediaController) point at our Trouter: skipped.
     for (const auto &[key, url] : CallJson::mediaControllerLinks(v, m_id.trouterUrl)) {
         if (m_mediaLinks.value(key).toString() == url) continue;

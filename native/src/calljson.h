@@ -22,6 +22,11 @@ QString shape(const QJsonValue &v, int depth = 0);
 // start with `ownTrouterUrl` are ours (clientContentForMediaController) and are skipped.
 QList<QPair<QString, QString>> mediaControllerLinks(const QJsonValue &v, const QString &ownTrouterUrl);
 
+// Where a media controller link is and what it looks like, for the log while the incoming-call
+// signaling is being learned: every value under `key`, anywhere in `v`, as a short description
+// (a string by its first path segments, the rest by its shape; never the whole value).
+QStringList describeKey(const QJsonValue &v, const QString &key);
+
 struct RosterStream {
     QString who;       // participant MRI
     QString type;      // "video", "audio" (lower case)
