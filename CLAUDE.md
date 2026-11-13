@@ -38,7 +38,8 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
     calendar events and the activity feed (a `SelfContext` carries who we are and the known people); `src/models.*`: the list models;
     `src/statecache.*`: the local cache's JSON format; `src/trouterframes.*`: Trouter's frames,
     gzip bodies and routing; `src/calljson.*`: SDP, media links, roster streams, call end text, the incoming call notification and the attach answer;
-    `src/sdpdialect.*`: the SDP translation to and from Microsoft's dialect.
+    `src/sdpdialect.*`: the SDP translation to and from Microsoft's dialect;
+    `src/presenceinfo.*`: presence icon, colour, words and the tray icon with the dot.
     Everything but `main.cpp` is the static library `kteams_core`, linked by the app and the tests.
   - `qml/`: Kirigami UI (chat list with tabs Chat/Team/Calendario, chat, channel threads).
   - `call/`: `kteams-capture`, Teams web in a QtWebEngine window, a developer tool only
@@ -48,7 +49,7 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 ## Tests: the regression suite
 
 Qt Test executables in `native/tests/` (`tst_content`, `tst_chatparser`, `tst_models`,
-`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_sdpdialect`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_composer`, `tst_translations`, `tst_backendlogic`, `tst_demo`, plus `qml_syntax`; see `native/tests/README.md`), run by ctest; built by default:
+`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_sdpdialect`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_composer`, `tst_translations`, `tst_presence`, `tst_backendlogic`, `tst_demo`, plus `qml_syntax`; see `native/tests/README.md`), run by ctest; built by default:
 
     cmake -S native -B native/build && cmake --build native/build
     ctest --test-dir native/build --output-on-failure

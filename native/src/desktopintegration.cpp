@@ -1,4 +1,5 @@
 #include "desktopintegration.h"
+#include "presenceinfo.h"
 
 #include <QCoreApplication>
 #include <QDBusConnection>
@@ -52,7 +53,7 @@ DesktopIntegration::DesktopIntegration(QObject *parent) : QObject(parent)
                                                  {QStringLiteral("DoNotDisturb"), tr("Do not disturb")}, {QStringLiteral("BeRightBack"), tr("Be right back")},
                                                  {QStringLiteral("Away"), tr("Away")}, {QStringLiteral("Offline"), tr("Appear offline")}};
     for (const auto &[value, label] : choices) {
-        QAction *a = status->addAction(QIcon::fromTheme(presenceIcon(value)), label);
+        QAction *a = status->addAction(QIcon::fromTheme(PresenceInfo::presenceIcon(value)), label);
         a->setCheckable(true);
         a->setData(value);
         group->addAction(a);
@@ -63,61 +64,11 @@ DesktopIntegration::DesktopIntegration(QObject *parent) : QObject(parent)
     m_tray->contextMenu()->insertSeparator(m_tray->contextMenu()->actions().value(1));
 }
 
-QString DesktopIntegration::presenceIcon(const QString &availability)
-{
-    if (availability == QLatin1String("Available")) return QStringLiteral("user-online");
-    if (availability == QLatin1String("Away") || availability == QLatin1String("BeRightBack")) return QStringLiteral("user-away");
-    if (availability == QLatin1String("Offline") || availability.isEmpty()) return QStringLiteral("user-offline");
-    return QStringLiteral("user-busy"); // Busy, DoNotDisturb, InACall, InAMeeting, Presenting
-}
-
-QString DesktopIntegration::presenceText(const QString &availability)
-{
-    static const QHash<QString, QString> names{{QStringLiteral("Available"), tr("Available")}, {QStringLiteral("Busy"), tr("Busy")},
-                                               {QStringLiteral("DoNotDisturb"), tr("Do not disturb")}, {QStringLiteral("BeRightBack"), tr("Be right back")},
-                                               {QStringLiteral("Away"), tr("Away")}, {QStringLiteral("Offline"), tr("Offline")},
-                                               {QStringLiteral("InACall"), tr("In a call")}, {QStringLiteral("InAMeeting"), tr("In a meeting")},
-                                               {QStringLiteral("Presenting"), tr("Presenting")}};
-    return names.value(availability, availability);
-}
-
-QIcon DesktopIntegration::iconWithPresence(const QString &availability)
-{
-    // The tray's overlay icons are too small to read: the dot is painted into the icon
-    // itself, large, at every size the tray may ask for.
-    QColor color;
-    if (availability == QLatin1String("Available")) color = QColor(0x2e, 0xb8, 0x5c);
-    else if (availability == QLatin1String("Away") || availability == QLatin1String("BeRightBack")) color = QColor(0xf5, 0xb8, 0x00);
-    else if (availability == QLatin1String("Offline")) color = QColor(0x9a, 0x9a, 0x9a);
-    else if (!availability.isEmpty()) color = QColor(0xd9, 0x2d, 0x2d); // busy, do not disturb, in a call...
-    const QIcon base(QStringLiteral(":/KTeams/icon.svg"));
-    if (!color.isValid()) return base;
-    QIcon icon;
-    for (int size : {22, 24, 32, 48, 64, 128}) {
-        QPixmap pm = base.pixmap(size, size);
-        QPainter p(&pm);
-        p.setRenderHint(QPainter::Antialiasing);
-        const qreal d = size * 0.30;
-        const QRectF dot(size - d, size - d, d, d);
-        p.setPen(QPen(QColor(255, 255, 255), qMax(1.0, size / 16.0)));
-        p.setBrush(color);
-        p.drawEllipse(dot);
-        if (availability == QLatin1String("DoNotDisturb")) { // the bar of the official icon
-            p.setPen(Qt::NoPen);
-            p.setBrush(Qt::white);
-            p.drawRect(QRectF(dot.left() + d * 0.22, dot.center().y() - d * 0.09, d * 0.56, d * 0.18));
-        }
-        p.end();
-        icon.addPixmap(pm);
-    }
-    return icon;
-}
-
 void DesktopIntegration::setPresence(const QString &availability)
 {
     if (availability == m_presence) return;
     m_presence = availability;
-    const QIcon icon = iconWithPresence(availability);
+    const QIcon icon = PresenceInfo::iconWithPresence(QIcon(QStringLiteral(":/KTeams/icon.svg")), availability);
     m_tray->setIconByPixmap(icon);
     m_tray->setAttentionIconByPixmap(icon);
     m_tray->setToolTipIconByPixmap(icon);
@@ -128,7 +79,7 @@ void DesktopIntegration::setPresence(const QString &availability)
 void DesktopIntegration::updateTooltip()
 {
     QStringList parts;
-    if (!m_presence.isEmpty()) parts << presenceText(m_presence);
+    if (!m_presence.isEmpty()) parts << PresenceInfo::presenceText(m_presence);
     if (m_unread > 0) parts << (m_unread == 1 ? tr("1 unread chat") : tr("%1 unread chats").arg(m_unread));
     m_tray->setToolTipSubTitle(parts.join(QStringLiteral(" · ")));
 }

@@ -55,6 +55,8 @@ add_library(kteams_core STATIC
     src/nativecall.h
     src/oauth.cpp
     src/oauth.h
+    src/presenceinfo.cpp
+    src/presenceinfo.h
     src/statecache.cpp
     src/statecache.h
     src/teamsclient.cpp
