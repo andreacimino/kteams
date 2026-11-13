@@ -3,6 +3,7 @@
 // KTEAMS_TEST_ENGINE=1 on a machine with GStreamer's webrtcbin and a PulseAudio/PipeWire server.
 //   KTEAMS_TEST_ENGINE=1 ctest --test-dir native/build -R tst_callengine --output-on-failure
 #include "callengine.h"
+#include "mediadevices.h"
 
 #include <QCoreApplication>
 #include <QFile>
@@ -30,12 +31,7 @@ private slots:
         GstElementFactory *webrtcbin = gst_element_factory_find("webrtcbin");
         if (!webrtcbin) QSKIP("webrtcbin is not installed");
         gst_object_unref(webrtcbin);
-        GstDeviceProvider *pulse = gst_device_provider_factory_get_by_name("pulsedeviceprovider");
-        GList *devices = pulse ? gst_device_provider_get_devices(pulse) : nullptr;
-        const bool haveAudio = devices != nullptr;
-        g_list_free_full(devices, gst_object_unref);
-        if (pulse) gst_object_unref(pulse);
-        if (!haveAudio) QSKIP("no PulseAudio/PipeWire server with audio devices");
+        if (MediaDevices::audioInputs().isEmpty()) QSKIP("no PulseAudio/PipeWire server with a microphone");
     }
 
     // We are the offerer (an outgoing call); Teams answers, then renegotiates with an offer of its

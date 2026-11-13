@@ -4,39 +4,39 @@
 <context>
     <name>Backend</name>
     <message>
-        <location filename="../src/backend.cpp" line="212"/>
+        <location filename="../src/backend.cpp" line="213"/>
         <source>Incoming call</source>
         <translation>着信</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="213"/>
+        <location filename="../src/backend.cpp" line="214"/>
         <source>%1 is calling you</source>
         <translation>%1 から着信しています</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="213"/>
-        <location filename="../src/backend.cpp" line="1023"/>
+        <location filename="../src/backend.cpp" line="214"/>
+        <location filename="../src/backend.cpp" line="1024"/>
         <location filename="../src/chatparser.cpp" line="65"/>
         <source>Someone</source>
         <translation>誰か</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="346"/>
+        <location filename="../src/backend.cpp" line="347"/>
         <source>Loading profile...</source>
         <translation>プロファイルを読み込んでいます…</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="389"/>
+        <location filename="../src/backend.cpp" line="390"/>
         <source>Chat session expired, renewing...</source>
         <translation>チャット セッションの期限が切れました。更新しています…</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="486"/>
+        <location filename="../src/backend.cpp" line="487"/>
         <source>Loading messages...</source>
         <translation>メッセージを読み込んでいます…</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="511"/>
+        <location filename="../src/backend.cpp" line="512"/>
         <source>Loading conversations...</source>
         <translation>会話を読み込んでいます…</translation>
     </message>
@@ -46,13 +46,13 @@
         <translation>個人用メモ</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="575"/>
+        <location filename="../src/backend.cpp" line="576"/>
         <location filename="../src/chatparser.cpp" line="109"/>
         <source>Chat</source>
         <translation>チャット</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="575"/>
+        <location filename="../src/backend.cpp" line="576"/>
         <location filename="../src/chatparser.cpp" line="109"/>
         <source>Group chat</source>
         <translation>グループ チャット</translation>
@@ -68,96 +68,101 @@
         <translation>このメッセージは削除されました。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="746"/>
-        <location filename="../src/backend.cpp" line="1238"/>
-        <location filename="../src/backend.cpp" line="1422"/>
+        <location filename="../src/backend.cpp" line="747"/>
+        <location filename="../src/backend.cpp" line="1262"/>
+        <location filename="../src/backend.cpp" line="1446"/>
         <source>Open</source>
         <translation>開く</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1023"/>
+        <location filename="../src/backend.cpp" line="1024"/>
         <location filename="../src/backend.h" line="119"/>
         <source>%1 is typing...</source>
         <translation>%1 が入力しています…</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1055"/>
-        <location filename="../src/backend.cpp" line="1069"/>
+        <location filename="../src/backend.cpp" line="1056"/>
+        <location filename="../src/backend.cpp" line="1070"/>
         <source>Picture too large (20 MB at most).</source>
         <translation>画像が大きすぎます (最大 20 MB)。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1065"/>
+        <location filename="../src/backend.cpp" line="1066"/>
         <source>Cannot read %1</source>
         <translation>%1 を読み取れません</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1111"/>
+        <location filename="../src/backend.cpp" line="1112"/>
         <source>Unknown team for this channel: cannot upload the file.</source>
         <translation>このチャネルのチームが不明です：ファイルをアップロードできません。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1167"/>
+        <location filename="../src/backend.cpp" line="1130"/>
+        <source>System default</source>
+        <translation>システムの既定</translation>
+    </message>
+    <message>
+        <location filename="../src/backend.cpp" line="1191"/>
         <source>Meeting link not recognized.</source>
         <translation>会議のリンクを認識できません。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1170"/>
+        <location filename="../src/backend.cpp" line="1194"/>
         <source>Push channel not connected: try again in a few seconds.</source>
         <translation>プッシュ チャネルが接続されていません：数秒後にもう一度お試しください。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1171"/>
+        <location filename="../src/backend.cpp" line="1195"/>
         <source>A call is already in progress.</source>
         <translation>既に通話中です。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1235"/>
+        <location filename="../src/backend.cpp" line="1259"/>
         <source>Download finished</source>
         <translation>ダウンロードが完了しました</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1240"/>
+        <location filename="../src/backend.cpp" line="1264"/>
         <source>Show in folder</source>
         <translation>フォルダーで表示</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1249"/>
+        <location filename="../src/backend.cpp" line="1273"/>
         <source>This file has no downloadable link.</source>
         <translation>このファイルにはダウンロード リンクがありません。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1269"/>
+        <location filename="../src/backend.cpp" line="1293"/>
         <source>Download failed: %1</source>
         <translation>ダウンロードに失敗しました：%1</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1274"/>
+        <location filename="../src/backend.cpp" line="1298"/>
         <source>Cannot write %1</source>
         <translation>%1 に書き込めません</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1292"/>
+        <location filename="../src/backend.cpp" line="1316"/>
         <source>Picture not downloaded yet.</source>
         <translation>画像はまだダウンロードされていません。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1297"/>
+        <location filename="../src/backend.cpp" line="1321"/>
         <source>Cannot save the picture.</source>
         <translation>画像を保存できません。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1320"/>
+        <location filename="../src/backend.cpp" line="1344"/>
         <source>The camera turns on once the call is connected.</source>
         <translation>カメラは通話が接続されるとオンになります。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1327"/>
+        <location filename="../src/backend.cpp" line="1351"/>
         <source>Sharing starts once the call is connected.</source>
         <translation>共有は通話が接続されると開始されます。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1353"/>
+        <location filename="../src/backend.cpp" line="1377"/>
         <source>Open a chat with people to call them.</source>
         <translation>通話するには、相手とのチャットを開いてください。</translation>
     </message>
@@ -187,47 +192,47 @@
         <translation>ボイスメール</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1526"/>
+        <location filename="../src/backend.cpp" line="1550"/>
         <source>Meeting: invalid title or times.</source>
         <translation>会議：タイトルまたは時刻が無効です。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1551"/>
+        <location filename="../src/backend.cpp" line="1575"/>
         <source>Meeting not created (HTTP %1)</source>
         <translation>会議を作成できませんでした (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1582"/>
+        <location filename="../src/backend.cpp" line="1606"/>
         <source>In %1 minutes: %2</source>
         <translation>%1 分後：%2</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1582"/>
+        <location filename="../src/backend.cpp" line="1606"/>
         <source>meeting</source>
         <translation>会議</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1583"/>
+        <location filename="../src/backend.cpp" line="1607"/>
         <source>Starts at %1</source>
         <translation>%1 に開始</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1590"/>
+        <location filename="../src/backend.cpp" line="1614"/>
         <source>Open chat</source>
         <translation>チャットを開く</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1621"/>
+        <location filename="../src/backend.cpp" line="1645"/>
         <source>Event not found in the calendar (Graph).</source>
         <translation>予定表にイベントが見つかりません (Graph)。</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1629"/>
+        <location filename="../src/backend.cpp" line="1653"/>
         <source>Replying to the invitation failed (HTTP %1)</source>
         <translation>招待への返信に失敗しました (HTTP %1)</translation>
     </message>
     <message>
-        <location filename="../src/backend.cpp" line="1711"/>
+        <location filename="../src/backend.cpp" line="1735"/>
         <source>Saved data: %1 conversations (refreshing)</source>
         <translation>保存済みデータ：%1 件の会話 (更新中)</translation>
     </message>
@@ -248,42 +253,42 @@
 <context>
     <name>CallEngine</name>
     <message>
-        <location filename="../src/callengine.cpp" line="240"/>
+        <location filename="../src/callengine.cpp" line="243"/>
         <source>GStreamer: could not start the audio</source>
         <translation>GStreamer：音声を開始できませんでした</translation>
     </message>
     <message>
-        <location filename="../src/callengine.cpp" line="384"/>
+        <location filename="../src/callengine.cpp" line="387"/>
         <source>Camera not available</source>
         <translation>カメラを使用できません</translation>
     </message>
     <message>
-        <location filename="../src/callengine.cpp" line="409"/>
+        <location filename="../src/callengine.cpp" line="412"/>
         <source>Screen sharing not started</source>
         <translation>画面共有を開始できませんでした</translation>
     </message>
     <message>
-        <location filename="../src/callengine.cpp" line="529"/>
+        <location filename="../src/callengine.cpp" line="532"/>
         <source>WebRTC offer not created</source>
         <translation>WebRTC オファーを作成できませんでした</translation>
     </message>
     <message>
-        <location filename="../src/callengine.cpp" line="651"/>
+        <location filename="../src/callengine.cpp" line="654"/>
         <source>invalid SDP answer</source>
         <translation>無効な SDP アンサー</translation>
     </message>
     <message>
-        <location filename="../src/callengine.cpp" line="662"/>
+        <location filename="../src/callengine.cpp" line="665"/>
         <source>SDP answer not applicable: </source>
         <translation>SDP アンサーを適用できません：</translation>
     </message>
     <message>
-        <location filename="../src/callengine.cpp" line="681"/>
+        <location filename="../src/callengine.cpp" line="687"/>
         <source>invalid renegotiation offer</source>
         <translation>無効な再ネゴシエーション オファー</translation>
     </message>
     <message>
-        <location filename="../src/callengine.cpp" line="703"/>
+        <location filename="../src/callengine.cpp" line="709"/>
         <source>renegotiation answer not created</source>
         <translation>再ネゴシエーション アンサーを作成できませんでした</translation>
     </message>
@@ -410,25 +415,25 @@
     <name>ConversationsPage</name>
     <message>
         <location filename="../qml/ConversationsPage.qml" line="11"/>
-        <location filename="../qml/ConversationsPage.qml" line="128"/>
+        <location filename="../qml/ConversationsPage.qml" line="134"/>
         <source>Activity</source>
         <translation>アクティビティ</translation>
     </message>
     <message>
         <location filename="../qml/ConversationsPage.qml" line="11"/>
-        <location filename="../qml/ConversationsPage.qml" line="127"/>
+        <location filename="../qml/ConversationsPage.qml" line="133"/>
         <source>Calendar</source>
         <translation>予定表</translation>
     </message>
     <message>
         <location filename="../qml/ConversationsPage.qml" line="11"/>
-        <location filename="../qml/ConversationsPage.qml" line="126"/>
+        <location filename="../qml/ConversationsPage.qml" line="132"/>
         <source>Teams</source>
         <translation>チーム</translation>
     </message>
     <message>
         <location filename="../qml/ConversationsPage.qml" line="11"/>
-        <location filename="../qml/ConversationsPage.qml" line="125"/>
+        <location filename="../qml/ConversationsPage.qml" line="131"/>
         <source>Chat</source>
         <translation>チャット</translation>
     </message>
@@ -454,233 +459,238 @@
     </message>
     <message>
         <location filename="../qml/ConversationsPage.qml" line="59"/>
+        <source>Settings…</source>
+        <translation>設定…</translation>
+    </message>
+    <message>
+        <location filename="../qml/ConversationsPage.qml" line="65"/>
         <source>Sign out</source>
         <translation>サインアウト</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="75"/>
-        <location filename="../qml/ConversationsPage.qml" line="75"/>
-        <location filename="../qml/ConversationsPage.qml" line="104"/>
+        <location filename="../qml/ConversationsPage.qml" line="81"/>
+        <location filename="../qml/ConversationsPage.qml" line="81"/>
+        <location filename="../qml/ConversationsPage.qml" line="110"/>
         <source>Available</source>
         <translation>連絡可能</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="75"/>
-        <location filename="../qml/ConversationsPage.qml" line="75"/>
-        <location filename="../qml/ConversationsPage.qml" line="104"/>
+        <location filename="../qml/ConversationsPage.qml" line="81"/>
+        <location filename="../qml/ConversationsPage.qml" line="81"/>
+        <location filename="../qml/ConversationsPage.qml" line="110"/>
         <source>Busy</source>
         <translation>取り込み中</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="76"/>
-        <location filename="../qml/ConversationsPage.qml" line="104"/>
+        <location filename="../qml/ConversationsPage.qml" line="82"/>
+        <location filename="../qml/ConversationsPage.qml" line="110"/>
         <source>Do not disturb</source>
         <translation>応答不可</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="76"/>
+        <location filename="../qml/ConversationsPage.qml" line="82"/>
         <source>Presenting</source>
         <translation>発表中</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="76"/>
+        <location filename="../qml/ConversationsPage.qml" line="82"/>
         <source>In a call</source>
         <translation>通話中</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="77"/>
+        <location filename="../qml/ConversationsPage.qml" line="83"/>
         <source>In a meeting</source>
         <translation>会議中</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="77"/>
-        <location filename="../qml/ConversationsPage.qml" line="105"/>
+        <location filename="../qml/ConversationsPage.qml" line="83"/>
+        <location filename="../qml/ConversationsPage.qml" line="111"/>
         <source>Be right back</source>
         <translation>一時退席中</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="77"/>
-        <location filename="../qml/ConversationsPage.qml" line="105"/>
+        <location filename="../qml/ConversationsPage.qml" line="83"/>
+        <location filename="../qml/ConversationsPage.qml" line="111"/>
         <source>Away</source>
         <translation>退席中</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="94"/>
+        <location filename="../qml/ConversationsPage.qml" line="100"/>
         <source>Set status</source>
         <translation>ステータスを設定</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="105"/>
+        <location filename="../qml/ConversationsPage.qml" line="111"/>
         <source>Appear offline</source>
         <translation>オフラインで表示</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="117"/>
+        <location filename="../qml/ConversationsPage.qml" line="123"/>
         <source>Status message…</source>
         <translation>ステータス メッセージ…</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="125"/>
+        <location filename="../qml/ConversationsPage.qml" line="131"/>
         <source>Chat (%1)</source>
         <translation>チャット (%1)</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="128"/>
+        <location filename="../qml/ConversationsPage.qml" line="134"/>
         <source>Activity (%1)</source>
         <translation>アクティビティ (%1)</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="138"/>
+        <location filename="../qml/ConversationsPage.qml" line="144"/>
         <source>Search chats and messages</source>
         <translation>チャットとメッセージを検索</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="152"/>
+        <location filename="../qml/ConversationsPage.qml" line="158"/>
         <source>Unread only</source>
         <translation>未読のみ</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="159"/>
+        <location filename="../qml/ConversationsPage.qml" line="165"/>
         <source>Chats</source>
         <translation>チャット</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="161"/>
+        <location filename="../qml/ConversationsPage.qml" line="167"/>
         <source>Messages (%1)</source>
         <translation>メッセージ (%1)</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="161"/>
+        <location filename="../qml/ConversationsPage.qml" line="167"/>
         <source>Messages</source>
         <translation>メッセージ</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="165"/>
+        <location filename="../qml/ConversationsPage.qml" line="171"/>
         <source>reading the other chats…</source>
         <translation>他のチャットを読み込んでいます…</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="170"/>
+        <location filename="../qml/ConversationsPage.qml" line="176"/>
         <source>All</source>
         <translation>すべて</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="171"/>
+        <location filename="../qml/ConversationsPage.qml" line="177"/>
         <source>Mentions</source>
         <translation>メンション</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="172"/>
+        <location filename="../qml/ConversationsPage.qml" line="178"/>
         <source>Replies</source>
         <translation>返信</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="173"/>
+        <location filename="../qml/ConversationsPage.qml" line="179"/>
         <source>Reactions</source>
         <translation>リアクション</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="179"/>
+        <location filename="../qml/ConversationsPage.qml" line="185"/>
         <source>Mark all as read</source>
         <translation>すべて既読にする</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="189"/>
+        <location filename="../qml/ConversationsPage.qml" line="195"/>
         <source>New meeting</source>
         <translation>新しい会議</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="195"/>
+        <location filename="../qml/ConversationsPage.qml" line="201"/>
         <source>Previous week</source>
         <translation>前の週</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="205"/>
+        <location filename="../qml/ConversationsPage.qml" line="211"/>
         <source>Today</source>
         <translation>今日</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="212"/>
+        <location filename="../qml/ConversationsPage.qml" line="218"/>
         <source>Next week</source>
         <translation>次の週</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="234"/>
+        <location filename="../qml/ConversationsPage.qml" line="240"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="235"/>
+        <location filename="../qml/ConversationsPage.qml" line="241"/>
         <source>No messages found</source>
         <translation>メッセージが見つかりません</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="235"/>
+        <location filename="../qml/ConversationsPage.qml" line="241"/>
         <source>No activity</source>
         <translation>アクティビティはありません</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="235"/>
+        <location filename="../qml/ConversationsPage.qml" line="241"/>
         <source>No events this week</source>
         <translation>今週の予定はありません</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="235"/>
+        <location filename="../qml/ConversationsPage.qml" line="241"/>
         <source>No teams</source>
         <translation>チームはありません</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="235"/>
+        <location filename="../qml/ConversationsPage.qml" line="241"/>
         <source>No chats</source>
         <translation>チャットはありません</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="382"/>
+        <location filename="../qml/ConversationsPage.qml" line="388"/>
         <source>(no title)</source>
         <translation>(タイトルなし)</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="397"/>
+        <location filename="../qml/ConversationsPage.qml" line="403"/>
         <source>Join</source>
         <translation>参加</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="470"/>
+        <location filename="../qml/ConversationsPage.qml" line="476"/>
         <source>Unpin</source>
         <translation>ピン留めを解除</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="470"/>
+        <location filename="../qml/ConversationsPage.qml" line="476"/>
         <source>Pin</source>
         <translation>ピン留め</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="471"/>
+        <location filename="../qml/ConversationsPage.qml" line="477"/>
         <source>Unmute</source>
         <translation>ミュート解除</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="471"/>
+        <location filename="../qml/ConversationsPage.qml" line="477"/>
         <source>Mute</source>
         <translation>ミュート</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="472"/>
+        <location filename="../qml/ConversationsPage.qml" line="478"/>
         <source>Hide</source>
         <translation>非表示</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="474"/>
+        <location filename="../qml/ConversationsPage.qml" line="480"/>
         <source>Rename…</source>
         <translation>名前の変更…</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="475"/>
+        <location filename="../qml/ConversationsPage.qml" line="481"/>
         <source>Add people…</source>
         <translation>ユーザーを追加…</translation>
     </message>
     <message>
-        <location filename="../qml/ConversationsPage.qml" line="476"/>
+        <location filename="../qml/ConversationsPage.qml" line="482"/>
         <source>Leave</source>
         <translation>退出</translation>
     </message>
@@ -847,117 +857,117 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../qml/Main.qml" line="59"/>
+        <location filename="../qml/Main.qml" line="61"/>
         <source>Edit message</source>
         <translation>メッセージを編集</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="72"/>
+        <location filename="../qml/Main.qml" line="74"/>
         <source>Delete the message?</source>
         <translation>メッセージを削除しますか？</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="73"/>
+        <location filename="../qml/Main.qml" line="75"/>
         <source>It will be deleted for everyone.</source>
         <translation>全員に対して削除されます。</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="80"/>
+        <location filename="../qml/Main.qml" line="82"/>
         <source>Status message</source>
         <translation>ステータス メッセージ</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="81"/>
+        <location filename="../qml/Main.qml" line="83"/>
         <source>Others see it next to your name. Empty to remove it.</source>
         <translation>他のユーザーには、あなたの名前の横に表示されます。空にすると削除されます。</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="83"/>
+        <location filename="../qml/Main.qml" line="85"/>
         <source>E.g. On holiday until Monday</source>
         <translation>例：月曜日まで休暇中</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="90"/>
+        <location filename="../qml/Main.qml" line="92"/>
         <source>Rename chat</source>
         <translation>チャット名の変更</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="92"/>
+        <location filename="../qml/Main.qml" line="94"/>
         <source>Chat name</source>
         <translation>チャット名</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="98"/>
+        <location filename="../qml/Main.qml" line="100"/>
         <source>Leave the chat?</source>
         <translation>チャットから退出しますか？</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="99"/>
+        <location filename="../qml/Main.qml" line="101"/>
         <source>You will no longer receive this chat&apos;s messages.</source>
         <translation>このチャットのメッセージは今後受信されなくなります。</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="105"/>
+        <location filename="../qml/Main.qml" line="107"/>
         <source>Leave &quot;%1&quot;?</source>
         <translation>「%1」から退出しますか？</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="177"/>
+        <location filename="../qml/Main.qml" line="179"/>
         <source>Reply</source>
         <translation>返信</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="184"/>
+        <location filename="../qml/Main.qml" line="186"/>
         <source>Decline</source>
         <translation>拒否</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="192"/>
+        <location filename="../qml/Main.qml" line="194"/>
         <source>Unmute</source>
         <translation>ミュート解除</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="192"/>
+        <location filename="../qml/Main.qml" line="194"/>
         <source>Mute</source>
         <translation>ミュート</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="198"/>
+        <location filename="../qml/Main.qml" line="200"/>
         <source>Camera off</source>
         <translation>カメラをオフ</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="198"/>
+        <location filename="../qml/Main.qml" line="200"/>
         <source>Camera</source>
         <translation>カメラ</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="204"/>
+        <location filename="../qml/Main.qml" line="206"/>
         <source>Stop sharing</source>
         <translation>共有を停止</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="204"/>
+        <location filename="../qml/Main.qml" line="206"/>
         <source>Share screen</source>
         <translation>画面を共有</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="210"/>
+        <location filename="../qml/Main.qml" line="212"/>
         <source>Back to chat</source>
         <translation>チャットに戻る</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="210"/>
+        <location filename="../qml/Main.qml" line="212"/>
         <source>Video</source>
         <translation>ビデオ</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="216"/>
+        <location filename="../qml/Main.qml" line="218"/>
         <source>Chat</source>
         <translation>チャット</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="226"/>
+        <location filename="../qml/Main.qml" line="228"/>
         <source>Hang up</source>
         <translation>退出</translation>
     </message>
@@ -1342,6 +1352,34 @@
         <location filename="../src/screencast.cpp" line="113"/>
         <source>Screen portal: no stream</source>
         <translation>画面ポータル：ストリームがありません</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsPage</name>
+    <message>
+        <location filename="../qml/SettingsPage.qml" line="11"/>
+        <source>Settings</source>
+        <translation>設定</translation>
+    </message>
+    <message>
+        <location filename="../qml/SettingsPage.qml" line="31"/>
+        <source>Microphone:</source>
+        <translation>マイク：</translation>
+    </message>
+    <message>
+        <location filename="../qml/SettingsPage.qml" line="35"/>
+        <source>Speakers:</source>
+        <translation>スピーカー：</translation>
+    </message>
+    <message>
+        <location filename="../qml/SettingsPage.qml" line="39"/>
+        <source>Camera:</source>
+        <translation>カメラ：</translation>
+    </message>
+    <message>
+        <location filename="../qml/SettingsPage.qml" line="47"/>
+        <source>The choice applies from the next call (the camera, the next time it is turned on).</source>
+        <translation>選択は次の通話から有効になります（カメラは、次にオンにしたときから）。</translation>
     </message>
 </context>
 <context>

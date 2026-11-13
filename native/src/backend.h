@@ -204,6 +204,12 @@ public:
     Q_INVOKABLE void sendFile(const QUrl &file, bool inThread);
     // The attachments staged in the composer, sent together: pictures inline, other files
     // through OneDrive/SharePoint one after the other. `urls`: file URLs.
+    // The devices of a kind ("audioInput", "audioOutput", "camera") for the settings page: a list of
+    // {id, name} whose first entry is the system default (id ""), the choice kept in the settings
+    // ("" for the default) and a new choice. A call uses them when it starts (the camera, when turned on).
+    Q_INVOKABLE QVariantList mediaDevices(const QString &kind) const;
+    Q_INVOKABLE QString selectedDevice(const QString &kind) const;
+    Q_INVOKABLE void selectDevice(const QString &kind, const QString &id);
     Q_INVOKABLE void sendAttachments(const QVariantList &urls, bool inThread);
     // The picture in the clipboard saved as a file (a day in the cache folder); empty URL on failure.
     Q_INVOKABLE QUrl stageClipboardImage();

@@ -1,4 +1,5 @@
 #include "callengine.h"
+#include "mediadevices.h"
 #include "sdpdialect.h"
 
 #include <QDateTime>
@@ -28,8 +29,7 @@ constexpr int kGatherTimeoutMs = 2500;
 // Remote video counts as stopped after this long without a frame (the other side turned
 // the camera off: Teams sends no event we handle yet, the packets just stop).
 constexpr int kRemoteVideoTimeoutMs = 3000;
-// Camera device; the frames are scaled to this size before encoding.
-constexpr auto kCameraDevice = "/dev/video0";
+// Camera frames are scaled to this size before encoding.
 constexpr int kVideoWidth = 640, kVideoHeight = 360, kVideoFps = 15;
 // Screen sharing: letterboxed into this size, fewer frames (text, not motion).
 constexpr int kShareWidth = 1280, kShareHeight = 720, kShareFps = 10;
@@ -99,7 +99,7 @@ bool CallEngine::start(const QStringList &turnServers, bool answerer, int opusPt
         // never start (two clock providers block each other), pulsesrc/pulsesink do.
         // Echo cancellation, noise suppression and gain control (WebRTC audio processing):
         // webrtcdsp on the microphone, fed with what the speakers play by webrtcechoprobe.
-        "pulsesrc name=mic client-name=\"KTeams\" do-timestamp=true ! queue max-size-time=200000000 max-size-buffers=0 max-size-bytes=0 leaky=downstream "
+        "pulsesrc name=mic @MICDEV@client-name=\"KTeams\" do-timestamp=true ! queue max-size-time=200000000 max-size-buffers=0 max-size-bytes=0 leaky=downstream "
         "! audioconvert ! audioresample ! audio/x-raw,format=S16LE,rate=48000,channels=1 "
         "! webrtcdsp probe=echoprobe echo-cancel=true noise-suppression=true gain-control=true delay-agnostic=true extended-filter=true "
         "! volume name=micvolume "
@@ -108,7 +108,7 @@ bool CallEngine::start(const QStringList &turnServers, bool answerer, int opusPt
         // Playback path, present from the start (the echo probe must exist when the DSP
         // starts): silence until the remote audio is mixed in.
         "audiotestsrc is-live=true wave=silence ! audio/x-raw,format=S16LE,rate=48000,channels=1 ! audiomixer name=playmix "
-        "! audio/x-raw,format=S16LE,rate=48000,channels=1 ! webrtcechoprobe name=echoprobe ! pulsesink client-name=\"KTeams\" "
+        "! audio/x-raw,format=S16LE,rate=48000,channels=1 ! webrtcechoprobe name=echoprobe ! pulsesink @SPKDEV@client-name=\"KTeams\" "
         // Video section, present from the start (Teams web offers it with the camera off
         // too): black frames or the camera (input-selector), H.264 constrained baseline
         // for any Teams client, packetization-mode 1. The valve stays closed while the
@@ -134,7 +134,10 @@ bool CallEngine::start(const QStringList &turnServers, bool answerer, int opusPt
         "! application/x-rtp,media=video,encoding-name=H264,payload=%9,clock-rate=90000,ssrc=(uint)%10 "
         "! identity name=shareout ! valve name=sharevalve drop=true drop-mode=forward-sticky-events ! webrtc.")
         .arg(opusPt).arg(ssrc).arg(videoPt).arg(videoSsrc).arg(kVideoWidth).arg(kVideoHeight).arg(kVideoFps).arg(kVideoFps * 3)
-        .arg(sharePt).arg(shareSsrc).arg(kShareWidth).arg(kShareHeight).arg(kShareFps).arg(kShareFps * 3).toLatin1();
+        .arg(sharePt).arg(shareSsrc).arg(kShareWidth).arg(kShareHeight).arg(kShareFps).arg(kShareFps * 3)
+         // The devices chosen in the settings (the default ones when none, or when it is unplugged).
+         .replace(QLatin1String("@MICDEV@"), MediaDevices::pipelineDeviceProperty(MediaDevices::selectedIfPresent(MediaDevices::Kind::AudioInput)))
+         .replace(QLatin1String("@SPKDEV@"), MediaDevices::pipelineDeviceProperty(MediaDevices::selectedIfPresent(MediaDevices::Kind::AudioOutput))).toUtf8();
     qCInfo(lcCallEngine) << "sending with ssrc" << ssrc << "pt" << opusPt << "video ssrc" << videoSsrc << "pt" << videoPt << "profile" << videoProfile
                          << "share ssrc" << shareSsrc << "pt" << sharePt;
     m_pipeline = gst_parse_launch(launch.constData(), &error);
@@ -378,7 +381,7 @@ void CallEngine::setCameraEnabled(bool on)
         // not parse inside gst_parse_bin_from_description.)
         const QByteArray description = QStringLiteral("v4l2src device=%1 ! videoconvert ! videoscale ! videorate "
                                                       "! capsfilter caps=\"video/x-raw,format=I420,width=%2,height=%3,framerate=%4/1\"")
-                                           .arg(QString::fromLatin1(qgetenv("KTEAMS_CAMERA").isEmpty() ? kCameraDevice : qgetenv("KTEAMS_CAMERA").constData()))
+                                           .arg(MediaDevices::cameraToUse(QString::fromLocal8Bit(qgetenv("KTEAMS_CAMERA")), MediaDevices::selectedIfPresent(MediaDevices::Kind::Camera)))
                                            .arg(kVideoWidth).arg(kVideoHeight).arg(kVideoFps).toLatin1();
         if (!attachSource(m_cameraBin, m_cameraPad, m_videoSelector, m_videoValve, description)) {
             emit failed(tr("Camera not available"));

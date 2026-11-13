@@ -20,6 +20,8 @@ separate developer tool that exercises the media pipeline without calling anyone
 | `qml_syntax` (ctest) | every `qml/*.qml` parses (`qmllint`; its warnings about the `backend` context object are tolerated, syntax errors fail) |
 | `tst_presence.cpp` | `src/presenceinfo.cpp`: theme icon, dot colour and words for every presence, and the tray icon drawn and checked pixel by pixel (dot position at six sizes, the Do Not Disturb bar, the white ring) |
 | `tst_callengine.cpp` | opt-in (`KTEAMS_TEST_ENGINE=1`, opens the microphone): the real webrtcbin answering the renegotiation of a call that ended with SdpParsingFailure, from the SDPs in `tests/data/` |
+| `tst_mediadevices.cpp` | `src/mediadevices.cpp`: the camera list from a fake sysfs, the choice in the settings (kept when a device is unplugged), which camera the call opens, and the pipeline quoting checked against GStreamer's own parser |
+| `tst_settingspage.cpp` | `qml/SettingsPage.qml` in a QML engine with a stand-in backend: the default first, the stored choice shown, choosing writes it |
 | `tst_models.cpp` | `src/models.cpp`: the list models (conversations, messages, channels, activity, calendar) |
 | `tst_statecache.cpp` | `src/statecache.cpp`: the local cache's JSON format, old and new |
 | `tst_demo.cpp` | `src/demo.h`: demo mode hides real names, titles and texts |

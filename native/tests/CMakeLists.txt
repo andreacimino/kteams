@@ -23,6 +23,8 @@ kteams_test(tst_composer)
 kteams_test(tst_translations)
 kteams_test(tst_presence)
 kteams_test(tst_callengine)
+kteams_test(tst_mediadevices)
+kteams_test(tst_settingspage)
 target_compile_definitions(tst_translations PRIVATE KTEAMS_TRANSLATIONS_DIR="${CMAKE_SOURCE_DIR}/translations")
 
 # Every QML file must at least parse (qmllint fails on syntax errors; its many
@@ -54,7 +56,7 @@ if(KTEAMS_COVERAGE)
                     --xml ${CMAKE_BINARY_DIR}/coverage/coverage.xml
                     ${CMAKE_BINARY_DIR}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS tst_content tst_chatparser tst_trouterframes tst_calljson tst_sdpdialect tst_caches tst_teamsclient tst_oauth tst_fileuploader tst_composer tst_translations tst_presence tst_callengine tst_backendlogic tst_models tst_statecache tst_demo
+            DEPENDS tst_content tst_chatparser tst_trouterframes tst_calljson tst_sdpdialect tst_caches tst_teamsclient tst_oauth tst_fileuploader tst_composer tst_translations tst_presence tst_callengine tst_mediadevices tst_settingspage tst_backendlogic tst_models tst_statecache tst_demo
             COMMENT "Running the tests and writing coverage/index.html")
     endif()
 endif()

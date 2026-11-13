@@ -55,6 +55,12 @@ Kirigami.ScrollablePage {
             onTriggered: desktop.startAtLogin = checked
         },
         Kirigami.Action {
+            icon.name: "configure"
+            text: qsTr("Settings…")
+            displayHint: Kirigami.DisplayHint.AlwaysHide
+            onTriggered: applicationWindow().showSettings()
+        },
+        Kirigami.Action {
             icon.name: "system-log-out"
             text: qsTr("Sign out") + (backend.selfDisplayName ? " (" + backend.selfDisplayName + ")" : "")
             displayHint: Kirigami.DisplayHint.AlwaysHide

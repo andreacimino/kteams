@@ -11,6 +11,7 @@
     <file>NewChatDialog.qml</file>
     <file>PersonCard.qml</file>
     <file>CallPage.qml</file>
+    <file>SettingsPage.qml</file>
     <file>NewMeetingDialog.qml</file>
   </qresource>
   <qresource prefix="/KTeams">

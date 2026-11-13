@@ -33,6 +33,9 @@ The calendar week, with meetings to join:
 - Audio calls: outgoing (one-to-one and group), incoming with ringtone, Teams' test call;
   echo cancellation and noise suppression; mute, hang up.
 - Presence (own and others'), status message, Do not disturb.
+- Settings: microphone, speakers and camera of the calls (menu, Settings…); the default is the
+  system one, and `KTEAMS_CAMERA` still wins for the camera.
+- A Chat button in the call bar opens the chat of the call or meeting.
 - Calendar: week view, reminders, accept/decline, join; new meeting (through Microsoft Graph).
 - Activity feed (mentions, replies, reactions) with filters and mark-all-read.
 - Plasma notifications with sounds and pictures, tray icon with unread count, start at
@@ -58,8 +61,7 @@ The calendar week, with meetings to join:
 - Message formatting toolbar, forwarding, link previews.
 - Meeting lobby, hand raising, in-meeting chat; hold and transfer; call keep-alive on very
   long calls.
-- Settings page (audio/video devices, sounds); the camera is `/dev/video0` (or
-  `KTEAMS_CAMERA`).
+- Sounds in the settings page (only the microphone, speakers and camera are there).
 - Flatpak on Flathub (the Flatpak is built by GitHub Actions, see `packaging/README.md`);
   AppImage.
 

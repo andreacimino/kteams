@@ -34,6 +34,8 @@ add_library(kteams_core STATIC
     src/content.h
     src/mediacache.cpp
     src/mediacache.h
+    src/mediadevices.cpp
+    src/mediadevices.h
     src/trouter.cpp
     src/trouter.h
     src/trouterframes.cpp

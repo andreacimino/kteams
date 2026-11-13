@@ -43,9 +43,11 @@ Kirigami.ApplicationWindow {
     Component { id: chatPage; ChatPage {} }
     Component { id: threadPage; ThreadPage {} }
     Component { id: callPage; CallPage {} }
+    Component { id: settingsPage; SettingsPage {} }
 
     // The video page sits on a layer above everything; opened when video flows either way.
     property bool callPageShown: pageStack.layers.depth > 1 && pageStack.layers.currentItem.objectName === "callPage"
+    function showSettings() { pageStack.layers.push(settingsPage) }
     function showCallPage() { if (!callPageShown) pageStack.layers.push(callPage) }
     function hideCallPage() { if (callPageShown) pageStack.layers.pop() }
 

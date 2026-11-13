@@ -2,6 +2,7 @@
 #include "chatparser.h"
 #include "content.h"
 #include "demo.h"
+#include "mediadevices.h"
 #include "statecache.h"
 
 #include <QBuffer>
@@ -1120,6 +1121,29 @@ void Backend::startNextFile()
         m_files.upload(path, token, groupId, channelId);
         emit uploadingChanged();
     });
+}
+
+QVariantList Backend::mediaDevices(const QString &kind) const
+{
+    MediaDevices::Kind k;
+    if (!MediaDevices::kindFromName(kind, &k)) return {};
+    QVariantList list{QVariantMap{{QStringLiteral("id"), QString()}, {QStringLiteral("name"), tr("System default")}}};
+    const QList<MediaDevices::Device> devices = k == MediaDevices::Kind::AudioInput ? MediaDevices::audioInputs()
+        : k == MediaDevices::Kind::AudioOutput ? MediaDevices::audioOutputs() : MediaDevices::cameras();
+    for (const MediaDevices::Device &d : devices) list << QVariantMap{{QStringLiteral("id"), d.id}, {QStringLiteral("name"), d.name}};
+    return list;
+}
+
+QString Backend::selectedDevice(const QString &kind) const
+{
+    MediaDevices::Kind k;
+    return MediaDevices::kindFromName(kind, &k) ? MediaDevices::selected(k) : QString();
+}
+
+void Backend::selectDevice(const QString &kind, const QString &id)
+{
+    MediaDevices::Kind k;
+    if (MediaDevices::kindFromName(kind, &k)) MediaDevices::select(k, id);
 }
 
 void Backend::sendAttachments(const QVariantList &urls, bool inThread)
