@@ -285,6 +285,9 @@ void NativeCall::startCall(const Identity &identity, const QStringList &calleeMr
     m_threadId = threadId;
     m_calleeName = calleeName;
     begin(identity);
+    // The caller hears it ring from the moment of pressing Call until the other side answers
+    // (Teams sends no "progress" for every call); stopped on acceptance, end or failure.
+    if (m_active) m_tone.play(QString::fromLatin1(kRingback));
 }
 
 void NativeCall::begin(const Identity &identity)
@@ -618,6 +621,7 @@ bool NativeCall::handleCallback(const QString &url, const QJsonObject &body)
         const QString sdp = findSdp(body);
         if (!sdp.isEmpty()) m_engine.setRemoteAnswer(sdp);
         if (event == QLatin1String("call/acceptance")) {
+            m_tone.stop();
             setState(tr("Connecting audio…"));
             // Teams web acknowledges the acceptance through the link it carries; keep the
             // call-leg links for later (hold, renegotiation, keep-alive).
