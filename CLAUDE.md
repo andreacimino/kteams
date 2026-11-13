@@ -47,7 +47,7 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 ## Tests: the regression suite
 
 Qt Test executables in `native/tests/` (`tst_content`, `tst_chatparser`, `tst_models`,
-`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_sdpdialect`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_backendlogic`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
+`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_sdpdialect`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_composer`, `tst_backendlogic`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
 
     cmake -S native -B native/build && cmake --build native/build
     ctest --test-dir native/build --output-on-failure
@@ -71,6 +71,8 @@ Coverage (gcovr), in its own build directory because it changes the compiler fla
   real network in tests): `teamsclient` takes `setTokens` (chat service) and `setHosts` (the
   other Microsoft hosts), `oauth` takes `setAuthority` and `setTokenStore` (the tests never
   touch the system keychain), `fileuploader` takes `setGraphBase`. A new service client gets the same injection points.
+  QML components can be tested too: `tst_composer.cpp` loads `Composer.qml` in a QML engine with
+  a stand-in `backend` object that records what is asked of it (offscreen, no second client).
   `callengine` (GStreamer) and the HTTP parts of `nativecall` are only tested through the pure
   modules they use (`calljson`, `trouterframes`, `sdpdialect`); `kteams-offer-test` checks the
   media pipeline by hand.

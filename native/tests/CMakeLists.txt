@@ -4,6 +4,7 @@ find_package(Qt6 REQUIRED COMPONENTS Test)
 function(kteams_test name)
     add_executable(${name} ${name}.cpp)
     target_link_libraries(${name} PRIVATE kteams_core Qt6::Test)
+    target_compile_definitions(${name} PRIVATE KTEAMS_QML_DIR="${CMAKE_SOURCE_DIR}/qml")
     add_test(NAME ${name} COMMAND ${name})
     # No display needed (CI runs headless); the content tests render HTML with QTextDocument.
     set_tests_properties(${name} PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
@@ -18,6 +19,7 @@ kteams_test(tst_caches)
 kteams_test(tst_teamsclient)
 kteams_test(tst_oauth)
 kteams_test(tst_fileuploader)
+kteams_test(tst_composer)
 kteams_test(tst_backendlogic)
 kteams_test(tst_models)
 kteams_test(tst_statecache)
@@ -38,7 +40,7 @@ if(KTEAMS_COVERAGE)
                     --xml ${CMAKE_BINARY_DIR}/coverage/coverage.xml
                     ${CMAKE_BINARY_DIR}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS tst_content tst_chatparser tst_trouterframes tst_calljson tst_sdpdialect tst_caches tst_teamsclient tst_oauth tst_fileuploader tst_backendlogic tst_models tst_statecache tst_demo
+            DEPENDS tst_content tst_chatparser tst_trouterframes tst_calljson tst_sdpdialect tst_caches tst_teamsclient tst_oauth tst_fileuploader tst_composer tst_backendlogic tst_models tst_statecache tst_demo
             COMMENT "Running the tests and writing coverage/index.html")
     endif()
 endif()

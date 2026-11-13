@@ -15,6 +15,7 @@ separate developer tool that exercises the media pipeline without calling anyone
 | `tst_oauth.cpp` | `src/oauth.cpp`: device code sign-in, token refresh, caching and sharing, session loss, with a fake login server and an in-memory token store (never the system keychain) |
 | `tst_fileuploader.cpp` | `src/fileuploader.cpp`: sending a file through Microsoft Graph (OneDrive for chats, the channel folder for channels), 5 MiB chunks, the file entry Teams expects, every failure stage |
 | `tst_sdpdialect.cpp` | `src/sdpdialect.cpp`: the SDP translation between webrtcbin and Microsoft's media controller, both ways (ports and addresses, labels, ssrc ranges, candidates, RTX, rejected sections, profiles) |
+| `tst_composer.cpp` | `qml/Composer.qml` in a QML engine with a stand-in backend: files staged as attachments, no duplicates, removal, cleared on another chat or thread, Enter sends text then attachments, Esc discards, Ctrl+V stages the picture |
 | `tst_models.cpp` | `src/models.cpp`: the list models (conversations, messages, channels, activity, calendar) |
 | `tst_statecache.cpp` | `src/statecache.cpp`: the local cache's JSON format, old and new |
 | `tst_demo.cpp` | `src/demo.h`: demo mode hides real names, titles and texts |

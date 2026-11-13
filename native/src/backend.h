@@ -196,6 +196,11 @@ public:
     Q_INVOKABLE void sendClipboardImage(bool inThread);
     // Any file: uploaded to OneDrive / the channel's SharePoint folder and shared as Teams does.
     Q_INVOKABLE void sendFile(const QUrl &file, bool inThread);
+    // The attachments staged in the composer, sent together: pictures inline, other files
+    // through OneDrive/SharePoint one after the other. `urls`: file URLs.
+    Q_INVOKABLE void sendAttachments(const QVariantList &urls, bool inThread);
+    // The picture in the clipboard saved as a file (a day in the cache folder); empty URL on failure.
+    Q_INVOKABLE QUrl stageClipboardImage();
     // Native video call: an audio call whose camera goes on once connected.
     Q_INVOKABLE void startNativeVideoCall();
     // Attachments: a shared file (from a message's files) or a picture, into ~/Downloads.
@@ -357,6 +362,10 @@ private:
     bool m_uploading = false;
     FileUploader m_files;
     double m_uploadProgress = 0;
+    struct QueuedFile { QUrl file; QString conversationId; QString replyTo; };
+    QList<QueuedFile> m_fileQueue;  // files waiting for the one being uploaded
+    bool m_fileSending = false;     // an upload was started and has not ended yet
+    void startNextFile();
     QString m_uploadConversation;  // where the file being uploaded goes
     QString m_uploadReplyTo;
     QNetworkAccessManager m_downloads;

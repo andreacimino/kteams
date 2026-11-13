@@ -152,6 +152,8 @@ Kirigami.Page {
             onVisibleChanged: if (!visible) backend.clearQuote()
         }
         Composer {
+            id: composer
+            target: backend.currentConversationId
             Layout.fillWidth: true
             Layout.margins: Kirigami.Units.smallSpacing
             enabled: backend.currentConversationId !== ""
@@ -162,7 +164,7 @@ Kirigami.Page {
         }
     }
 
-    // Drag and drop: pictures are sent inline, other files through OneDrive/SharePoint.
+    // Drag and drop: the files wait in the composer as attachments until Enter.
     DropArea {
         id: dropArea
         anchors.fill: parent
@@ -170,11 +172,7 @@ Kirigami.Page {
         enabled: backend.currentConversationId !== ""
         onDropped: drop => {
             if (!drop.hasUrls) return
-            for (const url of drop.urls) {
-                const name = url.toString().toLowerCase()
-                if (/\.(png|jpe?g|gif|webp|bmp)$/.test(name)) backend.sendImageFile(url, false)
-                else backend.sendFile(url, false)
-            }
+            composer.addFiles(drop.urls)
             drop.accept(Qt.CopyAction)
         }
         Rectangle {
@@ -188,7 +186,7 @@ Kirigami.Page {
                 anchors.centerIn: parent
                 width: parent.width - Kirigami.Units.gridUnit * 4
                 icon.name: "document-send"
-                text: qsTr("Drop to send")
+                text: qsTr("Drop to attach")
             }
         }
     }

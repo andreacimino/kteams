@@ -164,13 +164,20 @@ Backend::Backend(QObject *parent) : QObject(parent)
 
     connect(&m_client, &TeamsClient::imageUploading, this, [this](bool busy) { m_uploading = busy; emit uploadingChanged(); });
     connect(&m_files, &FileUploader::progress, this, [this](double f) { m_uploadProgress = f; emit uploadingChanged(); });
-    connect(&m_files, &FileUploader::failed, this, [this](const QString &message) { setError(message); emit uploadingChanged(); });
+    connect(&m_files, &FileUploader::failed, this, [this](const QString &message) {
+        setError(message);
+        emit uploadingChanged();
+        m_fileSending = false;
+        startNextFile();
+    });
     connect(&m_files, &FileUploader::uploaded, this, [this](const QJsonObject &entry) {
         emit uploadingChanged();
         // properties.files is a JSON array encoded as a string, as Teams sends it.
         const QString files = QString::fromUtf8(QJsonDocument(QJsonArray{entry}).toJson(QJsonDocument::Compact));
         m_client.sendMessage(m_uploadConversation, QString(), m_selfDisplayName, m_uploadReplyTo,
                              {{QStringLiteral("files"), files}});
+        m_fileSending = false;
+        startNextFile();
     });
     connect(&m_nativeCall, &NativeCall::stateChanged, this, &Backend::nativeCallChanged);
     connect(&m_nativeCall, &NativeCall::activeChanged, this, &Backend::nativeCallChanged);
@@ -345,6 +352,9 @@ void Backend::onSkypeToken(const QString &token, const QString &region, int expi
 void Backend::onAuthFailed(const QString &message, bool sessionLost)
 {
     setError(message);
+    // A file waiting for its token will never start: free the queue.
+    m_fileQueue.clear();
+    m_fileSending = false;
     if (sessionLost) {
         resetChatState();
         setState(State::SignedOut);
@@ -387,6 +397,8 @@ void Backend::onClientError(const QString &context, int httpStatus, const QStrin
 
 void Backend::resetChatState()
 {
+    m_fileQueue.clear();
+    m_fileSending = false;
     m_peopleLoaded = false;
     m_indexedAll = false;
     m_indexQueue.clear();
@@ -1079,20 +1091,61 @@ void Backend::sendClipboardImage(bool inThread)
 
 void Backend::sendFile(const QUrl &file, bool inThread)
 {
-    if (m_currentConversationId.isEmpty() || m_files.busy()) return;
-    m_uploadConversation = m_currentConversationId;
-    m_uploadReplyTo = inThread ? m_currentThreadId : QString();
-    const ChannelItem *channel = m_channels.find(m_currentConversationId);
+    if (m_currentConversationId.isEmpty()) return;
+    // The destination is fixed now: switching chat before the upload starts must not move the file.
+    m_fileQueue.append({file, m_currentConversationId, inThread ? m_currentThreadId : QString()});
+    startNextFile();
+}
+
+void Backend::startNextFile()
+{
+    // One upload at a time (the uploader takes one); the next starts when this one is done.
+    if (m_fileSending || m_fileQueue.isEmpty()) return;
+    const QueuedFile next = m_fileQueue.takeFirst();
+    m_uploadConversation = next.conversationId;
+    m_uploadReplyTo = next.replyTo;
+    const ChannelItem *channel = m_channels.find(next.conversationId);
     const QString groupId = channel ? channel->groupId : QString();
     const QString channelId = channel ? channel->id : QString();
-    if (channel && groupId.isEmpty()) { setError(tr("Unknown team for this channel: cannot upload the file.")); return; }
-    const QString path = file.toLocalFile();
+    if (channel && groupId.isEmpty()) {
+        setError(tr("Unknown team for this channel: cannot upload the file."));
+        startNextFile();
+        return;
+    }
+    const QString path = next.file.toLocalFile();
+    m_fileSending = true;
     m_uploadProgress = 0;
     emit uploadingChanged();
     m_oauth.accessToken(QStringLiteral("https://graph.microsoft.com"), [this, path, groupId, channelId](const QString &token) {
         m_files.upload(path, token, groupId, channelId);
         emit uploadingChanged();
     });
+}
+
+void Backend::sendAttachments(const QVariantList &urls, bool inThread)
+{
+    static const QSet<QString> pictures{QStringLiteral("png"), QStringLiteral("jpg"), QStringLiteral("jpeg"), QStringLiteral("gif"),
+                                        QStringLiteral("webp"), QStringLiteral("bmp")};
+    for (const QVariant &v : urls) {
+        const QUrl url = v.toUrl();
+        if (!url.isLocalFile()) continue;
+        // Pictures go inline, the other files through OneDrive/SharePoint, one after the other.
+        if (pictures.contains(QFileInfo(url.toLocalFile()).suffix().toLower())) sendImageFile(url, inThread);
+        else sendFile(url, inThread);
+    }
+}
+
+QUrl Backend::stageClipboardImage()
+{
+    const QImage image = QGuiApplication::clipboard()->image();
+    if (image.isNull()) return {};
+    // A file of its own, so it shows up as an attachment like any other until it is sent.
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + QStringLiteral("/pasted");
+    QDir().mkpath(dir);
+    for (const QFileInfo &old : QDir(dir).entryInfoList(QDir::Files)) // earlier pastes, a day old or more
+        if (old.lastModified().daysTo(QDateTime::currentDateTime()) >= 1) QFile::remove(old.filePath());
+    const QString path = dir + QLatin1Char('/') + QStringLiteral("image-%1.png").arg(QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd-HHmmss-zzz")));
+    return image.save(path, "PNG") ? QUrl::fromLocalFile(path) : QUrl();
 }
 
 void Backend::startNativeVideoCall()

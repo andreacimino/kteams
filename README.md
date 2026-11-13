@@ -25,7 +25,7 @@ The calendar week, with meetings to join:
 
 - Sign-in with the normal Microsoft login (device code), session kept in the system wallet.
 - Chats (one-to-one and groups) and teams/channels with threads: text with formatting,
-  pictures, files (send, drag and drop, download), reactions, mentions, edit and delete,
+  pictures, files (dropped, picked or pasted files wait above the message box until Enter; download), reactions, mentions, edit and delete,
   reply quotes, "seen by", "is typing", read state and unread counts.
 - Chat management: pin, mute, hide; group chats renamed, people added, leaving.
 - Interface in English, Italian, German, French, Spanish, Brazilian Portuguese, Simplified
