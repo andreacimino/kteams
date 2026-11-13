@@ -19,6 +19,7 @@ pkgbase = kteams-git
 	depends = kirigami-addons
 	depends = qqc2-desktop-style
 	depends = knotifications
+	depends = kidletime
 	depends = kstatusnotifieritem
 	depends = gstreamer
 	depends = gst-plugins-base

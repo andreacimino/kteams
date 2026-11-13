@@ -382,7 +382,8 @@ private:
     ScreenCastPortal m_screenCast;
     QPointer<KNotification> m_ringNotification;
     void notifyDownloaded(const QString &path);
-    QTimer m_idleTimer;     // marks the user inactive after a while away from the window
+    bool m_systemIdle = false; // no keyboard or mouse input on the desktop for a while (KIdleTime)
+    int m_idleTimeoutId = 0;
     bool m_reportedActive = false;
     int m_unreadCount = 0;
     void sendImageData(const QByteArray &data, const QString &fileName, bool inThread);

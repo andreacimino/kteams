@@ -17,7 +17,7 @@ jobs:
         run: |
           pacman -Syu --noconfirm --needed git cmake pkgconf gcovr \
             qt6-base qt6-declarative qt6-websockets qt6-multimedia qt6-tools qtkeychain-qt6 \
-            kirigami kirigami-addons qqc2-desktop-style knotifications kstatusnotifieritem \
+            kirigami kirigami-addons qqc2-desktop-style knotifications kidletime kstatusnotifieritem \
             gstreamer gst-plugins-base gst-plugins-bad-libs libnice zlib
       - uses: actions/checkout@v4
       - name: Configure (tests and coverage on)

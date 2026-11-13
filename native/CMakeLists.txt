@@ -19,6 +19,8 @@ find_package(ZLIB REQUIRED)
 find_package(Qt6Keychain REQUIRED)
 # Desktop notifications for new messages.
 find_package(KF6Notifications REQUIRED)
+# Idle detection for the "Away" presence: keyboard and mouse input on the whole desktop.
+find_package(KF6IdleTime REQUIRED)
 
 # Everything but main() is a static library, so the tests link the same code as the app.
 add_library(kteams_core STATIC
@@ -64,6 +66,7 @@ target_link_libraries(kteams_core PUBLIC
     ZLIB::ZLIB
     Qt6Keychain::Qt6Keychain
     KF6::Notifications
+    KF6::IdleTime
     KF6::StatusNotifierItem
     PkgConfig::GST
     Qt6::DBus

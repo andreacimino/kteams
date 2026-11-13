@@ -9,7 +9,7 @@ arch=('x86_64' 'aarch64')
 url="https://github.com/andreacimino/kteams"
 license=('GPL-3.0-or-later')
 depends=('qt6-base' 'qt6-declarative' 'qt6-websockets' 'qt6-multimedia' 'qtkeychain-qt6'
-         'kirigami' 'kirigami-addons' 'qqc2-desktop-style' 'knotifications' 'kstatusnotifieritem'
+         'kirigami' 'kirigami-addons' 'qqc2-desktop-style' 'knotifications' 'kidletime' 'kstatusnotifieritem'
          'gstreamer' 'gst-plugins-base' 'gst-plugins-good' 'gst-plugins-bad' 'gst-plugins-ugly'
          'gst-plugin-pipewire' 'libnice' 'zlib' 'hicolor-icon-theme')
 optdepends=('gst-plugin-va: hardware video decoding'

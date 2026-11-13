@@ -32,6 +32,7 @@
 #include <QTimeZone>
 #include <QTimer>
 #include <QVideoSink>
+#include <KIdleTime>
 #include <KNotification>
 #include <unistd.h>
 #include <algorithm>
@@ -96,7 +97,7 @@ Backend::Backend(QObject *parent) : QObject(parent)
     });
     // Activity can be reported only once the device is registered.
     connect(&m_client, &TeamsClient::presenceEndpointRegistered, this, [this] {
-        m_reportedActive = !(QGuiApplication::applicationState() == Qt::ApplicationActive || m_idleTimer.isActive());
+        m_reportedActive = m_systemIdle; // the opposite of what is due, so the first update reports
         updateActivity();
     });
     connect(&m_client, &TeamsClient::usersFound, this, [this](const QString &, const QJsonArray &users) {
@@ -238,14 +239,18 @@ Backend::Backend(QObject *parent) : QObject(parent)
 
     m_syncTimer.setSingleShot(true);
     connect(&m_syncTimer, &QTimer::timeout, this, &Backend::sync);
-    // Away after this long without using the window (the timer runs while it is in the background).
-    m_idleTimer.setSingleShot(true);
-    m_idleTimer.setInterval(std::chrono::minutes(5));
-    connect(&m_idleTimer, &QTimer::timeout, this, &Backend::updateActivity);
-    connect(qGuiApp, &QGuiApplication::applicationStateChanged, this, [this](Qt::ApplicationState s) {
-        if (s == Qt::ApplicationActive) m_idleTimer.stop();
-        else m_idleTimer.start();
+    // Away after this long without keyboard or mouse input anywhere on the desktop, as in the
+    // Teams client; not after this long without the KTeams window in front.
+    KIdleTime *idle = KIdleTime::instance();
+    m_idleTimeoutId = idle->addIdleTimeout(std::chrono::minutes(5));
+    connect(idle, &KIdleTime::timeoutReached, this, [this, idle](int id) {
+        if (id != m_idleTimeoutId) return;
+        m_systemIdle = true;
+        idle->catchNextResumeEvent(); // one shot: asked again at every idle period
         updateActivity();
+    });
+    connect(idle, &KIdleTime::resumingFromIdle, this, [this] { m_systemIdle = false; updateActivity(); });
+    connect(qGuiApp, &QGuiApplication::applicationStateChanged, this, [this](Qt::ApplicationState s) {
         if (s != Qt::ApplicationActive) return;
         // Back to the window: catch up now and mark the open chat as read.
         sync();
@@ -397,7 +402,6 @@ void Backend::resetChatState()
     m_avatars.clear();
     m_media.clear();
     m_presenceTimer.stop();
-    m_idleTimer.stop();
     m_reportedActive = false;
     m_presence.clear();
     m_trouter.stop();
@@ -1125,8 +1129,8 @@ void Backend::presenceToken(std::function<void(const QString &)> cb)
 
 void Backend::updateActivity()
 {
-    // Active while the window is in use; inactive after kIdleMinutes away (Teams shows "Away").
-    const bool active = QGuiApplication::applicationState() == Qt::ApplicationActive || m_idleTimer.isActive();
+    // Active unless the desktop has been idle for a while (then Teams shows "Away").
+    const bool active = !m_systemIdle;
     if (active == m_reportedActive || m_state != State::Connected) return;
     m_reportedActive = active;
     m_trouter.sendActivity(active);
