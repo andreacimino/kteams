@@ -21,6 +21,8 @@ public:
     void upload(const QString &localPath, const QString &graphToken,
                 const QString &channelGroupId = QString(), const QString &channelId = QString());
     bool busy() const { return m_file != nullptr; }
+    // For the tests: another server than Microsoft Graph.
+    void setGraphBase(const QString &base);
 
 signals:
     void progress(double fraction);
@@ -37,6 +39,7 @@ private:
 
     QNetworkAccessManager m_nam;
     std::unique_ptr<QFile> m_file;
+    QString m_graph;
     QString m_token;
     QString m_fileName;
     bool m_channel = false;

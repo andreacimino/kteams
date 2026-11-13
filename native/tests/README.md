@@ -13,6 +13,7 @@ separate developer tool that exercises the media pipeline without calling anyone
 | `tst_backendlogic.cpp` | what used to sit inside Backend: team channels, calendar events, activity feed, reminder timing, download file names (no path escapes), reply quotes (escaping) |
 | `tst_teamsclient.cpp` | `src/teamsclient.cpp` calls (chat service, sign-in, profiles, calendar, search, presence, pictures) against a fake HTTP server on loopback: method, path, query, headers and body of each request, the signals for answers, errors and bad JSON |
 | `tst_oauth.cpp` | `src/oauth.cpp`: device code sign-in, token refresh, caching and sharing, session loss, with a fake login server and an in-memory token store (never the system keychain) |
+| `tst_fileuploader.cpp` | `src/fileuploader.cpp`: sending a file through Microsoft Graph (OneDrive for chats, the channel folder for channels), 5 MiB chunks, the file entry Teams expects, every failure stage |
 | `tst_models.cpp` | `src/models.cpp`: the list models (conversations, messages, channels, activity, calendar) |
 | `tst_statecache.cpp` | `src/statecache.cpp`: the local cache's JSON format, old and new |
 | `tst_demo.cpp` | `src/demo.h`: demo mode hides real names, titles and texts |
@@ -38,7 +39,7 @@ Writing a test: one `tst_<module>.cpp` per source module, registered with `kteam
 `CMakeLists.txt`; each slot checks one behaviour and is named after it. Code that talks to
 the network is tested against `FakeServer` (`fakeserver.h`), a server on loopback that records
 every request and answers as configured: `teamsclient` through `setTokens` and `setHosts`,
-`oauth` through `setAuthority` and `setTokenStore`. A new service client gets the same two
+`oauth` through `setAuthority` and `setTokenStore`, `fileuploader` through `setGraphBase`. A new service client gets the same two
 injection points. `callengine` and the HTTP parts of `nativecall` are not unit-tested yet:
 parsing that can be separated from the request goes into a pure function (as `content.cpp`
 does) and gets tested there.

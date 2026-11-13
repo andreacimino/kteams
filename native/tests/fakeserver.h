@@ -47,6 +47,7 @@ public:
         answer = "{}";
         extraHeaders.clear();
         respond = nullptr;
+        statusOf = nullptr;
         requests.clear();
     }
 
@@ -54,6 +55,7 @@ public:
     QByteArray answer = "{}";
     QByteArray extraHeaders;                         // full header lines, each ending in \r\n
     std::function<QByteArray(const Request &)> respond; // when set, the body of the answer
+    std::function<int(const Request &)> statusOf;       // when set, the status of the answer
     QList<Request> requests;
 
 private:
@@ -78,7 +80,7 @@ private:
         m_buffers.remove(socket);
         requests.append(r);
         const QByteArray body = respond ? respond(r) : answer;
-        socket->write("HTTP/1.1 " + QByteArray::number(status) + " X\r\nContent-Type: application/json\r\nContent-Length: "
+        socket->write("HTTP/1.1 " + QByteArray::number(statusOf ? statusOf(r) : status) + " X\r\nContent-Type: application/json\r\nContent-Length: "
                       + QByteArray::number(body.size()) + "\r\n" + extraHeaders + "Connection: close\r\n\r\n" + body);
         socket->disconnectFromHost();
     }

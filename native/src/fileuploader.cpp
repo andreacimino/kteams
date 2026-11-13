@@ -22,11 +22,13 @@ QString httpError(QNetworkReply *reply, const QByteArray &body)
 }
 }
 
-FileUploader::FileUploader(QObject *parent) : QObject(parent) {}
+FileUploader::FileUploader(QObject *parent) : QObject(parent), m_graph(QString::fromLatin1(kGraph)) {}
+
+void FileUploader::setGraphBase(const QString &base) { m_graph = base; }
 
 QNetworkRequest FileUploader::graphRequest(const QString &pathOrUrl) const
 {
-    QNetworkRequest req(QUrl(pathOrUrl.startsWith(QLatin1String("https://")) ? pathOrUrl : QString::fromLatin1(kGraph) + pathOrUrl));
+    QNetworkRequest req(QUrl(pathOrUrl.startsWith(QLatin1String("https://")) ? pathOrUrl : m_graph + pathOrUrl));
     req.setRawHeader("Authorization", "Bearer " + m_token.toUtf8());
     req.setRawHeader("Accept", "application/json");
     return req;
