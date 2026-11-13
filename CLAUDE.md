@@ -36,7 +36,8 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
     `src/chatparser.*`: chat service JSON to conversations, messages, reactions, team channels,
     calendar events and the activity feed (a `SelfContext` carries who we are and the known people); `src/models.*`: the list models;
     `src/statecache.*`: the local cache's JSON format; `src/trouterframes.*`: Trouter's frames,
-    gzip bodies and routing; `src/calljson.*`: SDP, media links and roster streams of a call.
+    gzip bodies and routing; `src/calljson.*`: SDP, media links and roster streams of a call;
+    `src/sdpdialect.*`: the SDP translation to and from Microsoft's dialect.
     Everything but `main.cpp` is the static library `kteams_core`, linked by the app and the tests.
   - `qml/`: Kirigami UI (chat list with tabs Chat/Team/Calendario, chat, channel threads).
   - `call/`: `kteams-capture`, Teams web in a QtWebEngine window, a developer tool only
@@ -46,7 +47,7 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 ## Tests: the regression suite
 
 Qt Test executables in `native/tests/` (`tst_content`, `tst_chatparser`, `tst_models`,
-`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_backendlogic`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
+`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_sdpdialect`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_backendlogic`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
 
     cmake -S native -B native/build && cmake --build native/build
     ctest --test-dir native/build --output-on-failure
@@ -70,8 +71,9 @@ Coverage (gcovr), in its own build directory because it changes the compiler fla
   real network in tests): `teamsclient` takes `setTokens` (chat service) and `setHosts` (the
   other Microsoft hosts), `oauth` takes `setAuthority` and `setTokenStore` (the tests never
   touch the system keychain), `fileuploader` takes `setGraphBase`. A new service client gets the same injection points.
-  `callengine` and the HTTP parts of `nativecall` are only tested through the pure modules
-  they use (`calljson`, `trouterframes`).
+  `callengine` (GStreamer) and the HTTP parts of `nativecall` are only tested through the pure
+  modules they use (`calljson`, `trouterframes`, `sdpdialect`); `kteams-offer-test` checks the
+  media pipeline by hand.
 - CI: `.github/workflows/tests.yml` runs the suite with coverage in an Arch container on
   every push and pull request (the HTML report is an artifact); `flatpak.yml` builds the
   Flatpak. A red workflow means the branch is not ready.

@@ -44,6 +44,8 @@ add_library(kteams_core STATIC
     src/desktopintegration.h
     src/screencast.cpp
     src/screencast.h
+    src/sdpdialect.cpp
+    src/sdpdialect.h
     src/demo.h
     src/callengine.cpp
     src/callengine.h

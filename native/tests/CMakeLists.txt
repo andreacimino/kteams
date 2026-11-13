@@ -13,6 +13,7 @@ kteams_test(tst_content)
 kteams_test(tst_chatparser)
 kteams_test(tst_trouterframes)
 kteams_test(tst_calljson)
+kteams_test(tst_sdpdialect)
 kteams_test(tst_caches)
 kteams_test(tst_teamsclient)
 kteams_test(tst_oauth)
@@ -37,7 +38,7 @@ if(KTEAMS_COVERAGE)
                     --xml ${CMAKE_BINARY_DIR}/coverage/coverage.xml
                     ${CMAKE_BINARY_DIR}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS tst_content tst_chatparser tst_trouterframes tst_calljson tst_caches tst_teamsclient tst_oauth tst_fileuploader tst_backendlogic tst_models tst_statecache tst_demo
+            DEPENDS tst_content tst_chatparser tst_trouterframes tst_calljson tst_sdpdialect tst_caches tst_teamsclient tst_oauth tst_fileuploader tst_backendlogic tst_models tst_statecache tst_demo
             COMMENT "Running the tests and writing coverage/index.html")
     endif()
 endif()
