@@ -292,8 +292,12 @@ void Trouter::handleRequest(const QJsonObject &request)
         if (content.value(QLatin1String("type")).toString() == QLatin1String("EventMessage")) emit eventMessage(content);
         break;
     case TrouterFrames::Route::CallManager:
+        // Field names only: what the call manager pushes is still being learned.
+        qCInfo(lcTrouter) << "call manager push: evt" << decoded.evt << "fields" << content.keys();
         // purple-teams (teams_trouter.c): evt 107 = incoming call; "cp" holds callNotification.
-        if (decoded.evt == 107) {
+        // evt 109 (seen with a call in a group chat: groupChat, groupContext, meetingProperties) has
+        // the same callNotification and conversationInvitation, and rings the same way.
+        if (TrouterFrames::isIncomingCallEvent(decoded.evt)) {
             const TrouterFrames::Caller caller = TrouterFrames::callerOf(content);
             emit incomingCall(caller.mri, caller.name, content);
         }

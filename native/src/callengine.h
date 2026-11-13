@@ -158,7 +158,8 @@ class TonePlayer : public QObject
 public:
     explicit TonePlayer(QObject *parent = nullptr);
     ~TonePlayer() override;
-    void play(const QString &path);
+    // `loop`: ringtones repeat until stop(); a cue plays once.
+    void play(const QString &path, bool loop = true);
     void stop();
 
 private:

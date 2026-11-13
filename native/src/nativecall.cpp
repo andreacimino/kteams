@@ -21,6 +21,9 @@ constexpr auto kTrap = "https://teams.microsoft.com/trap/tokens";
 constexpr auto kTestBotMri = "28:cf28171e-fcfd-47e4-a1d6-79460b0b3ca0";
 constexpr auto kRingtone = "/usr/share/sounds/ocean/stereo/phone-incoming-call.oga";
 constexpr auto kRingback = "/usr/share/sounds/freedesktop/stereo/phone-outgoing-calling.oga";
+// Short cues: the call is connected (the ringing stops and someone can be heard), and it ended.
+constexpr auto kConnectedCue = "/usr/share/sounds/freedesktop/stereo/service-login.oga";
+constexpr auto kEndedCue = "/usr/share/sounds/freedesktop/stereo/service-logout.oga";
 constexpr int kEndpointCapabilities = 73463;
 constexpr int kClientEndpointCapabilities = 248477418;
 // Relays seen in Teams web's RTCPeerConnection configuration (EU region).
@@ -100,7 +103,12 @@ NativeCall::NativeCall(QObject *parent) : QObject(parent)
     connect(&m_engine, &CallEngine::remoteShareChanged, this, &NativeCall::videoChanged);
     connect(&m_engine, &CallEngine::screenShareChanged, this, &NativeCall::videoChanged);
     connect(&m_engine, &CallEngine::connectionStateChanged, this, [this](const QString &s) {
-        if (s == QLatin1String("connected")) { m_tone.stop(); setState(tr("In a call")); }
+        if (s == QLatin1String("connected")) {
+            m_tone.stop();
+            if (!m_connected) m_cue.play(QString::fromLatin1(kConnectedCue), false);
+            m_connected = true;
+            setState(tr("In a call"));
+        }
         else if (s == QLatin1String("failed")) finish(tr("Media connection failed"));
     });
 }
@@ -116,6 +124,9 @@ void NativeCall::setState(const QString &state)
 void NativeCall::finish(const QString &state)
 {
     m_tone.stop();
+    // A call that had been connected ends with a cue (once: finish() can be reached twice).
+    if (m_connected) m_cue.play(QString::fromLatin1(kEndedCue), false);
+    m_connected = false;
     m_engine.stop();
     setState(state);
     if (m_incoming) { m_incoming = false; emit incomingChanged(); }
@@ -345,6 +356,9 @@ void NativeCall::incoming(const Identity &identity, const QJsonObject &notificat
     m_threadId.clear(); // not the thread of an earlier call
     m_callees.clear();
     const IncomingCall invite = parseIncomingCall(notification);
+    qCInfo(lcNativeCall) << "incoming call: from" << invite.callerMri.section(QLatin1Char(':'), -1).left(8)
+                         << "fields" << notification.keys() << "groupChat" << notification.value(QLatin1String("groupChat")).toObject().keys()
+                         << "attach" << !invite.attachUrl.isEmpty() << "offer" << !invite.offer.isEmpty();
     m_calleeMri = invite.callerMri;
     m_calleeName = invite.callerName;
     if (m_calleeName.isEmpty()) m_calleeName = QStringLiteral("Sconosciuto");
@@ -354,6 +368,7 @@ void NativeCall::incoming(const Identity &identity, const QJsonObject &notificat
     // participantId makes it a second participant of the same user, which "removes" the
     // invited one (call/end subCode 5300).
     if (!invite.participantId.isEmpty()) m_participantId = invite.participantId;
+    m_threadId = invite.threadId; // a group call or meeting: its chat, for the Chat button
     const QString attach = invite.attachUrl;
     const QString joinUrl = invite.joinUrl;
     if (attach.isEmpty()) { qCWarning(lcNativeCall) << "incoming call without attach link"; return; }

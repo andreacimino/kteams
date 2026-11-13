@@ -35,6 +35,11 @@ enum class Route { CallAgent, Messaging, CallManager, Presence, Other };
 // Which service a push is for, from the end of its URL.
 Route routeOf(const QString &url);
 
+// Does the "evt" of an NGCallManagerWin push announce an incoming call? 107: a call; 109: a call in
+// a group chat or meeting (seen with groupChat, groupContext and meetingProperties; the same
+// callNotification and conversationInvitation as 107).
+bool isIncomingCallEvent(int evt);
+
 struct Caller { QString mri; QString name; };
 // callNotification.from of an incoming call push.
 Caller callerOf(const QJsonObject &content);

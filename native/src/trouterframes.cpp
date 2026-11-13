@@ -78,6 +78,8 @@ Route routeOf(const QString &url)
     return Route::Other;
 }
 
+bool isIncomingCallEvent(int evt) { return evt == 107 || evt == 109; }
+
 Caller callerOf(const QJsonObject &content)
 {
     const QJsonObject from = content.value(QLatin1String("callNotification")).toObject().value(QLatin1String("from")).toObject();

@@ -827,17 +827,21 @@ TonePlayer::TonePlayer(QObject *parent) : QObject(parent) {}
 
 TonePlayer::~TonePlayer() { stop(); }
 
-void TonePlayer::play(const QString &path)
+void TonePlayer::play(const QString &path, bool loop)
 {
     stop();
     m_playbin = gst_element_factory_make("playbin", nullptr);
     if (!m_playbin) return;
     g_object_set(m_playbin, "uri", QUrl::fromLocalFile(path).toString().toUtf8().constData(), nullptr);
+    g_object_set_data(G_OBJECT(m_playbin), "kteams-loop", GINT_TO_POINTER(loop ? 1 : 0));
     GstBus *bus = gst_element_get_bus(m_playbin);
     gst_bus_add_watch(bus, [](GstBus *, GstMessage *msg, gpointer element) -> gboolean {
-        // Loop: back to the start at the end of the file.
-        if (GST_MESSAGE_TYPE(msg) == GST_MESSAGE_EOS)
+        if (GST_MESSAGE_TYPE(msg) != GST_MESSAGE_EOS) return TRUE;
+        if (g_object_get_data(G_OBJECT(element), "kteams-loop"))
+            // Loop: back to the start at the end of the file.
             gst_element_seek_simple(GST_ELEMENT(element), GST_FORMAT_TIME, GstSeekFlags(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT), 0);
+        else
+            gst_element_set_state(GST_ELEMENT(element), GST_STATE_NULL); // a cue ends with its sound
         return TRUE;
     }, m_playbin);
     gst_object_unref(bus);

@@ -112,6 +112,7 @@ IncomingCall parseIncomingCall(const QJsonObject &notification)
     invite.participantId = call.value(QLatin1String("to")).toObject().value(QLatin1String("participantId")).toString();
     invite.attachUrl = call.value(QLatin1String("links")).toObject().value(QLatin1String("attach")).toString();
     invite.joinUrl = notification.value(QLatin1String("conversationInvitation")).toObject().value(QLatin1String("conversationController")).toString();
+    invite.threadId = notification.value(QLatin1String("groupChat")).toObject().value(QLatin1String("threadId")).toString();
     return invite;
 }
 

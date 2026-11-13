@@ -121,6 +121,8 @@ private:
     QString m_remoteLegId;
     QJsonObject m_invitationLinks; // acceptance, callLeg (reject), progress, mediaAnswer
     TonePlayer m_tone;
+    TonePlayer m_cue;          // the short sounds: connected, ended
+    bool m_connected = false;  // the media connected at some point in this call
     QStringList m_turn;
     void fetchTurn(std::function<void(const QStringList &)> done);
     QJsonObject acceptanceLinks() const;

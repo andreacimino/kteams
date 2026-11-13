@@ -43,6 +43,7 @@ struct IncomingCall {
     QString participantId; // the id the service already gave us in this call
     QString attachUrl;     // where to attach; empty: the notification is unusable
     QString joinUrl;       // the conversation controller, for the "join" action
+    QString threadId;      // the group chat of a group call or meeting; empty for a one-to-one call
 };
 // A Trouter NGCallManagerWin notification (evt 107) of an incoming call.
 IncomingCall parseIncomingCall(const QJsonObject &notification);

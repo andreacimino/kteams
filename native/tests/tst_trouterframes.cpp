@@ -177,6 +177,36 @@ private slots:
         QVERIFY(callerOf({}).mri.isEmpty());
     }
 
+    void whichCallManagerPushesRing_data()
+    {
+        QTest::addColumn<int>("evt");
+        QTest::addColumn<bool>("rings");
+        QTest::newRow("a call") << 107 << true;
+        QTest::newRow("a call in a group chat or meeting") << 109 << true;
+        QTest::newRow("another event") << 108 << false;
+        QTest::newRow("no evt") << 0 << false;
+        QTest::newRow("a negative number") << -1 << false;
+    }
+    void whichCallManagerPushesRing()
+    {
+        QFETCH(int, evt);
+        QFETCH(bool, rings);
+        QCOMPARE(isIncomingCallEvent(evt), rings);
+    }
+
+    void aGroupCallPushIsDecodedLikeACall()
+    {
+        // The push seen for a call in a group chat: evt 109 and the fields of an invitation.
+        const QJsonObject body{{"evt", 109}, {"callNotification", QJsonObject{{"from", QJsonObject{{"id", "8:orgid:bob"}, {"displayName", "Bob Smith"}}}}},
+                               {"conversationInvitation", QJsonObject{}}, {"groupChat", QJsonObject{{"threadId", "19:g@thread.v2"}}},
+                               {"groupContext", QJsonObject{}}, {"meetingProperties", QJsonObject{}}};
+        const Decoded d = decodeRequest({{"body", QString::fromUtf8(compact(body))}, {"url", "https://x/v4/f/y/NGCallManagerWin"}});
+        QVERIFY(isIncomingCallEvent(d.evt));
+        QCOMPARE(callerOf(d.content).mri, QStringLiteral("8:orgid:bob"));
+        QCOMPARE(callerOf(d.content).name, QStringLiteral("Bob Smith"));
+        QCOMPARE(routeOf("https://x/v4/f/y/NGCallManagerWin"), Route::CallManager);
+    }
+
     void messageLossIndicatorsIdentifyRepeats()
     {
         const QJsonObject loss{{"name", "trouter.message_loss"}, {"args", QJsonArray{QJsonObject{{"etag", "7"}}}}};

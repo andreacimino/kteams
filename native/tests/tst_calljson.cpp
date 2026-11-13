@@ -166,6 +166,15 @@ private slots:
         QCOMPARE(invite.joinUrl, QStringLiteral("https://host/controller"));
     }
 
+    void aGroupCallBringsItsThread()
+    {
+        const IncomingCall invite = parseIncomingCall({
+            {"callNotification", QJsonObject{{"from", QJsonObject{{"id", "8:orgid:bob"}}}, {"links", QJsonObject{{"attach", "https://host/attach"}}}}},
+            {"groupChat", QJsonObject{{"threadId", "19:team@thread.v2"}}}});
+        QCOMPARE(invite.threadId, QStringLiteral("19:team@thread.v2"));
+        QVERIFY(parseIncomingCall({{"callNotification", QJsonObject{}}}).threadId.isEmpty()); // a one-to-one call has none
+    }
+
     void incomingNotificationWithoutOfferOrLinks()
     {
         const IncomingCall invite = parseIncomingCall({{"callNotification", QJsonObject{{"from", QJsonObject{{"id", "8:orgid:x"}}}}}});
