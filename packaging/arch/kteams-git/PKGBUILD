@@ -1,0 +1,43 @@
+# Maintainer: Andrea Cimino
+# AUR package: builds the latest commit of the develop branch on GitHub.
+# After editing: makepkg --printsrcinfo > .SRCINFO
+pkgname=kteams-git
+pkgver=r12.8d5b356
+pkgrel=1
+pkgdesc="Native Microsoft Teams client for KDE (work accounts): chat, calls, video, screen sharing"
+arch=('x86_64' 'aarch64')
+url="https://github.com/andreacimino/kteams"
+license=('GPL-3.0-or-later')
+depends=('qt6-base' 'qt6-declarative' 'qt6-websockets' 'qt6-multimedia' 'qtkeychain-qt6'
+         'kirigami' 'kirigami-addons' 'qqc2-desktop-style' 'knotifications' 'kstatusnotifieritem'
+         'gstreamer' 'gst-plugins-base' 'gst-plugins-good' 'gst-plugins-bad' 'gst-plugins-ugly'
+         'gst-plugin-pipewire' 'libnice' 'zlib' 'hicolor-icon-theme')
+optdepends=('gst-plugin-va: hardware video decoding'
+            'pipewire-pulse: microphone and speakers through PipeWire'
+            'xdg-desktop-portal-kde: screen sharing picker'
+            'ocean-sound-theme: notification and call sounds')
+makedepends=('git' 'cmake' 'pkgconf' 'qt6-tools')
+provides=('kteams')
+conflicts=('kteams')
+source=("$pkgname::git+$url.git#branch=develop")
+sha256sums=('SKIP')
+
+pkgver() {
+    cd "$pkgname"
+    # "v0.1.0-3-gabcdef1" -> "0.1.0.r3.gabcdef1"; without a tag: "r<commits>.<hash>".
+    local described
+    if described=$(git describe --long --tags --abbrev=7 2>/dev/null); then
+        printf '%s' "$described" | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+    else
+        printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
+    fi
+}
+
+build() {
+    cmake -S "$pkgname/native" -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+    cmake --build build
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+}

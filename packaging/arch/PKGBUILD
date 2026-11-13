@@ -15,7 +15,7 @@ optdepends=('gst-plugin-va: hardware video decoding'
             'pipewire-pulse: microphone and speakers through PipeWire'
             'xdg-desktop-portal-kde: screen sharing picker'
             'ocean-sound-theme: notification and call sounds')
-makedepends=('cmake' 'pkgconf')
+makedepends=('cmake' 'pkgconf' 'qt6-tools')
 source=("$pkgname-$pkgver.tar.gz")
 sha256sums=('SKIP')
 

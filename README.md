@@ -56,7 +56,8 @@ The calendar week, with meetings to join:
   long calls.
 - Settings page (audio/video devices, sounds); the camera is `/dev/video0` (or
   `KTEAMS_CAMERA`).
-- Packages for distributions other than Arch (Flatpak/AppImage planned).
+- Flatpak on Flathub (the Flatpak is built by GitHub Actions, see `packaging/README.md`);
+  AppImage.
 
 **Known limits**
 
@@ -66,9 +67,11 @@ The calendar week, with meetings to join:
 
 ## Install
 
-Arch / CachyOS / Manjaro: `packaging/arch/build.sh` makes a package, then
-`sudo pacman -U packaging/arch/kteams-*.pkg.tar.zst`. Dependencies come from pacman.
-Details in `packaging/README.md`.
+Arch / CachyOS / Manjaro: `yay -S kteams-git` (AUR), or `makepkg -si` in
+`packaging/arch/kteams-git/`. Dependencies come from pacman; details in `packaging/README.md`.
+
+Any distribution: the Flatpak bundle (`kteams.flatpak`) built by GitHub Actions, from the
+latest run or from a release: `flatpak install --user kteams.flatpak`.
 
 From source (any distribution with Qt 6.5+, KF6, GStreamer 1.22+ with webrtcbin):
 
