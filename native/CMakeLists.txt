@@ -55,7 +55,23 @@ target_include_directories(kteams PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 # Source strings are English; translations/*.ts hold the other languages (Qt Linguist),
 # compiled and embedded at build time, picked by the system locale at start-up.
 # Refresh the .ts files after changing strings: cmake --build native/build --target update_translations
-qt_add_translations(kteams TS_FILES translations/kteams_it.ts RESOURCE_PREFIX "/i18n")
+# (the QML files are listed explicitly: lupdate does not look inside the .qrc)
+file(GLOB KTEAMS_QML_SOURCES CONFIGURE_DEPENDS qml/*.qml)
+qt_add_translations(kteams
+    SOURCES ${KTEAMS_QML_SOURCES}
+    TS_FILES
+        translations/kteams_it.ts
+        translations/kteams_de.ts
+        translations/kteams_fr.ts
+        translations/kteams_es.ts
+        translations/kteams_pt_BR.ts
+        translations/kteams_zh_CN.ts
+        translations/kteams_ja.ts
+        translations/kteams_ru.ts
+        translations/kteams_ko.ts
+        translations/kteams_nl.ts
+        translations/kteams_pl.ts
+    RESOURCE_PREFIX "/i18n")
 
 target_link_libraries(kteams PRIVATE
     Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2 Qt6::Network Qt6::WebSockets Qt6::Multimedia
