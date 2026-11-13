@@ -8,7 +8,7 @@ separate developer tool that exercises the media pipeline without calling anyone
 | `tst_content.cpp` | `src/content.cpp`: Teams HTML to text and rich text, links, pictures, emoji, files, times |
 | `tst_chatparser.cpp` | `src/chatparser.cpp`: chat service JSON to conversations (unread, pinned, previews), messages (edited, deleted, mentions), reactions, titles |
 | `tst_trouterframes.cpp` | `src/trouterframes.cpp`: socket.io frames, gzip/base64 push bodies, routing of pushes, message-loss repeats |
-| `tst_calljson.cpp` | `src/calljson.cpp`: SDP lookup, media controller links, roster streams of a call |
+| `tst_calljson.cpp` | `src/calljson.cpp`: SDP lookup, media controller links, roster streams, the text for how a call ended, the incoming call notification and the attach answer |
 | `tst_caches.cpp` | `src/mediacache.cpp`, `src/avatarcache.cpp`: which pictures get the session token, served from disk, stale and "no picture" entries (offline, in a temporary cache home) |
 | `tst_backendlogic.cpp` | what used to sit inside Backend: team channels, calendar events, activity feed, reminder timing, download file names (no path escapes), reply quotes (escaping) |
 | `tst_teamsclient.cpp` | `src/teamsclient.cpp` calls (chat service, sign-in, profiles, calendar, search, presence, pictures) against a fake HTTP server on loopback: method, path, query, headers and body of each request, the signals for answers, errors and bad JSON |

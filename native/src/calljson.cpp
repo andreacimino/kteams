@@ -1,5 +1,6 @@
 #include "calljson.h"
 
+#include <QCoreApplication>
 #include <QJsonArray>
 #include <QStringList>
 #include <functional>
@@ -84,6 +85,54 @@ QList<RosterStream> rosterStreams(const QJsonObject &body, const QString &selfMr
     for (auto it = participants.begin(); it != participants.end(); ++it)
         if (it.key() != selfMri) scan(it.key(), it.value());
     return streams;
+}
+
+QString callEndText(const QJsonObject &body)
+{
+    const QJsonObject end = body.value(QLatin1String("callEnd")).toObject();
+    const QString reason = end.value(QLatin1String("reason")).toString(body.value(QLatin1String("reason")).toString());
+    const int code = end.value(QLatin1String("code")).toInt(body.value(QLatin1String("code")).toInt());
+    if (reason == QLatin1String("declined") || code == 603) return QCoreApplication::translate("NativeCall", "Call declined");
+    if (reason == QLatin1String("busy") || code == 486) return QCoreApplication::translate("NativeCall", "Busy");
+    if (reason == QLatin1String("noAnswer") || code == 480 || code == 408) return QCoreApplication::translate("NativeCall", "No answer");
+    if (reason == QLatin1String("clientError") || code >= 400)
+        return QCoreApplication::translate("NativeCall", "Call failed (%1)").arg(end.value(QLatin1String("phrase")).toString(QString::number(code)).left(80));
+    return QCoreApplication::translate("NativeCall", "Call ended");
+}
+
+IncomingCall parseIncomingCall(const QJsonObject &notification)
+{
+    const QJsonObject call = notification.value(QLatin1String("callNotification")).toObject();
+    const QJsonObject from = call.value(QLatin1String("from")).toObject();
+    IncomingCall invite;
+    invite.callerMri = from.value(QLatin1String("id")).toString();
+    invite.callerName = from.value(QLatin1String("displayName")).toString();
+    invite.offer = findSdp(call.value(QLatin1String("mediaContent")));
+    invite.legId = call.value(QLatin1String("mediaContent")).toObject().value(QLatin1String("mediaLegId")).toString();
+    invite.participantId = call.value(QLatin1String("to")).toObject().value(QLatin1String("participantId")).toString();
+    invite.attachUrl = call.value(QLatin1String("links")).toObject().value(QLatin1String("attach")).toString();
+    invite.joinUrl = notification.value(QLatin1String("conversationInvitation")).toObject().value(QLatin1String("conversationController")).toString();
+    return invite;
+}
+
+AttachResponse parseAttachResponse(const QJsonObject &response)
+{
+    AttachResponse r;
+    const QJsonObject invitation = response.value(QLatin1String("callInvitation")).toObject();
+    r.invitationLinks = invitation.value(QLatin1String("links")).toObject();
+    r.participantId = response.value(QLatin1String("participants")).toObject().value(QLatin1String("to")).toObject()
+                          .value(QLatin1String("participantId")).toString();
+    r.offer = findSdp(invitation.value(QLatin1String("mediaContent")));
+    r.legId = invitation.value(QLatin1String("mediaContent")).toObject().value(QLatin1String("mediaLegId")).toString();
+    for (const auto &a : response.value(QLatin1String("additionalActionResponses")).toArray()) {
+        const QJsonObject action = a.toObject();
+        const QJsonObject inner = action.contains(QLatin1String("response")) ? action.value(QLatin1String("response")).toObject() : action;
+        if (inner.contains(QLatin1String("links"))) {
+            r.conversationLinks = inner.value(QLatin1String("links")).toObject();
+            r.hasConversationLinks = true;
+        }
+    }
+    return r;
 }
 
 }

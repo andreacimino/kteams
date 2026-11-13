@@ -36,7 +36,7 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
     `src/chatparser.*`: chat service JSON to conversations, messages, reactions, team channels,
     calendar events and the activity feed (a `SelfContext` carries who we are and the known people); `src/models.*`: the list models;
     `src/statecache.*`: the local cache's JSON format; `src/trouterframes.*`: Trouter's frames,
-    gzip bodies and routing; `src/calljson.*`: SDP, media links and roster streams of a call;
+    gzip bodies and routing; `src/calljson.*`: SDP, media links, roster streams, call end text, the incoming call notification and the attach answer;
     `src/sdpdialect.*`: the SDP translation to and from Microsoft's dialect.
     Everything but `main.cpp` is the static library `kteams_core`, linked by the app and the tests.
   - `qml/`: Kirigami UI (chat list with tabs Chat/Team/Calendario, chat, channel threads).

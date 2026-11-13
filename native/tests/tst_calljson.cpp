@@ -114,6 +114,109 @@ private slots:
         QCOMPARE(streams.size(), 1); // an empty stream entry still reads as zeros
         QCOMPARE(streams[0].sourceId, 0);
     }
+
+    // --- end of a call --------------------------------------------------------------------
+
+    void callEndTextFromReasonOrCode_data()
+    {
+        QTest::addColumn<QJsonObject>("body");
+        QTest::addColumn<QString>("text");
+        const auto ended = [](const QJsonObject &end) { return QJsonObject{{"callEnd", end}}; };
+        QTest::newRow("declined by reason") << ended({{"reason", "declined"}}) << "Call declined";
+        QTest::newRow("declined by code") << ended({{"code", 603}}) << "Call declined";
+        QTest::newRow("busy by reason") << ended({{"reason", "busy"}}) << "Busy";
+        QTest::newRow("busy by code") << ended({{"code", 486}}) << "Busy";
+        QTest::newRow("no answer by reason") << ended({{"reason", "noAnswer"}}) << "No answer";
+        QTest::newRow("no answer by 480") << ended({{"code", 480}}) << "No answer";
+        QTest::newRow("no answer by 408") << ended({{"code", 408}}) << "No answer";
+        QTest::newRow("failed with the phrase") << ended({{"reason", "clientError"}, {"phrase", "Not found"}}) << "Call failed (Not found)";
+        QTest::newRow("failed by code without a phrase") << ended({{"code", 500}}) << "Call failed (500)";
+        QTest::newRow("a very long phrase is cut") << ended({{"code", 404}, {"phrase", QString(200, 'x')}}) << QString("Call failed (%1)").arg(QString(80, 'x'));
+        QTest::newRow("a normal end") << ended({{"reason", "local"}, {"code", 200}}) << "Call ended";
+        QTest::newRow("nothing at all") << QJsonObject() << "Call ended";
+        QTest::newRow("conversation end: reason at the top") << QJsonObject{{"reason", "busy"}} << "Busy";
+        QTest::newRow("conversation end: code at the top") << QJsonObject{{"code", 603}} << "Call declined";
+    }
+    void callEndTextFromReasonOrCode()
+    {
+        QFETCH(QJsonObject, body);
+        QFETCH(QString, text);
+        QCOMPARE(callEndText(body), text);
+    }
+
+    // --- incoming calls -------------------------------------------------------------------
+
+    void incomingNotificationFields()
+    {
+        const QString sdp = QStringLiteral("v=0\r\ns=-\r\n");
+        const QJsonObject notification{
+            {"callNotification", QJsonObject{
+                {"from", QJsonObject{{"id", "8:orgid:bob"}, {"displayName", "Bob Smith"}}},
+                {"to", QJsonObject{{"participantId", "part-1"}}},
+                {"mediaContent", QJsonObject{{"blob", sdp}, {"mediaLegId", "leg-1"}}},
+                {"links", QJsonObject{{"attach", "https://host/attach"}}}}},
+            {"conversationInvitation", QJsonObject{{"conversationController", "https://host/controller"}}}};
+        const IncomingCall invite = parseIncomingCall(notification);
+        QCOMPARE(invite.callerMri, QStringLiteral("8:orgid:bob"));
+        QCOMPARE(invite.callerName, QStringLiteral("Bob Smith"));
+        QCOMPARE(invite.offer, sdp);
+        QCOMPARE(invite.legId, QStringLiteral("leg-1"));
+        QCOMPARE(invite.participantId, QStringLiteral("part-1"));
+        QCOMPARE(invite.attachUrl, QStringLiteral("https://host/attach"));
+        QCOMPARE(invite.joinUrl, QStringLiteral("https://host/controller"));
+    }
+
+    void incomingNotificationWithoutOfferOrLinks()
+    {
+        const IncomingCall invite = parseIncomingCall({{"callNotification", QJsonObject{{"from", QJsonObject{{"id", "8:orgid:x"}}}}}});
+        QCOMPARE(invite.callerMri, QStringLiteral("8:orgid:x"));
+        QVERIFY(invite.callerName.isEmpty());
+        QVERIFY(invite.offer.isEmpty());   // the offer comes with the attach answer
+        QVERIFY(invite.attachUrl.isEmpty()); // no link: the call cannot be answered
+        QVERIFY(invite.participantId.isEmpty());
+        QVERIFY(parseIncomingCall({}).callerMri.isEmpty());
+    }
+
+    // --- the attach answer ----------------------------------------------------------------
+
+    void attachResponseFields()
+    {
+        const QString sdp = QStringLiteral("v=0\r\ns=-\r\n");
+        const QJsonObject response{
+            {"callInvitation", QJsonObject{{"links", QJsonObject{{"acceptance", "https://host/accept"}, {"progress", "https://host/progress"}}},
+                                           {"mediaContent", QJsonObject{{"blob", sdp}, {"mediaLegId", "leg-2"}}}}},
+            {"participants", QJsonObject{{"to", QJsonObject{{"participantId", "part-2"}}}}},
+            {"additionalActionResponses", QJsonArray{QJsonObject{{"response", QJsonObject{{"links", QJsonObject{{"leave", "https://host/leave"}}}}}}}}};
+        const AttachResponse r = parseAttachResponse(response);
+        QCOMPARE(r.invitationLinks.value("acceptance").toString(), QStringLiteral("https://host/accept"));
+        QCOMPARE(r.participantId, QStringLiteral("part-2"));
+        QCOMPARE(r.offer, sdp);
+        QCOMPARE(r.legId, QStringLiteral("leg-2"));
+        QVERIFY(r.hasConversationLinks);
+        QCOMPARE(r.conversationLinks.value("leave").toString(), QStringLiteral("https://host/leave"));
+    }
+
+    void conversationLinksAreReadWithOrWithoutAResponseWrapperAndTheLastWins()
+    {
+        const QJsonObject response{{"additionalActionResponses", QJsonArray{
+            QJsonObject{{"links", QJsonObject{{"leave", "https://host/first"}}}},                                   // not wrapped
+            QJsonObject{{"name", "other"}},                                                                         // no links
+            QJsonObject{{"response", QJsonObject{{"links", QJsonObject{{"leave", "https://host/last"}}}}}}}}};      // wrapped
+        const AttachResponse r = parseAttachResponse(response);
+        QVERIFY(r.hasConversationLinks);
+        QCOMPARE(r.conversationLinks.value("leave").toString(), QStringLiteral("https://host/last"));
+    }
+
+    void anEmptyAttachResponse()
+    {
+        const AttachResponse r = parseAttachResponse({});
+        QVERIFY(!r.hasConversationLinks);
+        QVERIFY(r.invitationLinks.isEmpty());
+        QVERIFY(r.participantId.isEmpty());
+        QVERIFY(r.offer.isEmpty());
+        // An action response whose links are an empty object still counts as links.
+        QVERIFY(parseAttachResponse({{"additionalActionResponses", QJsonArray{QJsonObject{{"links", QJsonObject()}}}}}).hasConversationLinks);
+    }
 };
 
 QTEST_GUILESS_MAIN(CallJsonTest)

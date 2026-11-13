@@ -342,20 +342,18 @@ void NativeCall::incoming(const Identity &identity, const QJsonObject &notificat
     m_pendingSources.clear();
     m_screenSources.clear();
     m_videoSequence = 0;
-    const QJsonObject call = notification.value(QLatin1String("callNotification")).toObject();
-    const QJsonObject from = call.value(QLatin1String("from")).toObject();
-    m_calleeMri = from.value(QLatin1String("id")).toString();
-    m_calleeName = from.value(QLatin1String("displayName")).toString();
+    const IncomingCall invite = parseIncomingCall(notification);
+    m_calleeMri = invite.callerMri;
+    m_calleeName = invite.callerName;
     if (m_calleeName.isEmpty()) m_calleeName = QStringLiteral("Sconosciuto");
-    m_remoteOffer = findSdp(call.value(QLatin1String("mediaContent")));
-    m_remoteLegId = call.value(QLatin1String("mediaContent")).toObject().value(QLatin1String("mediaLegId")).toString();
+    m_remoteOffer = invite.offer;
+    m_remoteLegId = invite.legId;
     // The service already names us as a participant of this call: answering with another
     // participantId makes it a second participant of the same user, which "removes" the
     // invited one (call/end subCode 5300).
-    const QString invitedId = call.value(QLatin1String("to")).toObject().value(QLatin1String("participantId")).toString();
-    if (!invitedId.isEmpty()) m_participantId = invitedId;
-    const QString attach = call.value(QLatin1String("links")).toObject().value(QLatin1String("attach")).toString();
-    const QString joinUrl = notification.value(QLatin1String("conversationInvitation")).toObject().value(QLatin1String("conversationController")).toString();
+    if (!invite.participantId.isEmpty()) m_participantId = invite.participantId;
+    const QString attach = invite.attachUrl;
+    const QString joinUrl = invite.joinUrl;
     if (attach.isEmpty()) { qCWarning(lcNativeCall) << "incoming call without attach link"; return; }
 
     m_active = true;
@@ -401,26 +399,20 @@ void NativeCall::incoming(const Identity &identity, const QJsonObject &notificat
         const QJsonObject response = QJsonDocument::fromJson(reply->readAll()).object();
         qCInfo(lcNativeCall).noquote() << "attach HTTP" << http << shape(response).left(900);
         if (reply->error() != QNetworkReply::NoError) { finish(tr("Incoming call lost (attach HTTP %1)").arg(http)); return; }
-        const QJsonObject invitation = response.value(QLatin1String("callInvitation")).toObject();
-        m_invitationLinks = invitation.value(QLatin1String("links")).toObject();
+        const AttachResponse attached = parseAttachResponse(response);
+        m_invitationLinks = attached.invitationLinks;
         qCInfo(lcNativeCall) << "invitation links:" << m_invitationLinks.keys();
         rememberMediaLinks(response);
-        const QString toId = response.value(QLatin1String("participants")).toObject().value(QLatin1String("to")).toObject()
-                                 .value(QLatin1String("participantId")).toString();
-        if (!toId.isEmpty() && toId != m_participantId) {
+        if (!attached.participantId.isEmpty() && attached.participantId != m_participantId) {
             qCInfo(lcNativeCall) << "participantId from attach response replaces ours";
-            m_participantId = toId;
+            m_participantId = attached.participantId;
         }
         if (m_remoteOffer.isEmpty()) {
-            m_remoteOffer = findSdp(invitation.value(QLatin1String("mediaContent")));
-            m_remoteLegId = invitation.value(QLatin1String("mediaContent")).toObject().value(QLatin1String("mediaLegId")).toString();
+            m_remoteOffer = attached.offer;
+            m_remoteLegId = attached.legId;
         }
         // Conversation links (leave...) come back with the "join" action's response.
-        for (const auto &a : response.value(QLatin1String("additionalActionResponses")).toArray()) {
-            const QJsonObject r = a.toObject();
-            const QJsonObject inner = r.contains(QLatin1String("response")) ? r.value(QLatin1String("response")).toObject() : r;
-            if (inner.contains(QLatin1String("links"))) m_links = inner.value(QLatin1String("links")).toObject();
-        }
+        if (attached.hasConversationLinks) m_links = attached.conversationLinks;
         if (m_remoteOffer.isEmpty()) { finish(tr("Incoming call without a media offer")); return; }
         // Ringing, as Teams web reports it.
         postJson(QStringLiteral("progress"), "POST", m_invitationLinks.value(QLatin1String("progress")).toString(),
@@ -655,15 +647,7 @@ bool NativeCall::handleCallback(const QString &url, const QJsonObject &body)
         setState(tr("Ringing…"));
         m_tone.play(QString::fromLatin1(kRingback));
     } else if (event == QLatin1String("call/end") || event == QLatin1String("conversation/conversationEnd")) {
-        const QJsonObject end = body.value(QLatin1String("callEnd")).toObject();
-        const QString reason = end.value(QLatin1String("reason")).toString(body.value(QLatin1String("reason")).toString());
-        const int code = end.value(QLatin1String("code")).toInt(body.value(QLatin1String("code")).toInt());
-        QString text = tr("Call ended");
-        if (reason == QLatin1String("declined") || code == 603) text = tr("Call declined");
-        else if (reason == QLatin1String("busy") || code == 486) text = tr("Busy");
-        else if (reason == QLatin1String("noAnswer") || code == 480 || code == 408) text = tr("No answer");
-        else if (reason == QLatin1String("clientError") || code >= 400) text = tr("Call failed (%1)").arg(end.value(QLatin1String("phrase")).toString(QString::number(code)).left(80));
-        finish(text);
+        finish(callEndText(body));
     }
     return true;
 }

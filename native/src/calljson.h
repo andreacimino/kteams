@@ -31,4 +31,31 @@ struct RosterStream {
 // participants[mri]...mediaStreams[{type, label, sourceId, direction}], except `selfMri`'s own.
 QList<RosterStream> rosterStreams(const QJsonObject &body, const QString &selfMri);
 
+// What to show when a call ends, from the body of call/end or conversation/conversationEnd:
+// declined, busy, no answer, failed (with the server's phrase), or just "Call ended".
+QString callEndText(const QJsonObject &body);
+
+struct IncomingCall {
+    QString callerMri;
+    QString callerName;
+    QString offer;         // the caller's SDP, if it came in the notification
+    QString legId;         // the media leg of that offer
+    QString participantId; // the id the service already gave us in this call
+    QString attachUrl;     // where to attach; empty: the notification is unusable
+    QString joinUrl;       // the conversation controller, for the "join" action
+};
+// A Trouter NGCallManagerWin notification (evt 107) of an incoming call.
+IncomingCall parseIncomingCall(const QJsonObject &notification);
+
+struct AttachResponse {
+    QJsonObject invitationLinks;   // acceptance, callLeg (reject), progress, mediaAnswer
+    QString participantId;         // ours, as the service sees it; may be empty
+    QString offer;                 // the SDP, when it was not in the notification
+    QString legId;
+    QJsonObject conversationLinks; // leave...: from the "join" action's response
+    bool hasConversationLinks = false;
+};
+// The answer to the attach request.
+AttachResponse parseAttachResponse(const QJsonObject &response);
+
 }
