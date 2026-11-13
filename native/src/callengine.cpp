@@ -691,6 +691,20 @@ void CallEngine::setRemoteOffer(const QString &sdp)
     GstPromise *applied = gst_promise_new_with_change_func([](GstPromise *p, gpointer selfPtr) {
         gst_promise_unref(p);
         auto *self = static_cast<CallEngine *>(selfPtr);
+        // As the answerer our video transceivers come out of the offer as receive-only or
+        // inactive (Teams offers "recvonly" for its side), so the answer would say "inactive"
+        // and the camera's and the screen's packets would never leave: ask for send and receive.
+        if (self->m_answerer) {
+            for (int index = 0; index < 8; ++index) {
+                GstWebRTCRTPTransceiver *transceiver = nullptr;
+                g_signal_emit_by_name(self->m_webrtc, "get-transceiver", index, &transceiver);
+                if (!transceiver) break;
+                guint mline = G_MAXUINT;
+                g_object_get(transceiver, "mlineindex", &mline, nullptr);
+                if (mline == 1 || mline == 2) g_object_set(transceiver, "direction", GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV, nullptr);
+                gst_object_unref(transceiver);
+            }
+        }
         GstPromise *answer = gst_promise_new_with_change_func(onAnswerCreated, self, nullptr);
         g_signal_emit_by_name(self->m_webrtc, "create-answer", nullptr, answer);
     }, this, nullptr);

@@ -68,6 +68,31 @@ private slots:
         QVERIFY(lines.filter("a=setup:passive").isEmpty()); // we answer as the active DTLS side
         QVERIFY(lines.filter("a=setup:active").size() >= 3);
     }
+    // We are the answerer (Tommaso called us): Teams offers its video sections receive-only for
+    // its side ("recvonly") and the screen section inactive. Our answer must say we send on the
+    // camera section, or the camera's packets never leave (seen 2026-11-13: "video out 1 pkts").
+    void theAnswerToAnIncomingCallLetsUsSendTheCamera()
+    {
+        const QString teamsOffer = fixture("incoming-teams-offer.sdp");
+        QVERIFY(!teamsOffer.isEmpty());
+        CallEngine engine;
+        QString answer;
+        connect(&engine, &CallEngine::answerReady, &engine, [&](const QString &sdp) { answer = sdp; });
+        QVERIFY(engine.start({}, true, 111, 102, QStringLiteral("42001f"), 102));
+        engine.setRemoteOffer(teamsOffer);
+        QTRY_VERIFY_WITH_TIMEOUT(!answer.isEmpty(), 25000);
+
+        // The direction line of each media section, in order.
+        QStringList directions;
+        for (const QString &part : answer.split(QStringLiteral("\r\nm="), Qt::SkipEmptyParts)) {
+            static const QRegularExpression direction(QStringLiteral("\\r\\na=(sendrecv|sendonly|recvonly|inactive)\\r"));
+            directions << (direction.match(part + QStringLiteral("\r")).hasMatch() ? direction.match(part + QStringLiteral("\r")).captured(1) : QStringLiteral("none"));
+        }
+        qInfo() << "answer directions:" << directions;
+        QVERIFY(directions.size() >= 4); // the header, audio, camera, screen
+        QVERIFY2(directions[2] == QLatin1String("sendonly") || directions[2] == QLatin1String("sendrecv"),
+                 qPrintable("camera section answered " + directions[2]));
+    }
 };
 
 QTEST_GUILESS_MAIN(CallEngineTest)
