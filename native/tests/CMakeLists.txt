@@ -10,6 +10,7 @@ function(kteams_test name)
 endfunction()
 
 kteams_test(tst_content)
+kteams_test(tst_chatparser)
 kteams_test(tst_models)
 kteams_test(tst_statecache)
 kteams_test(tst_demo)
@@ -29,7 +30,7 @@ if(KTEAMS_COVERAGE)
                     --xml ${CMAKE_BINARY_DIR}/coverage/coverage.xml
                     ${CMAKE_BINARY_DIR}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS tst_content tst_models tst_statecache tst_demo
+            DEPENDS tst_content tst_chatparser tst_models tst_statecache tst_demo
             COMMENT "Running the tests and writing coverage/index.html")
     endif()
 endif()

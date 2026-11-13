@@ -11,6 +11,7 @@
 #include <QString>
 #include <QTimer>
 #include "avatarcache.h"
+#include "chatparser.h"
 #include "fileuploader.h"
 #include "mediacache.h"
 #include "nativecall.h"
@@ -274,15 +275,12 @@ private:
     void onAuthFailed(const QString &message, bool sessionLost);
     void resetChatState();
     void handleSelf(const QJsonObject &props);
-    bool parseConversation(const QJsonObject &o, ConversationItem &it, bool &lastFromOther) const;
     void handleConversations(const QJsonArray &arr, bool incremental);
     void handleMessages(const QString &conversationId, const QJsonArray &arr, bool older);
     void refreshThread();
     void handleCalendar(const QJsonArray &events);
     void scheduleReminders(const QVector<CalendarEvent> &events);
     QSet<QString> m_reminded;
-    QVariantList parseReactions(const QJsonObject &properties) const;
-    bool mentionsSelf(const QJsonObject &properties) const;
     void pollPresence();
     // First poll now, then every minute (a second call only polls again).
     void startPresencePolling();
@@ -290,13 +288,12 @@ private:
     void updateActivity();
     void handlePresence(const QJsonArray &list);
     void handleEvent(const QJsonObject &event);
-    bool isSelf(const QString &fromUrl) const;
     QString selfMri() const { return QStringLiteral("8:") + m_selfSkypeName; }
+    // Who we are and who the others are, for the parsers in chatparser.h.
+    ChatParser::SelfContext selfContext() const { return {m_selfSkypeName, m_people, m_chatMembers}; }
     void loadPeople();
     void handleChatsAndTeams(const QJsonObject &summary);
     void handleProfiles(const QJsonArray &profiles);
-    // "Donata Gabelloni" (one-to-one), "Donata, Riccardo e Tommaso", "Giovanni, Michele, +2".
-    QString titleFromMembers(const QString &conversationId, bool oneToOne) const;
     void applyMemberTitles();
     void markCurrentRead();
     bool isUnread(const QString &id) const;
@@ -321,7 +318,7 @@ private:
     QTimer m_skypeRenewTimer;
     QTimer m_syncTimer;
     qint64 m_lastSyncMs = 0; // newest activity seen, for incremental sync
-    struct Person { QString displayName; QString givenName; QString email; QString jobTitle; QString department; };
+    using Person = ChatParser::Person;
     // Profile card: {mri, name, email, jobTitle, department, presence}
     Q_INVOKABLE QVariantMap personInfo(const QString &mri) const;
     // Opens (or creates) the one-to-one chat with this person.
@@ -372,7 +369,6 @@ private:
     QString m_searchQuery;
     QTimer m_indexTimeout;
     bool m_indexedAll = false;
-    QVector<MessageItem> parseMessages(const QJsonArray &arr, qint64 *oldestRaw) const;
     void indexNext();
     void loadSearchIndex();
     void runSearch();

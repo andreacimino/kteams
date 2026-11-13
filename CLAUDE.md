@@ -32,8 +32,10 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
   - `tests/offer_dump.cpp` (`kteams-offer-test`): prints the SDP offer and runs the
     camera without calling anyone; the way to check the media pipeline.
   - `src/backend.*`: state, notifications, everything QML sees as `backend`.
-  - `src/content.*`: Teams message HTML to text/rich text, files, reactions (pure functions);
-    `src/models.*`: the list models; `src/statecache.*`: the local cache's JSON format.
+  - `src/content.*`: Teams message HTML to text/rich text, files (pure functions);
+    `src/chatparser.*`: chat service JSON to conversations, messages and reactions (a
+    `SelfContext` carries who we are and the known people); `src/models.*`: the list models;
+    `src/statecache.*`: the local cache's JSON format.
     Everything but `main.cpp` is the static library `kteams_core`, linked by the app and the tests.
   - `qml/`: Kirigami UI (chat list with tabs Chat/Team/Calendario, chat, channel threads).
   - `call/`: `kteams-capture`, Teams web in a QtWebEngine window, a developer tool only
@@ -42,8 +44,8 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 
 ## Tests: the regression suite
 
-Qt Test executables in `native/tests/` (`tst_content`, `tst_models`, `tst_statecache`,
-`tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
+Qt Test executables in `native/tests/` (`tst_content`, `tst_chatparser`, `tst_models`,
+`tst_statecache`, `tst_demo`; see `native/tests/README.md`), run by ctest; built by default:
 
     cmake -S native -B native/build && cmake --build native/build
     ctest --test-dir native/build --output-on-failure
@@ -59,6 +61,8 @@ Coverage (gcovr), in its own build directory because it changes the compiler fla
   mention was found this way).
 - New logic that does not need the network goes into a pure function or module (like
   `content.cpp`) and gets its `tst_<module>.cpp`; one slot per behaviour, named after it.
+  Not in a test file: raw string literals holding `\"` or `//` (moc misreads them and silently
+  drops the whole test class, which then fails to link); build the JSON with `QJsonObject`.
   Code that talks to Teams (`teamsclient`, `trouter`, `oauth`, `nativecall`) is not
   unit-tested yet: separate the parsing from the request, then test the parsing.
 - CI: `.github/workflows/tests.yml` runs the suite with coverage in an Arch container on

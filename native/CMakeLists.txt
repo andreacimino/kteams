@@ -26,6 +26,8 @@ add_library(kteams_core STATIC
     src/backend.h
     src/avatarcache.cpp
     src/avatarcache.h
+    src/chatparser.cpp
+    src/chatparser.h
     src/content.cpp
     src/content.h
     src/mediacache.cpp
