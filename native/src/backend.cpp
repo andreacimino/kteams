@@ -1135,6 +1135,18 @@ void Backend::updateActivity()
     m_reportedActive = active;
     m_trouter.sendActivity(active);
     presenceToken([this, active](const QString &token) { m_client.reportActivity(m_trouter.endpointId(), active, token); });
+    // The status shown comes from polling, which runs once a minute: look at our own again
+    // soon, once the server has applied the report and once more in case it was slow.
+    qInfo() << "activity:" << (active ? "active again" : "idle for a while, reported inactive");
+    for (const auto delay : {std::chrono::milliseconds(2000), std::chrono::milliseconds(8000)})
+        QTimer::singleShot(delay, this, &Backend::pollOwnPresence);
+}
+
+void Backend::pollOwnPresence()
+{
+    if (m_state != State::Connected) return;
+    m_oauth.accessToken(QStringLiteral("https://presence.teams.microsoft.com"),
+                        [this](const QString &token) { m_client.fetchPresence({selfMri()}, token); });
 }
 
 void Backend::setMyAvailability(const QString &availability)

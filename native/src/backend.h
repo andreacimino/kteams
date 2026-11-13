@@ -282,6 +282,7 @@ private:
     void scheduleReminders(const QVector<CalendarEvent> &events);
     QSet<QString> m_reminded;
     void pollPresence();
+    void pollOwnPresence(); // just our own status, for after an activity change
     // First poll now, then every minute (a second call only polls again).
     void startPresencePolling();
     void presenceToken(std::function<void(const QString &)> cb);
