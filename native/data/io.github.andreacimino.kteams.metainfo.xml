@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>org.kteams.kteams</id>
+  <id>io.github.andreacimino.kteams</id>
   <name>KTeams</name>
   <summary>Native Microsoft Teams client for KDE</summary>
   <developer id="io.github.andreacimino">
@@ -16,7 +16,7 @@
       web client needs.
     </p>
   </description>
-  <launchable type="desktop-id">org.kteams.kteams.desktop</launchable>
+  <launchable type="desktop-id">io.github.andreacimino.kteams.desktop</launchable>
   <url type="homepage">https://github.com/andreacimino/kteams</url>
   <url type="bugtracker">https://github.com/andreacimino/kteams/issues</url>
   <categories>
@@ -25,6 +25,7 @@
   </categories>
   <content_rating type="oars-1.1" />
   <releases>
+    <release version="0.1.1" date="2026-11-14" />
     <release version="0.1.0" date="2026-11-14" />
   </releases>
 </component>

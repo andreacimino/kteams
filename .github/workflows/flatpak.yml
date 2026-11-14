@@ -31,12 +31,12 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .flatpak-builder
-          key: flatpak-builder-${{ hashFiles('packaging/flatpak/org.kteams.kteams.yml') }}
+          key: flatpak-builder-${{ hashFiles('packaging/flatpak/io.github.andreacimino.kteams.yml') }}
       - name: Build
         run: |
           flatpak-builder --user --disable-rofiles-fuse --force-clean --repo=repo \
-            --default-branch=master build-dir packaging/flatpak/org.kteams.kteams.yml
-          flatpak build-bundle repo kteams.flatpak org.kteams.kteams master
+            --default-branch=master build-dir packaging/flatpak/io.github.andreacimino.kteams.yml
+          flatpak build-bundle repo kteams.flatpak io.github.andreacimino.kteams master
       - uses: actions/upload-artifact@v4
         with:
           name: kteams-flatpak

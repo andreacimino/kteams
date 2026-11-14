@@ -36,17 +36,17 @@ and computes `pkgver` itself.
 ## Flatpak (any distribution)
 
 GitHub Actions (`.github/workflows/flatpak.yml`) builds the Flatpak on every push, with the
-manifest in `flatpak/org.kteams.kteams.yml`, and keeps `kteams.flatpak` as an artifact of the
+manifest in `flatpak/io.github.andreacimino.kteams.yml`, and keeps `kteams.flatpak` as an artifact of the
 run (Actions tab, open the run, "Artifacts"); on a `v*` tag it is attached to the release.
 Install it with:
 
     flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
     flatpak install --user kteams.flatpak      # pulls org.kde.Platform 6.11 from Flathub
-    flatpak run org.kteams.kteams
+    flatpak run io.github.andreacimino.kteams
 
 To build it locally (needs `flatpak-builder` and the `org.kde.Sdk//6.11` runtime):
 
-    flatpak-builder --user --install --force-clean build-dir packaging/flatpak/org.kteams.kteams.yml
+    flatpak-builder --user --install --force-clean build-dir packaging/flatpak/io.github.andreacimino.kteams.yml
 
 Inside the sandbox the app can read the home folder (files dragged into a chat), write
 `~/Downloads` (received files), use the microphone, speakers and camera, and talk to the

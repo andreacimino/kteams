@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(kteams VERSION 0.1.0 LANGUAGES CXX)
+project(kteams VERSION 0.1.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -128,11 +128,11 @@ if(BUILD_CALL_HELPER)
 install(TARGETS kteams-capture RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 # The menu launcher's PATH may not include the install prefix (~/.local/bin): absolute Exec.
-configure_file(data/org.kteams.kteams.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/org.kteams.kteams.desktop @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kteams.kteams.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
-install(FILES data/org.kteams.kteams.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
+configure_file(data/io.github.andreacimino.kteams.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/io.github.andreacimino.kteams.desktop @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/io.github.andreacimino.kteams.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+install(FILES data/io.github.andreacimino.kteams.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
 install(FILES data/kteams.notifyrc DESTINATION ${CMAKE_INSTALL_DATADIR}/knotifications6)
-install(FILES data/org.kteams.kteams.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
+install(FILES data/io.github.andreacimino.kteams.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
 
 # Media pipeline check without a call (not built by default): cmake --build native/build --target kteams-offer-test
 add_executable(kteams-offer-test EXCLUDE_FROM_ALL tests/offer_dump.cpp)

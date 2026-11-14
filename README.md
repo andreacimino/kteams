@@ -1,4 +1,4 @@
-<p align="center"><img src="native/data/org.kteams.kteams.svg" width="128" alt="KTeams logo"></p>
+<p align="center"><img src="native/data/io.github.andreacimino.kteams.svg" width="128" alt="KTeams logo"></p>
 
 # KTeams
 

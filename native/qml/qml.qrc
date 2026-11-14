@@ -16,7 +16,7 @@
     <file>NewMeetingDialog.qml</file>
   </qresource>
   <qresource prefix="/KTeams">
-    <file alias="icon.svg">../data/org.kteams.kteams.svg</file>
+    <file alias="icon.svg">../data/io.github.andreacimino.kteams.svg</file>
     <file alias="kteams.notifyrc">../data/kteams.notifyrc</file>
   </qresource>
 </RCC>

@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QCoreApplication::setOrganizationName(QStringLiteral("kteams"));
     QCoreApplication::setApplicationName(QStringLiteral("kteams"));
-    QGuiApplication::setDesktopFileName(QStringLiteral("org.kteams.kteams"));
+    QGuiApplication::setDesktopFileName(QStringLiteral("io.github.andreacimino.kteams"));
     installFileLog();
     // Interface language: the system's, when a translation exists (English otherwise).
     QTranslator translator;
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         QCoreApplication::installTranslator(&translator);
     // The task bar finds the icon through the desktop entry (installed); the embedded one
     // covers a build run from the checkout.
-    app.setWindowIcon(QIcon::fromTheme(QStringLiteral("org.kteams.kteams"), QIcon(QStringLiteral(":/KTeams/icon.svg"))));
+    app.setWindowIcon(QIcon::fromTheme(QStringLiteral("io.github.andreacimino.kteams"), QIcon(QStringLiteral(":/KTeams/icon.svg"))));
 
     // Native Breeze look on Plasma; QT_QUICK_CONTROLS_STYLE still overrides it.
     if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE"))

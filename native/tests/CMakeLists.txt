@@ -26,6 +26,7 @@ kteams_test(tst_callengine)
 kteams_test(tst_mediadevices)
 kteams_test(tst_settingspage)
 kteams_test(tst_imageviewer)
+kteams_test(tst_desktopintegration)
 target_compile_definitions(tst_translations PRIVATE KTEAMS_TRANSLATIONS_DIR="${CMAKE_SOURCE_DIR}/translations")
 
 # Every QML file must at least parse (qmllint fails on syntax errors; its many

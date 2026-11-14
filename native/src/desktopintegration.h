@@ -18,7 +18,9 @@ class DesktopIntegration : public QObject
     Q_PROPERTY(bool trayAvailable READ trayAvailable CONSTANT)
 
 public:
-    static constexpr auto kDesktopId = "org.kteams.kteams";
+    static constexpr auto kDesktopId = "io.github.andreacimino.kteams";
+    // Ids the app had before; their autostart entries are moved to kDesktopId.
+    static constexpr const char *kLegacyDesktopIds[] = {"org.ac.teams.native", "org.kteams.kteams"};
 
     explicit DesktopIntegration(QObject *parent = nullptr);
 

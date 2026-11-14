@@ -34,8 +34,14 @@ DesktopIntegration::DesktopIntegration(QObject *parent) : QObject(parent)
     // Leftovers of the app's previous name (ac-teams-native): its autostart entry would
     // point at a binary that no longer exists.
     QFile::remove(dir + QStringLiteral("/ac-teams-native.notifyrc"));
-    const QString oldAutostart = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/autostart/org.ac.teams.native.desktop");
-    if (QFile::exists(oldAutostart)) { QFile::remove(oldAutostart); setStartAtLogin(true); }
+    // Autostart entries written under the app's earlier ids (ac-teams-native, then
+    // org.kteams.kteams up to 0.1.0): replaced by one under the current id, so the
+    // setting keeps working and switching it off removes the right file.
+    for (const char *legacyId : kLegacyDesktopIds) {
+        const QString legacy = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/autostart/")
+            + QString::fromLatin1(legacyId) + QStringLiteral(".desktop");
+        if (QFile::exists(legacy)) { QFile::remove(legacy); setStartAtLogin(true); }
+    }
 
     m_tray = new KStatusNotifierItem(QString::fromLatin1(kDesktopId), this);
     m_tray->setCategory(KStatusNotifierItem::Communications);
@@ -100,7 +106,7 @@ void DesktopIntegration::setUnreadCount(int count)
 
     // Task manager badge: the Unity LauncherEntry signal, which Plasma's task manager reads.
     // It matches the installed desktop file by id.
-    QDBusMessage signal = QDBusMessage::createSignal(QStringLiteral("/org/kteams/kteams"),
+    QDBusMessage signal = QDBusMessage::createSignal(QStringLiteral("/io/github/andreacimino/kteams"),
                                                      QStringLiteral("com.canonical.Unity.LauncherEntry"), QStringLiteral("Update"));
     signal << QStringLiteral("application://%1.desktop").arg(QString::fromLatin1(kDesktopId))
            << QVariantMap{{QStringLiteral("count"), qint64(count)}, {QStringLiteral("count-visible"), count > 0}};

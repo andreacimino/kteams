@@ -50,7 +50,7 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
 ## Tests: the regression suite
 
 Qt Test executables in `native/tests/` (`tst_content`, `tst_chatparser`, `tst_models`,
-`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_sdpdialect`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_composer`, `tst_translations`, `tst_presence`, `tst_mediadevices`, `tst_settingspage`, `tst_imageviewer`, `tst_callengine` (opt-in), `tst_backendlogic`, `tst_demo`, plus `qml_syntax`; see `native/tests/README.md`), run by ctest; built by default:
+`tst_statecache`, `tst_trouterframes`, `tst_calljson`, `tst_sdpdialect`, `tst_caches`, `tst_teamsclient`, `tst_oauth`, `tst_fileuploader`, `tst_composer`, `tst_translations`, `tst_presence`, `tst_mediadevices`, `tst_settingspage`, `tst_imageviewer`, `tst_desktopintegration`, `tst_callengine` (opt-in), `tst_backendlogic`, `tst_demo`, plus `qml_syntax`; see `native/tests/README.md`), run by ctest; built by default:
 
     cmake -S native -B native/build && cmake --build native/build
     ctest --test-dir native/build --output-on-failure
@@ -89,9 +89,9 @@ Coverage (gcovr), in its own build directory because it changes the compiler fla
   builds `develop` from GitHub) and `packaging/arch/PKGBUILD` with `build.sh` (the current
   checkout). A new dependency goes into both PKGBUILDs, the Flatpak manifest and
   `.github/workflows/tests.yml`.
-- Flatpak: `packaging/flatpak/org.kteams.kteams.yml` on the KDE 6.11 runtime; QtKeychain
+- Flatpak: `packaging/flatpak/io.github.andreacimino.kteams.yml` on the KDE 6.11 runtime; QtKeychain
   and the x264 GStreamer element are built as modules. Sandbox permissions are listed there
-  with the reason for each. `native/data/org.kteams.kteams.metainfo.xml` is the AppStream
+  with the reason for each. `native/data/io.github.andreacimino.kteams.metainfo.xml` is the AppStream
   file. See `packaging/README.md`.
 
 ## How the protocol was learned

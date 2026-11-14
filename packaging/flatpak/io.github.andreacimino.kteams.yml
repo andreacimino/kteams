@@ -1,9 +1,9 @@
 # Flatpak manifest. Built by .github/workflows/flatpak.yml on every push; by hand:
-#   flatpak-builder --user --install --force-clean build-dir packaging/flatpak/org.kteams.kteams.yml
+#   flatpak-builder --user --install --force-clean build-dir packaging/flatpak/io.github.andreacimino.kteams.yml
 # The KDE runtime brings Qt 6, Kirigami (+ addons), KNotifications, KStatusNotifierItem and
 # GStreamer with webrtcbin, libnice and the PipeWire/PulseAudio elements. Built here: QtKeychain
 # (not in the runtime) and x264, which the runtime's gst-plugins-ugly leaves out (GPL).
-id: org.kteams.kteams
+id: io.github.andreacimino.kteams
 runtime: org.kde.Platform
 runtime-version: '6.11'
 sdk: org.kde.Sdk

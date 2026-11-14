@@ -10,7 +10,7 @@
     </filter>
   </defs>
   <rect width="1200" height="1200" fill="url(#page)"/>
-  <image href="../../native/data/org.kteams.kteams.svg" x="74" y="64" width="150" height="150"/>
+  <image href="../../native/data/io.github.andreacimino.kteams.svg" x="74" y="64" width="150" height="150"/>
   <text x="250" y="148" font-family="Noto Sans, sans-serif" font-size="88" font-weight="700" fill="#fcfcfc">KTeams</text>
   <text x="254" y="200" font-family="Noto Sans, sans-serif" font-size="32" fill="#c8ccd2">A native Microsoft Teams client for KDE Plasma</text>
 
