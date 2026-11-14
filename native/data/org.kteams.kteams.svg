@@ -1,7 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <rect x="4" y="8" width="28" height="28" rx="6" fill="#5059C9"/>
-  <rect x="20" y="14" width="24" height="26" rx="6" fill="#7B83EB"/>
-  <circle cx="38" cy="10" r="5" fill="#7B83EB"/>
-  <rect x="11" y="16" width="14" height="4" rx="1" fill="#fff"/>
-  <rect x="16" y="16" width="4" height="14" rx="1" fill="#fff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3daee9"/>
+      <stop offset="1" stop-color="#2a5fd6"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="224" height="224" rx="52" fill="url(#bg)"/>
+  <!-- the other person's message, behind -->
+  <path d="M112 56h76a24 24 0 0 1 24 24v44a24 24 0 0 1-24 24h-2v22l-26-22h-48a24 24 0 0 1-24-24V80a24 24 0 0 1 24-24z"
+        fill="#fff" fill-opacity="0.38"/>
+  <!-- our message, in front -->
+  <path d="M68 96h88a24 24 0 0 1 24 24v48a24 24 0 0 1-24 24H98l-30 24v-24a24 24 0 0 1-24-24v-48a24 24 0 0 1 24-24z"
+        fill="#fff"/>
+  <circle cx="82" cy="144" r="11" fill="#2a7fe0"/>
+  <circle cx="112" cy="144" r="11" fill="#2a7fe0"/>
+  <circle cx="142" cy="144" r="11" fill="#2a7fe0"/>
 </svg>

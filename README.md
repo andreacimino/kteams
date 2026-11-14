@@ -1,3 +1,5 @@
+<p align="center"><img src="native/data/org.kteams.kteams.svg" width="128" alt="KTeams logo"></p>
+
 # KTeams
 
 A **native** Microsoft Teams client for KDE Plasma (work / school accounts), written in
