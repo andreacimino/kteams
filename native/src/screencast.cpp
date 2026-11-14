@@ -13,7 +13,7 @@
 #include <QLoggingCategory>
 #include <unistd.h>
 
-Q_LOGGING_CATEGORY(lcScreenCast, "kteams.screencast", QtInfoMsg)
+Q_LOGGING_CATEGORY(lcScreenCast, "kollega.screencast", QtInfoMsg)
 
 namespace {
 constexpr auto kService = "org.freedesktop.portal.Desktop";
@@ -59,7 +59,7 @@ void ScreenCastPortal::request(const QString &method, QVariantList args, QVarian
 {
     // The portal answers on /org/freedesktop/portal/desktop/request/<sender>/<token>:
     // subscribe before calling, so the Response cannot be missed.
-    const QString token = QStringLiteral("kteams%1").arg(++m_counter);
+    const QString token = QStringLiteral("kollega%1").arg(++m_counter);
     QString sender = QDBusConnection::sessionBus().baseService().mid(1);
     sender.replace(QLatin1Char('.'), QLatin1Char('_'));
     if (!m_requestPath.isEmpty())
@@ -99,7 +99,7 @@ void ScreenCastPortal::handleResponse(uint code, const QVariantMap &results)
 void ScreenCastPortal::start()
 {
     if (active()) return;
-    const QString sessionToken = QStringLiteral("kteamssession%1").arg(++m_counter);
+    const QString sessionToken = QStringLiteral("kollegasession%1").arg(++m_counter);
     request(QStringLiteral("CreateSession"), {}, {{QStringLiteral("session_handle_token"), sessionToken}}, [this](const QVariantMap &results) {
         m_session = results.value(QStringLiteral("session_handle")).toString();
         if (m_session.isEmpty()) { emit failed(tr("Screen portal: no session")); return; }

@@ -1,4 +1,4 @@
-# KTeams: native Microsoft Teams client for KDE (work accounts)
+# Kollega: native Microsoft Teams client for KDE (work accounts)
 
 Goal: a **native Qt/Kirigami client** for a work/school Teams account, with the normal
 Microsoft sign-in and every function the official client has, calls included, without any
@@ -7,7 +7,7 @@ uses ~1 GB.
 
 Chat in Italian with the developer; code, comments, commit messages, documentation and the
 interface's source strings in English. User-visible text goes through `qsTr()` (QML) or
-`tr()` (C++). Translations live in `native/translations/kteams_<lang>.ts` (Qt Linguist):
+`tr()` (C++). Translations live in `native/translations/kollega_<lang>.ts` (Qt Linguist):
 Italian, German, French, Spanish, Brazilian Portuguese, Simplified Chinese, Japanese,
 Russian, Korean, Dutch, Polish. After changing strings: `cmake --build native/build --target
 update_translations` (lupdate; the QML files are passed explicitly, it does not read the
@@ -30,7 +30,7 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
     (`NGCallManagerWin`), and the call callbacks (`callAgent/...`).
   - `src/nativecall.*` + `src/callengine.*`: native calls (audio, camera, screen sharing),
     see `native/docs/calling-protocol.md`; `src/screencast.*`: the ScreenCast portal.
-  - `tests/offer_dump.cpp` (`kteams-offer-test`): prints the SDP offer and runs the
+  - `tests/offer_dump.cpp` (`kollega-offer-test`): prints the SDP offer and runs the
     camera without calling anyone; the way to check the media pipeline.
   - `src/backend.*`: state, notifications, everything QML sees as `backend`.
   - `src/content.*`: Teams message HTML to text/rich text, files (pure functions);
@@ -41,9 +41,9 @@ in `native/CMakeLists.txt`, run `update_translations` to create it, translate.
     `src/sdpdialect.*`: the SDP translation to and from Microsoft's dialect;
     `src/presenceinfo.*`: presence icon, colour, words and the tray icon with the dot;
     `src/mediadevices.*`: microphones, speakers, cameras and the choice kept in QSettings.
-    Everything but `main.cpp` is the static library `kteams_core`, linked by the app and the tests.
+    Everything but `main.cpp` is the static library `kollega_core`, linked by the app and the tests.
   - `qml/`: Kirigami UI (chat list with tabs Chat/Team/Calendario, chat, channel threads).
-  - `call/`: `kteams-capture`, Teams web in a QtWebEngine window, a developer tool only
+  - `call/`: `kollega-capture`, Teams web in a QtWebEngine window, a developer tool only
     (`-DBUILD_CALL_HELPER=ON`): `--capture` records the calling protocol. The app never
     starts it.
 
@@ -56,7 +56,7 @@ Qt Test executables in `native/tests/` (`tst_content`, `tst_chatparser`, `tst_mo
     ctest --test-dir native/build --output-on-failure
 
 Coverage (gcovr), in its own build directory because it changes the compiler flags:
-`cmake -S native -B native/build-coverage -DBUILD_TESTING=ON -DKTEAMS_COVERAGE=ON` then
+`cmake -S native -B native/build-coverage -DBUILD_TESTING=ON -DKOLLEGA_COVERAGE=ON` then
 `cmake --build native/build-coverage --target coverage`; the report is
 `native/build-coverage/coverage/index.html`, the summary `coverage/summary.txt`.
 
@@ -77,7 +77,7 @@ Coverage (gcovr), in its own build directory because it changes the compiler fla
   QML components can be tested too: `tst_composer.cpp` loads `Composer.qml` in a QML engine with
   a stand-in `backend` object that records what is asked of it (offscreen, no second client).
   `callengine` (GStreamer) and the HTTP parts of `nativecall` are only tested through the pure
-  modules they use (`calljson`, `trouterframes`, `sdpdialect`); `kteams-offer-test` checks the
+  modules they use (`calljson`, `trouterframes`, `sdpdialect`); `kollega-offer-test` checks the
   media pipeline by hand.
 - CI: `.github/workflows/tests.yml` runs the suite with coverage in an Arch container on
   every push and pull request (the HTML report is an artifact); `flatpak.yml` builds the
@@ -85,18 +85,18 @@ Coverage (gcovr), in its own build directory because it changes the compiler fla
 
 ## Packaging
 
-- Arch and derivatives: `packaging/arch/kteams-git/` (PKGBUILD + .SRCINFO, the AUR package,
+- Arch and derivatives: `packaging/arch/kollega-git/` (PKGBUILD + .SRCINFO, the AUR package,
   builds `develop` from GitHub) and `packaging/arch/PKGBUILD` with `build.sh` (the current
   checkout). A new dependency goes into both PKGBUILDs, the Flatpak manifest and
   `.github/workflows/tests.yml`.
-- Flatpak: `packaging/flatpak/io.github.andreacimino.kteams.yml` on the KDE 6.11 runtime; QtKeychain
+- Flatpak: `packaging/flatpak/io.github.andreacimino.kollega.yml` on the KDE 6.11 runtime; QtKeychain
   and the x264 GStreamer element are built as modules. Sandbox permissions are listed there
-  with the reason for each. `native/data/io.github.andreacimino.kteams.metainfo.xml` is the AppStream
+  with the reason for each. `native/data/io.github.andreacimino.kollega.metainfo.xml` is the AppStream
   file. See `packaging/README.md`.
 
 ## How the protocol was learned
 
-purple-teams (EionRobb) for chat/presence/login, Teams web captures (`kteams-capture
+purple-teams (EionRobb) for chat/presence/login, Teams web captures (`kollega-capture
 --capture`) and its minified code (service-worker cache) for calling. Never invent an
 endpoint or a field: check a capture, the Teams code, or purple-teams, and log the shape of
 unknown responses before using them.
@@ -104,9 +104,9 @@ unknown responses before using them.
 ## Working rules
 
 - Never restart the running app while the developer may be in a call: ask first.
-- No autonomous test calls (`KTEAMS_AUTOTEST`) without telling the developer.
+- No autonomous test calls (`KOLLEGA_AUTOTEST`) without telling the developer.
 - Secrets (tokens, TURN credentials) never go into logs or captures: mask them.
-- Logs: `QT_FORCE_STDERR_LOGGING=1`, categories `kteams.*`; the call engine logs a `stats`
+- Logs: `QT_FORCE_STDERR_LOGGING=1`, categories `kollega.*`; the call engine logs a `stats`
   line every 5 s (raw/encoded/sent/received packets, peer receiver reports).
 
 ## State (November 2026)

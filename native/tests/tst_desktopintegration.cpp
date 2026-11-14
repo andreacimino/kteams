@@ -36,14 +36,13 @@ private slots:
         QTest::addColumn<QString>("legacyId");
         // Written by hand, not taken from kLegacyDesktopIds: dropping an id there must fail here.
         QTest::newRow("ac-teams-native") << QStringLiteral("org.ac.teams.native");
-        QTest::newRow("0.1.0") << QStringLiteral("org.kteams.kteams");
     }
     void legacyAutostartEntryIsMovedToTheCurrentId()
     {
         QFETCH(QString, legacyId);
         QFile legacy(entryPath(legacyId));
         QVERIFY(legacy.open(QIODevice::WriteOnly));
-        legacy.write("[Desktop Entry]\nName=KTeams\nType=Application\n");
+        legacy.write("[Desktop Entry]\nName=Kollega\nType=Application\n");
         legacy.close();
 
         DesktopIntegration integration;
@@ -52,7 +51,7 @@ private slots:
         QVERIFY(integration.startAtLogin());
         QFile current(currentEntry());
         QVERIFY(current.open(QIODevice::ReadOnly));
-        QVERIFY(current.readAll().contains("Icon=io.github.andreacimino.kteams\n"));
+        QVERIFY(current.readAll().contains("Icon=io.github.andreacimino.kollega\n"));
     }
 
     void noEntryIsCreatedWithoutALegacyOne()

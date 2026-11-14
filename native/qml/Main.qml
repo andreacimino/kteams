@@ -2,13 +2,13 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
-import KTeams
+import Kollega
 
 // Kirigami column layout: chat list and chat side by side on wide windows,
 // one at a time (with back navigation) on narrow ones.
 Kirigami.ApplicationWindow {
     id: root
-    title: backend.unreadCount > 0 ? "(" + backend.unreadCount + ") KTeams" : "KTeams"
+    title: backend.unreadCount > 0 ? "(" + backend.unreadCount + ") Kollega" : "Kollega"
 
     // Keyboard shortcuts
     Shortcut { sequence: "Ctrl+K"; onActivated: root.focusSearch() }

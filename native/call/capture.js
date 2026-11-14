@@ -1,4 +1,4 @@
-// Protocol capture for kteams-capture (only with --capture): records what the Teams web app
+// Protocol capture for kollega-capture (only with --capture): records what the Teams web app
 // exchanges during a call, to design a native implementation. Injected before the page
 // scripts. Lines go to the console as "ACCAPTURE <json>"; main.cpp writes them to a file.
 // Secrets are masked here, before anything leaves the page.

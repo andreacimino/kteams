@@ -4,14 +4,14 @@
 #include <QString>
 #include <QStringList>
 
-// Demo mode (KTEAMS_DEMO=1): what the interface shows is replaced by made-up names, titles
+// Demo mode (KOLLEGA_DEMO=1): what the interface shows is replaced by made-up names, titles
 // and sentences, chosen deterministically from the real text, so screenshots carry no
 // real data. Nothing else changes: the real data is still fetched and cached as usual.
 namespace Demo {
 
 inline bool enabled()
 {
-    static const bool on = qgetenv("KTEAMS_DEMO") == "1";
+    static const bool on = qgetenv("KOLLEGA_DEMO") == "1";
     return on;
 }
 

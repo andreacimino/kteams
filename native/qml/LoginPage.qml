@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
-import KTeams
+import Kollega
 
 // Sign-in without an embedded browser: Microsoft's device code flow. The user opens
 // the Microsoft page in their own browser, types the code and signs in as usual
@@ -10,7 +10,7 @@ import KTeams
 Kirigami.Page {
     id: page
     objectName: "login"
-    title: "KTeams"
+    title: "Kollega"
 
     readonly property bool busy: backend.state === Backend.Starting || backend.state === Backend.Connecting
     readonly property bool waitingForCode: backend.state === Backend.WaitingForCode

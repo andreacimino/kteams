@@ -57,7 +57,7 @@ private slots:
     void initTestCase()
     {
         engine.rootContext()->setContextProperty("backend", &backend);
-        component = new QQmlComponent(&engine, QUrl::fromLocalFile(QStringLiteral(KTEAMS_QML_DIR "/Composer.qml")));
+        component = new QQmlComponent(&engine, QUrl::fromLocalFile(QStringLiteral(KOLLEGA_QML_DIR "/Composer.qml")));
         if (component->isError()) qWarning() << component->errors();
         QVERIFY2(component->isReady(), qPrintable(component->errorString()));
     }
@@ -204,7 +204,7 @@ private slots:
         // The attachments take room above the text field.
         QQuickItem *input = composer->findChild<QQuickItem *>("composerInput");
         QVERIFY(input->mapToItem(composer, QPointF(0, 0)).y() > 20);
-        if (const QByteArray out = qgetenv("KTEAMS_TEST_SCREENSHOT"); !out.isEmpty()) shot.save(QString::fromLocal8Bit(out));
+        if (const QByteArray out = qgetenv("KOLLEGA_TEST_SCREENSHOT"); !out.isEmpty()) shot.save(QString::fromLocal8Bit(out));
     }
 };
 

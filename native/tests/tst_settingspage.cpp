@@ -44,7 +44,7 @@ private slots:
     void initTestCase()
     {
         engine.rootContext()->setContextProperty("backend", &backend);
-        component = new QQmlComponent(&engine, QUrl::fromLocalFile(QStringLiteral(KTEAMS_QML_DIR "/SettingsPage.qml")));
+        component = new QQmlComponent(&engine, QUrl::fromLocalFile(QStringLiteral(KOLLEGA_QML_DIR "/SettingsPage.qml")));
         if (component->isError()) qWarning() << component->errors();
         QVERIFY2(component->isReady(), qPrintable(component->errorString()));
     }

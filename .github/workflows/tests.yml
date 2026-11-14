@@ -21,7 +21,7 @@ jobs:
             gstreamer gst-plugins-base gst-plugins-bad-libs libnice zlib
       - uses: actions/checkout@v4
       - name: Configure (tests and coverage on)
-        run: cmake -S native -B native/build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -DKTEAMS_COVERAGE=ON
+        run: cmake -S native -B native/build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -DKOLLEGA_COVERAGE=ON
       - name: Build
         run: cmake --build native/build -j"$(nproc)"
       - name: Tests and coverage report

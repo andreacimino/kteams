@@ -61,15 +61,15 @@ class TranslationsTest : public QObject
 private slots:
     void initTestCase()
     {
-        const QDir dir(QStringLiteral(KTEAMS_TRANSLATIONS_DIR));
-        for (const QString &name : dir.entryList({"kteams_*.ts"}, QDir::Files, QDir::Name)) files.insert(name, readTs(dir.filePath(name)));
+        const QDir dir(QStringLiteral(KOLLEGA_TRANSLATIONS_DIR));
+        for (const QString &name : dir.entryList({"kollega_*.ts"}, QDir::Files, QDir::Name)) files.insert(name, readTs(dir.filePath(name)));
         QVERIFY2(files.size() >= 11, "the translations folder was not found");
     }
 
     void everyFileDeclaresItsOwnLanguage()
     {
         for (auto it = files.cbegin(); it != files.cend(); ++it) {
-            const QString expected = it.key().mid(QStringLiteral("kteams_").size()).chopped(3); // kteams_pt_BR.ts -> pt_BR
+            const QString expected = it.key().mid(QStringLiteral("kollega_").size()).chopped(3); // kollega_pt_BR.ts -> pt_BR
             QVERIFY2(it->language == expected || it->language.startsWith(expected), qPrintable(it.key() + " declares " + it->language));
         }
     }
@@ -101,7 +101,7 @@ private slots:
             for (const Message &m : ts.messages) if (live(m)) k.insert(m.context + "|" + m.source);
             return k;
         };
-        const QSet<QString> reference = keys(files.value("kteams_it.ts"));
+        const QSet<QString> reference = keys(files.value("kollega_it.ts"));
         QVERIFY(reference.size() > 200);
         QStringList problems;
         for (auto it = files.cbegin(); it != files.cend(); ++it) {

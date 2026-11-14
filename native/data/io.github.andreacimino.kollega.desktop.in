@@ -1,12 +1,12 @@
 [Desktop Entry]
-Name=KTeams
+Name=Kollega
 GenericName=Microsoft Teams client
 Comment=Native Microsoft Teams client for KDE (work account)
-Exec=@CMAKE_INSTALL_FULL_BINDIR@/kteams
-Icon=io.github.andreacimino.kteams
+Exec=@CMAKE_INSTALL_FULL_BINDIR@/kollega
+Icon=io.github.andreacimino.kollega
 Terminal=false
 Type=Application
 Categories=Network;InstantMessaging;Chat;Qt;KDE;
 Keywords=teams;microsoft;chat;office;
-StartupWMClass=kteams
+StartupWMClass=kollega
 X-KDE-StartupNotify=true

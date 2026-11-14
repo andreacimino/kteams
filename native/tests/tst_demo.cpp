@@ -1,4 +1,4 @@
-// Demo mode (KTEAMS_DEMO=1, src/demo.h): the models show made-up data in place of the real one.
+// Demo mode (KOLLEGA_DEMO=1, src/demo.h): the models show made-up data in place of the real one.
 #include "demo.h"
 #include "models.h"
 
@@ -56,7 +56,7 @@ private slots:
 
 int main(int argc, char **argv)
 {
-    qputenv("KTEAMS_DEMO", "1"); // before the first Demo::enabled() call, which caches it
+    qputenv("KOLLEGA_DEMO", "1"); // before the first Demo::enabled() call, which caches it
     QCoreApplication app(argc, argv);
     DemoTest test;
     return QTest::qExec(&test, argc, argv);

@@ -1,11 +1,11 @@
 # Maintainer: Andrea Cimino
 # Built from a tarball of the repository made by build.sh (git archive).
-pkgname=kteams
+pkgname=kollega
 pkgver=0.1.0
 pkgrel=1
 pkgdesc="Native Microsoft Teams client for KDE (work accounts): chat, calls, video, screen sharing"
 arch=('x86_64' 'aarch64')
-url="https://github.com/andreacimino/kteams"
+url="https://github.com/andreacimino/kollega"
 license=('GPL-3.0-or-later')
 depends=('qt6-base' 'qt6-declarative' 'qt6-websockets' 'qt6-multimedia' 'qtkeychain-qt6'
          'kirigami' 'kirigami-addons' 'qqc2-desktop-style' 'knotifications' 'kidletime' 'kstatusnotifieritem'

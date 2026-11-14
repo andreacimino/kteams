@@ -20,7 +20,7 @@
 #include <gst/sdp/sdp.h>
 #include <gst/webrtc/webrtc.h>
 
-Q_LOGGING_CATEGORY(lcCallEngine, "kteams.callengine", QtInfoMsg)
+Q_LOGGING_CATEGORY(lcCallEngine, "kollega.callengine", QtInfoMsg)
 
 namespace {
 // Teams web sends its offer once a first candidate is known (~1 s, trickle ICE); waiting a
@@ -99,7 +99,7 @@ bool CallEngine::start(const QStringList &turnServers, bool answerer, int opusPt
         // never start (two clock providers block each other), pulsesrc/pulsesink do.
         // Echo cancellation, noise suppression and gain control (WebRTC audio processing):
         // webrtcdsp on the microphone, fed with what the speakers play by webrtcechoprobe.
-        "pulsesrc name=mic @MICDEV@client-name=\"KTeams\" do-timestamp=true ! queue max-size-time=200000000 max-size-buffers=0 max-size-bytes=0 leaky=downstream "
+        "pulsesrc name=mic @MICDEV@client-name=\"Kollega\" do-timestamp=true ! queue max-size-time=200000000 max-size-buffers=0 max-size-bytes=0 leaky=downstream "
         "! audioconvert ! audioresample ! audio/x-raw,format=S16LE,rate=48000,channels=1 "
         "! webrtcdsp probe=echoprobe echo-cancel=true noise-suppression=true gain-control=true delay-agnostic=true extended-filter=true "
         "! volume name=micvolume "
@@ -108,7 +108,7 @@ bool CallEngine::start(const QStringList &turnServers, bool answerer, int opusPt
         // Playback path, present from the start (the echo probe must exist when the DSP
         // starts): silence until the remote audio is mixed in.
         "audiotestsrc is-live=true wave=silence ! audio/x-raw,format=S16LE,rate=48000,channels=1 ! audiomixer name=playmix "
-        "! audio/x-raw,format=S16LE,rate=48000,channels=1 ! webrtcechoprobe name=echoprobe ! pulsesink @SPKDEV@client-name=\"KTeams\" "
+        "! audio/x-raw,format=S16LE,rate=48000,channels=1 ! webrtcechoprobe name=echoprobe ! pulsesink @SPKDEV@client-name=\"Kollega\" "
         // Video section, present from the start (Teams web offers it with the camera off
         // too): black frames or the camera (input-selector), H.264 constrained baseline
         // for any Teams client, packetization-mode 1. The valve stays closed while the
@@ -381,7 +381,7 @@ void CallEngine::setCameraEnabled(bool on)
         // not parse inside gst_parse_bin_from_description.)
         const QByteArray description = QStringLiteral("v4l2src device=%1 ! videoconvert ! videoscale ! videorate "
                                                       "! capsfilter caps=\"video/x-raw,format=I420,width=%2,height=%3,framerate=%4/1\"")
-                                           .arg(MediaDevices::cameraToUse(QString::fromLocal8Bit(qgetenv("KTEAMS_CAMERA")), MediaDevices::selectedIfPresent(MediaDevices::Kind::Camera)))
+                                           .arg(MediaDevices::cameraToUse(QString::fromLocal8Bit(qgetenv("KOLLEGA_CAMERA")), MediaDevices::selectedIfPresent(MediaDevices::Kind::Camera)))
                                            .arg(kVideoWidth).arg(kVideoHeight).arg(kVideoFps).toLatin1();
         if (!attachSource(m_cameraBin, m_cameraPad, m_videoSelector, m_videoValve, description)) {
             emit failed(tr("Camera not available"));
@@ -847,11 +847,11 @@ void TonePlayer::play(const QString &path, bool loop)
     m_playbin = gst_element_factory_make("playbin", nullptr);
     if (!m_playbin) return;
     g_object_set(m_playbin, "uri", QUrl::fromLocalFile(path).toString().toUtf8().constData(), nullptr);
-    g_object_set_data(G_OBJECT(m_playbin), "kteams-loop", GINT_TO_POINTER(loop ? 1 : 0));
+    g_object_set_data(G_OBJECT(m_playbin), "kollega-loop", GINT_TO_POINTER(loop ? 1 : 0));
     GstBus *bus = gst_element_get_bus(m_playbin);
     gst_bus_add_watch(bus, [](GstBus *, GstMessage *msg, gpointer element) -> gboolean {
         if (GST_MESSAGE_TYPE(msg) != GST_MESSAGE_EOS) return TRUE;
-        if (g_object_get_data(G_OBJECT(element), "kteams-loop"))
+        if (g_object_get_data(G_OBJECT(element), "kollega-loop"))
             // Loop: back to the start at the end of the file.
             gst_element_seek_simple(GST_ELEMENT(element), GST_FORMAT_TIME, GstSeekFlags(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT), 0);
         else

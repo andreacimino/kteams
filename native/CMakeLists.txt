@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(kteams VERSION 0.1.1 LANGUAGES CXX)
+project(kollega VERSION 0.1.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,7 +23,7 @@ find_package(KF6Notifications REQUIRED)
 find_package(KF6IdleTime REQUIRED)
 
 # Everything but main() is a static library, so the tests link the same code as the app.
-add_library(kteams_core STATIC
+add_library(kollega_core STATIC
     src/backend.cpp
     src/backend.h
     src/avatarcache.cpp
@@ -66,8 +66,8 @@ add_library(kteams_core STATIC
     src/models.cpp
     src/models.h
 )
-target_include_directories(kteams_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(kteams_core PUBLIC
+target_include_directories(kollega_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(kollega_core PUBLIC
     Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2 Qt6::Network Qt6::WebSockets Qt6::Multimedia
     ZLIB::ZLIB
     Qt6Keychain::Qt6Keychain
@@ -78,7 +78,7 @@ target_link_libraries(kteams_core PUBLIC
     Qt6::DBus
 )
 
-add_executable(kteams
+add_executable(kollega
     src/main.cpp
     qml/qml.qrc
 )
@@ -87,65 +87,65 @@ add_executable(kteams
 # compiled and embedded at build time, picked by the system locale at start-up.
 # Refresh the .ts files after changing strings: cmake --build native/build --target update_translations
 # (the QML files are listed explicitly: lupdate does not look inside the .qrc)
-file(GLOB KTEAMS_QML_SOURCES CONFIGURE_DEPENDS qml/*.qml)
-qt_add_translations(kteams
-    SOURCE_TARGETS kteams kteams_core
-    SOURCES ${KTEAMS_QML_SOURCES}
+file(GLOB KOLLEGA_QML_SOURCES CONFIGURE_DEPENDS qml/*.qml)
+qt_add_translations(kollega
+    SOURCE_TARGETS kollega kollega_core
+    SOURCES ${KOLLEGA_QML_SOURCES}
     TS_FILES
-        translations/kteams_it.ts
-        translations/kteams_de.ts
-        translations/kteams_fr.ts
-        translations/kteams_es.ts
-        translations/kteams_pt_BR.ts
-        translations/kteams_zh_CN.ts
-        translations/kteams_ja.ts
-        translations/kteams_ru.ts
-        translations/kteams_ko.ts
-        translations/kteams_nl.ts
-        translations/kteams_pl.ts
+        translations/kollega_it.ts
+        translations/kollega_de.ts
+        translations/kollega_fr.ts
+        translations/kollega_es.ts
+        translations/kollega_pt_BR.ts
+        translations/kollega_zh_CN.ts
+        translations/kollega_ja.ts
+        translations/kollega_ru.ts
+        translations/kollega_ko.ts
+        translations/kollega_nl.ts
+        translations/kollega_pl.ts
     RESOURCE_PREFIX "/i18n")
 
-target_link_libraries(kteams PRIVATE kteams_core)
+target_link_libraries(kollega PRIVATE kollega_core)
 
 # Developer tool, off by default: Teams web in a QtWebEngine window with "--capture",
 # which records the calling protocol (see docs/calling-protocol.md). Not used by the app.
-option(BUILD_CALL_HELPER "Build kteams-capture, the Teams web protocol recorder (needs QtWebEngine)" OFF)
+option(BUILD_CALL_HELPER "Build kollega-capture, the Teams web protocol recorder (needs QtWebEngine)" OFF)
 if(BUILD_CALL_HELPER)
 find_package(Qt6 6.8 REQUIRED COMPONENTS WebEngineCore WebEngineQuick)
-add_executable(kteams-capture
+add_executable(kollega-capture
     call/main.cpp
     call/call.qrc
 )
-target_link_libraries(kteams-capture PRIVATE
+target_link_libraries(kollega-capture PRIVATE
     Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2 Qt6::WebEngineCore Qt6::WebEngineQuick
 )
 endif()
 
 # cmake --install build --prefix ~/.local  (menu entry, icon, both programs)
 include(GNUInstallDirs)
-install(TARGETS kteams RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS kollega RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 if(BUILD_CALL_HELPER)
-install(TARGETS kteams-capture RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS kollega-capture RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 # The menu launcher's PATH may not include the install prefix (~/.local/bin): absolute Exec.
-configure_file(data/io.github.andreacimino.kteams.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/io.github.andreacimino.kteams.desktop @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/io.github.andreacimino.kteams.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
-install(FILES data/io.github.andreacimino.kteams.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
-install(FILES data/kteams.notifyrc DESTINATION ${CMAKE_INSTALL_DATADIR}/knotifications6)
-install(FILES data/io.github.andreacimino.kteams.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
+configure_file(data/io.github.andreacimino.kollega.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/io.github.andreacimino.kollega.desktop @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/io.github.andreacimino.kollega.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+install(FILES data/io.github.andreacimino.kollega.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
+install(FILES data/kollega.notifyrc DESTINATION ${CMAKE_INSTALL_DATADIR}/knotifications6)
+install(FILES data/io.github.andreacimino.kollega.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
 
-# Media pipeline check without a call (not built by default): cmake --build native/build --target kteams-offer-test
-add_executable(kteams-offer-test EXCLUDE_FROM_ALL tests/offer_dump.cpp)
-target_link_libraries(kteams-offer-test PRIVATE kteams_core)
+# Media pipeline check without a call (not built by default): cmake --build native/build --target kollega-offer-test
+add_executable(kollega-offer-test EXCLUDE_FROM_ALL tests/offer_dump.cpp)
+target_link_libraries(kollega-offer-test PRIVATE kollega_core)
 
 # Regression tests (Qt Test, run by ctest): cmake -DBUILD_TESTING=ON, then ctest --test-dir native/build.
-# With -DKTEAMS_COVERAGE=ON the "coverage" target runs them and writes the gcovr report
+# With -DKOLLEGA_COVERAGE=ON the "coverage" target runs them and writes the gcovr report
 # (native/build/coverage/index.html, summary on the terminal); see tests/README.md.
 include(CTest)
-option(KTEAMS_COVERAGE "Compile with gcov instrumentation and add the coverage target" OFF)
-if(KTEAMS_COVERAGE)
-    target_compile_options(kteams_core PUBLIC --coverage -O0 -g)
-    target_link_options(kteams_core PUBLIC --coverage)
+option(KOLLEGA_COVERAGE "Compile with gcov instrumentation and add the coverage target" OFF)
+if(KOLLEGA_COVERAGE)
+    target_compile_options(kollega_core PUBLIC --coverage -O0 -g)
+    target_link_options(kollega_core PUBLIC --coverage)
 endif()
 if(BUILD_TESTING)
     add_subdirectory(tests)

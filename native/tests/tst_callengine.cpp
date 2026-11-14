@@ -1,7 +1,7 @@
 // The call engine with a real webrtcbin: the renegotiation of a call that ended with
 // "SdpParsingFailure". Opt-in: it opens the microphone for a few seconds, so it runs only with
-// KTEAMS_TEST_ENGINE=1 on a machine with GStreamer's webrtcbin and a PulseAudio/PipeWire server.
-//   KTEAMS_TEST_ENGINE=1 ctest --test-dir native/build -R tst_callengine --output-on-failure
+// KOLLEGA_TEST_ENGINE=1 on a machine with GStreamer's webrtcbin and a PulseAudio/PipeWire server.
+//   KOLLEGA_TEST_ENGINE=1 ctest --test-dir native/build -R tst_callengine --output-on-failure
 #include "callengine.h"
 #include "mediadevices.h"
 
@@ -15,7 +15,7 @@
 namespace {
 QString fixture(const char *name)
 {
-    QFile f(QStringLiteral(KTEAMS_TEST_DATA_DIR "/") + QLatin1String(name));
+    QFile f(QStringLiteral(KOLLEGA_TEST_DATA_DIR "/") + QLatin1String(name));
     return f.open(QIODevice::ReadOnly) ? QString::fromUtf8(f.readAll()) : QString();
 }
 }
@@ -26,7 +26,7 @@ class CallEngineTest : public QObject
 private slots:
     void initTestCase()
     {
-        if (qgetenv("KTEAMS_TEST_ENGINE") != "1") QSKIP("opt-in: set KTEAMS_TEST_ENGINE=1 (opens the microphone)");
+        if (qgetenv("KOLLEGA_TEST_ENGINE") != "1") QSKIP("opt-in: set KOLLEGA_TEST_ENGINE=1 (opens the microphone)");
         gst_init(nullptr, nullptr);
         GstElementFactory *webrtcbin = gst_element_factory_find("webrtcbin");
         if (!webrtcbin) QSKIP("webrtcbin is not installed");

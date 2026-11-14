@@ -11,8 +11,8 @@
 #include <QLoggingCategory>
 #include <zlib.h>
 
-// Protocol details: QT_LOGGING_RULES="kteams.trouter.debug=true"
-Q_LOGGING_CATEGORY(lcTrouter, "kteams.trouter", QtInfoMsg)
+// Protocol details: QT_LOGGING_RULES="kollega.trouter.debug=true"
+Q_LOGGING_CATEGORY(lcTrouter, "kollega.trouter", QtInfoMsg)
 
 namespace {
 // Values purple-teams sends (teams_trouter.c, libteams.h).

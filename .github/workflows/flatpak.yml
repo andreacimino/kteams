@@ -1,4 +1,4 @@
-# Builds the Flatpak on every push and pull request; the bundle (kteams.flatpak) is an
+# Builds the Flatpak on every push and pull request; the bundle (kollega.flatpak) is an
 # artifact of the run, and on a "v*" tag it is attached to the GitHub release.
 #
 # flatpak-builder runs on the runner itself, with the KDE runtime installed for the user:
@@ -31,18 +31,18 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .flatpak-builder
-          key: flatpak-builder-${{ hashFiles('packaging/flatpak/io.github.andreacimino.kteams.yml') }}
+          key: flatpak-builder-${{ hashFiles('packaging/flatpak/io.github.andreacimino.kollega.yml') }}
       - name: Build
         run: |
           flatpak-builder --user --disable-rofiles-fuse --force-clean --repo=repo \
-            --default-branch=master build-dir packaging/flatpak/io.github.andreacimino.kteams.yml
-          flatpak build-bundle repo kteams.flatpak io.github.andreacimino.kteams master
+            --default-branch=master build-dir packaging/flatpak/io.github.andreacimino.kollega.yml
+          flatpak build-bundle repo kollega.flatpak io.github.andreacimino.kollega master
       - uses: actions/upload-artifact@v4
         with:
-          name: kteams-flatpak
-          path: kteams.flatpak
+          name: kollega-flatpak
+          path: kollega.flatpak
       - name: Attach the bundle to the release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: kteams.flatpak
+          files: kollega.flatpak

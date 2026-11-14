@@ -1,6 +1,6 @@
-<p align="center"><img src="native/data/io.github.andreacimino.kteams.svg" width="128" alt="KTeams logo"></p>
+<p align="center"><img src="native/data/io.github.andreacimino.kollega.svg" width="128" alt="Kollega logo"></p>
 
-# KTeams
+# Kollega
 
 A **native** Microsoft Teams client for KDE Plasma (work / school accounts), written in
 Qt 6 / Kirigami. No embedded browser: it talks to the Teams services directly, as the
@@ -36,7 +36,7 @@ The calendar week, with meetings to join:
   echo cancellation and noise suppression; mute, hang up.
 - Presence (own and others'), status message, Do not disturb.
 - Settings: microphone, speakers and camera of the calls (menu, Settings…); the default is the
-  system one, and `KTEAMS_CAMERA` still wins for the camera.
+  system one, and `KOLLEGA_CAMERA` still wins for the camera.
 - A Chat button in the call bar opens the chat of the call or meeting.
 - Calendar: week view, reminders, accept/decline, join; new meeting (through Microsoft Graph).
 - Activity feed (mentions, replies, reactions) with filters and mark-all-read.
@@ -75,11 +75,11 @@ The calendar week, with meetings to join:
 
 ## Install
 
-Arch / CachyOS / Manjaro: `yay -S kteams-git` (AUR), or `makepkg -si` in
-`packaging/arch/kteams-git/`. Dependencies come from pacman; details in `packaging/README.md`.
+Arch / CachyOS / Manjaro: `yay -S kollega-git` (AUR), or `makepkg -si` in
+`packaging/arch/kollega-git/`. Dependencies come from pacman; details in `packaging/README.md`.
 
-Any distribution: the Flatpak bundle (`kteams.flatpak`) built by GitHub Actions, from the
-latest run or from a release: `flatpak install --user kteams.flatpak`.
+Any distribution: the Flatpak bundle (`kollega.flatpak`) built by GitHub Actions, from the
+latest run or from a release: `flatpak install --user kollega.flatpak`.
 
 From source (any distribution with Qt 6.5+, KF6, GStreamer 1.22+ with webrtcbin):
 
@@ -87,12 +87,12 @@ From source (any distribution with Qt 6.5+, KF6, GStreamer 1.22+ with webrtcbin)
     cmake --build native/build
     cmake --install native/build     # menu entry, icon, notification sounds
 
-Then "KTeams" from the menu, or `kteams`.
+Then "Kollega" from the menu, or `kollega`.
 
 ## When something goes wrong
 
-- Logs are in `~/.cache/kteams/kteams/kteams.log` (no tokens or secrets in
-  them). Live: `QT_FORCE_STDERR_LOGGING=1 kteams`.
+- Logs are in `~/.cache/kollega/kollega/kollega.log` (no tokens or secrets in
+  them). Live: `QT_FORCE_STDERR_LOGGING=1 kollega`.
 - During calls the log prints a `stats:` line every 5 seconds with the packets sent and
   received: "received" stuck at 0 means a network (TURN) or negotiation problem.
 - "Sign out" in the tray menu really quits; closing the window keeps the app in the tray.
@@ -106,17 +106,17 @@ Then "KTeams" from the menu, or `kteams`.
   `cmake --build native/build --target update_translations`, then fill every `.ts`).
 - Tests: Qt Test suites in `native/tests/` (message content, models, cache, demo mode),
   built by default and run with `ctest --test-dir native/build --output-on-failure`;
-  coverage with `-DKTEAMS_COVERAGE=ON` and the `coverage` target (gcovr). GitHub Actions runs
+  coverage with `-DKOLLEGA_COVERAGE=ON` and the `coverage` target (gcovr). GitHub Actions runs
   them on every push (`.github/workflows/tests.yml`), next to the Flatpak build.
 - `native/docs/calling-protocol.md`: the Teams calling protocol as we understand it
   (Microsoft's SDP dialect, video source requests, meetings).
-- `native/tests/offer_dump.cpp` → `kteams-offer-test`: prints the SDP offer, turns the
+- `native/tests/offer_dump.cpp` → `kollega-offer-test`: prints the SDP offer, turns the
   camera on, and with `loop` runs a call between two engines in one process, without calling
-  anyone. `cmake --build native/build --target kteams-offer-test`.
-- Screenshots: `KTEAMS_DEMO=1` replaces every name, title and message with made-up ones;
-  `KTEAMS_SCREENSHOT=file.png` (with `KTEAMS_START_TAB=0..3`) saves the window after
-  `KTEAMS_SCREENSHOT_DELAY` seconds and quits. `docs/screenshots/` was made that way.
-- `native/call/`: `kteams-capture`, Teams web in a QtWebEngine window, a developer tool only
+  anyone. `cmake --build native/build --target kollega-offer-test`.
+- Screenshots: `KOLLEGA_DEMO=1` replaces every name, title and message with made-up ones;
+  `KOLLEGA_SCREENSHOT=file.png` (with `KOLLEGA_START_TAB=0..3`) saves the window after
+  `KOLLEGA_SCREENSHOT_DELAY` seconds and quits. `docs/screenshots/` was made that way.
+- `native/call/`: `kollega-capture`, Teams web in a QtWebEngine window, a developer tool only
   (`-DBUILD_CALL_HELPER=ON`): with `--capture` it records the protocol traffic, secrets
   masked. The app does not use it.
 - The chat protocol comes from purple-teams; the calling one from captures and Teams web's
@@ -124,11 +124,11 @@ Then "KTeams" from the menu, or `kteams`.
 
 ## License and disclaimer
 
-KTeams is free software, released under the **GNU General Public License, version 3 or
+Kollega is free software, released under the **GNU General Public License, version 3 or
 later** (see `LICENSE`). It is written and maintained by Andrea Cimino with the help of
 AI assistants.
 
-KTeams is an **unofficial** client. It is not affiliated with, endorsed by or supported by
+Kollega is an **unofficial** client. It is not affiliated with, endorsed by or supported by
 Microsoft. "Microsoft Teams" and "Microsoft" are trademarks of Microsoft Corporation. The
 program talks to Teams through the same services the official clients use; those services
 are not publicly documented and may change at any time, which can stop the program from

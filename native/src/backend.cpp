@@ -208,7 +208,7 @@ Backend::Backend(QObject *parent) : QObject(parent)
         m_nativeCall.incoming({m_client.tokens().skypeToken, selfMri(), m_selfDisplayName, m_trouter.endpointId(), m_trouter.surl()}, notification);
         if (!m_nativeCall.isIncoming()) return;
         auto *n = new KNotification(QStringLiteral("incomingCall"), KNotification::Persistent);
-        n->setComponentName(QStringLiteral("kteams"));
+        n->setComponentName(QStringLiteral("kollega"));
         m_ringNotification = n;
         n->setTitle(tr("Incoming call"));
         n->setText(tr("%1 is calling you").arg(who.isEmpty() ? tr("Someone") : who.toHtmlEscaped()));
@@ -226,11 +226,11 @@ Backend::Backend(QObject *parent) : QObject(parent)
         emit nativeCallChanged();
     });
     connect(&m_trouter, &Trouter::connectedChanged, this, [this] { emit realtimeChanged(); scheduleSync(); });
-    // KTEAMS_AUTOTEST=1: an unattended native test call (echo bot) once the push channel is
+    // KOLLEGA_AUTOTEST=1: an unattended native test call (echo bot) once the push channel is
     // up, hung up after 45 s; the stats in the log tell whether audio flowed both ways.
     connect(&m_trouter, &Trouter::connectedChanged, this, [this](bool connected) {
         static bool done = false;
-        if (!connected || done || !qEnvironmentVariableIsSet("KTEAMS_AUTOTEST")) return;
+        if (!connected || done || !qEnvironmentVariableIsSet("KOLLEGA_AUTOTEST")) return;
         done = true;
         QTimer::singleShot(std::chrono::seconds(3), this, [this] {
             qInfo() << "autotest: starting the native test call";
@@ -248,7 +248,7 @@ Backend::Backend(QObject *parent) : QObject(parent)
     m_syncTimer.setSingleShot(true);
     connect(&m_syncTimer, &QTimer::timeout, this, &Backend::sync);
     // Away after this long without keyboard or mouse input anywhere on the desktop, as in the
-    // Teams client; not after this long without the KTeams window in front.
+    // Teams client; not after this long without the Kollega window in front.
     KIdleTime *idle = KIdleTime::instance();
     m_idleTimeoutId = idle->addIdleTimeout(std::chrono::minutes(5));
     connect(idle, &KIdleTime::timeoutReached, this, [this, idle](int id) {
@@ -733,12 +733,12 @@ void Backend::sync()
 
 void Backend::notifyNewMessage(const ConversationItem &conv)
 {
-    // Our own events (data/kteams.notifyrc): popup and sound, user-configurable.
+    // Our own events (data/kollega.notifyrc): popup and sound, user-configurable.
     const bool mention = conv.title.contains(QStringLiteral(" › ")); // channel mention (see handleConversations)
     if (conv.muted || doNotDisturb()) { qInfo() << "notify: skipped (muted or do not disturb)" << conv.title; return; }
     qInfo() << "notify:" << (mention ? "mention" : "message") << "from" << conv.title;
     auto *n = new KNotification(mention ? QStringLiteral("mention") : QStringLiteral("newMessage"), KNotification::CloseOnTimeout);
-    n->setComponentName(QStringLiteral("kteams"));
+    n->setComponentName(QStringLiteral("kollega"));
     n->setTitle(conv.title);
     n->setText(conv.preview.toHtmlEscaped());
     n->setIconName(QStringLiteral("im-user"));
@@ -1255,7 +1255,7 @@ QString freeDownloadPath(const QString &fileName)
 void Backend::notifyDownloaded(const QString &path)
 {
     auto *n = new KNotification(QStringLiteral("downloadDone"), KNotification::CloseOnTimeout);
-    n->setComponentName(QStringLiteral("kteams"));
+    n->setComponentName(QStringLiteral("kollega"));
     n->setTitle(tr("Download finished"));
     n->setText(QFileInfo(path).fileName().toHtmlEscaped());
     n->setIconName(QStringLiteral("document-save"));
@@ -1437,7 +1437,7 @@ void Backend::handleActivity(const QJsonArray &arr)
         m_knownActivity.insert(it.id);
         if (!m_activityLoaded || it.read || doNotDisturb()) continue;
         auto *n = new KNotification(QStringLiteral("activity"), KNotification::CloseOnTimeout);
-        n->setComponentName(QStringLiteral("kteams"));
+        n->setComponentName(QStringLiteral("kollega"));
         n->setTitle(it.who + QLatin1Char(' ') + it.text + (it.where.isEmpty() ? QString() : QStringLiteral(" · ") + it.where));
         n->setText(it.preview.toHtmlEscaped());
         n->setIconName(QStringLiteral("notifications"));
@@ -1602,7 +1602,7 @@ void Backend::scheduleReminders(const QVector<CalendarEvent> &events)
         const QString when = QLocale().toString(ev.start.toLocalTime().time(), QLocale::ShortFormat);
         QTimer::singleShot(std::chrono::milliseconds(msecs), this, [this, subject, joinUrl, chatId, when] {
             auto *n = new KNotification(QStringLiteral("reminder"), KNotification::Persistent);
-            n->setComponentName(QStringLiteral("kteams"));
+            n->setComponentName(QStringLiteral("kollega"));
             n->setTitle(tr("In %1 minutes: %2").arg(kMinutesBefore).arg(subject.isEmpty() ? tr("meeting") : subject));
             n->setText(tr("Starts at %1").arg(when));
             n->setIconName(QStringLiteral("view-calendar"));

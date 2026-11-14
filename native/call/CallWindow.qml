@@ -8,7 +8,7 @@ ApplicationWindow {
     width: 1100
     height: 750
     visible: startVisible
-    title: (web.title || "Chiamata") + " — KTeams"
+    title: (web.title || "Chiamata") + " — Kollega"
     readonly property double startedAt: Date.now()
 
     // A call or meeting handed over by the main app (CallController::open).
@@ -27,7 +27,7 @@ ApplicationWindow {
     // One signed-in web session for the main window and the windows Teams opens.
     WebEngineProfile {
         id: teamsProfile
-        storageName: "kteams-auth"
+        storageName: "kollega-auth"
         persistentStoragePath: profilePath   // set by main.cpp
         offTheRecord: false
         spellCheckEnabled: false
@@ -103,7 +103,7 @@ ApplicationWindow {
             width: 1000
             height: 700
             visible: true
-            title: (popupView.title || "Chiamata") + " — KTeams"
+            title: (popupView.title || "Chiamata") + " — Kollega"
             onClosing: popup.destroy()
             CallView {
                 id: popupView

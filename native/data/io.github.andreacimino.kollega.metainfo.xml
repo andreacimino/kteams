@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>io.github.andreacimino.kteams</id>
-  <name>KTeams</name>
+  <id>io.github.andreacimino.kollega</id>
+  <name>Kollega</name>
   <summary>Native Microsoft Teams client for KDE</summary>
   <developer id="io.github.andreacimino">
     <name>Andrea Cimino</name>
@@ -16,9 +16,9 @@
       web client needs.
     </p>
   </description>
-  <launchable type="desktop-id">io.github.andreacimino.kteams.desktop</launchable>
-  <url type="homepage">https://github.com/andreacimino/kteams</url>
-  <url type="bugtracker">https://github.com/andreacimino/kteams/issues</url>
+  <launchable type="desktop-id">io.github.andreacimino.kollega.desktop</launchable>
+  <url type="homepage">https://github.com/andreacimino/kollega</url>
+  <url type="bugtracker">https://github.com/andreacimino/kollega/issues</url>
   <categories>
     <category>Network</category>
     <category>InstantMessaging</category>

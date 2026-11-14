@@ -25,6 +25,32 @@ public:
     }
     void remove() override { ++removed; stored.clear(); }
 };
+
+// A MigratingTokenStore over three stores kept in memory: the current one, then two legacy
+// ones, newer first.
+struct Migrating
+{
+    MemoryStore *current, *newer, *older;
+    std::unique_ptr<MigratingTokenStore> store;
+};
+Migrating migrating()
+{
+    auto current = std::make_unique<MemoryStore>();
+    auto newer = std::make_unique<MemoryStore>();
+    auto older = std::make_unique<MemoryStore>();
+    Migrating m{current.get(), newer.get(), older.get(), nullptr};
+    std::vector<std::unique_ptr<TokenStore>> legacy;
+    legacy.push_back(std::move(newer));
+    legacy.push_back(std::move(older));
+    m.store = std::make_unique<MigratingTokenStore>(std::move(current), std::move(legacy));
+    return m;
+}
+QString readFrom(TokenStore &store)
+{
+    QString got = QStringLiteral("<not called>");
+    store.read([&got](const QString &token) { got = token; });
+    return got;
+}
 }
 
 class OAuthTest : public QObject
@@ -302,6 +328,73 @@ private slots:
         QVERIFY(failed.wait(5000));
         QCOMPARE(failed[0].at(0).toString(), QStringLiteral("Cannot save the session in the keychain: locked wallet"));
         QCOMPARE(failed[0].at(1).toBool(), false);
+    }
+    // --- session kept under an earlier app name -----------------------------------------
+
+    void currentTokenIsReadWithoutTouchingTheLegacyOnes()
+    {
+        Migrating m = migrating();
+        m.current->stored = "new";
+        m.newer->stored = "old";
+
+        QCOMPARE(readFrom(*m.store), QString("new"));
+        QCOMPARE(m.newer->stored, QString("old"));
+        QCOMPARE(m.newer->removed, 0);
+    }
+
+    void legacyTokenIsMovedToTheCurrentStore()
+    {
+        Migrating m = migrating();
+        m.newer->stored = "from-newer";
+
+        QCOMPARE(readFrom(*m.store), QString("from-newer"));
+        QCOMPARE(m.current->stored, QString("from-newer"));
+        QCOMPARE(m.newer->removed, 1);
+    }
+
+    void olderLegacyStoreIsTriedWhenTheNewerIsEmpty()
+    {
+        Migrating m = migrating();
+        m.older->stored = "from-older";
+
+        QCOMPARE(readFrom(*m.store), QString("from-older"));
+        QCOMPARE(m.current->stored, QString("from-older"));
+        QCOMPARE(m.older->removed, 1);
+        QCOMPARE(m.newer->removed, 0);
+    }
+
+    void legacyTokenIsKeptWhenTheCopyFails()
+    {
+        Migrating m = migrating();
+        m.newer->stored = "from-newer";
+        m.current->writeError = "keychain locked";
+
+        QCOMPARE(readFrom(*m.store), QString("from-newer")); // this run still signs in
+        QCOMPARE(m.newer->removed, 0);
+        QCOMPARE(m.newer->stored, QString("from-newer"));
+    }
+
+    void nothingStoredAnywhereReadsEmpty()
+    {
+        Migrating m = migrating();
+
+        QCOMPARE(readFrom(*m.store), QString());
+        QVERIFY(m.current->writes.isEmpty());
+    }
+
+    void writesAndRemovalsGoToTheCurrentStore()
+    {
+        Migrating m = migrating();
+        m.newer->stored = "old";
+        QString error = "<not called>";
+
+        m.store->write("fresh", [&error](const QString &e) { error = e; });
+        m.store->remove();
+
+        QCOMPARE(error, QString());
+        QCOMPARE(m.current->writes, QStringList{"fresh"});
+        QCOMPARE(m.current->removed, 1);
+        QCOMPARE(m.newer->stored, QString("old"));
     }
 };
 

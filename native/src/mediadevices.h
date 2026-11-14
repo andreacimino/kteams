@@ -33,7 +33,7 @@ void select(Kind kind, const QString &id);
 // because the chosen USB microphone is unplugged. The choice itself is kept for when it is back.
 QString selectedIfPresent(Kind kind);
 
-// The camera the call uses: KTEAMS_CAMERA if set, else the one chosen, else /dev/video0.
+// The camera the call uses: KOLLEGA_CAMERA if set, else the one chosen, else /dev/video0.
 QString cameraToUse(const QString &environmentValue, const QString &chosen);
 
 // ` device="<id>" ` for a gst_parse_launch description, or "" for the default.

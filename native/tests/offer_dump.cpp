@@ -1,7 +1,7 @@
 // Starts the call engine without any signaling (no TURN, no call) and prints the SDP
 // offer it would send, in the Teams dialect; then turns the camera on and off. A check
 // that the media pipeline negotiates and describes itself as intended, runnable without
-// calling anyone:  QT_FORCE_STDERR_LOGGING=1 ./kteams-offer-test [camera]
+// calling anyone:  QT_FORCE_STDERR_LOGGING=1 ./kollega-offer-test [camera]
 #include <QCoreApplication>
 #include <QRegularExpression>
 #include <QTimer>

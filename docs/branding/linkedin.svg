@@ -10,8 +10,8 @@
     </filter>
   </defs>
   <rect width="1200" height="1200" fill="url(#page)"/>
-  <image href="../../native/data/io.github.andreacimino.kteams.svg" x="74" y="64" width="150" height="150"/>
-  <text x="250" y="148" font-family="Noto Sans, sans-serif" font-size="88" font-weight="700" fill="#fcfcfc">KTeams</text>
+  <image href="../../native/data/io.github.andreacimino.kollega.svg" x="74" y="64" width="150" height="150"/>
+  <text x="250" y="148" font-family="Noto Sans, sans-serif" font-size="88" font-weight="700" fill="#fcfcfc">Kollega</text>
   <text x="254" y="200" font-family="Noto Sans, sans-serif" font-size="32" fill="#c8ccd2">A native Microsoft Teams client for KDE Plasma</text>
 
   <rect x="80" y="270" width="1040" height="650" rx="18" fill="#202326" filter="url(#shadow)"/>
@@ -32,5 +32,5 @@
     <text x="997" y="1027" font-size="34" font-weight="700" fill="#3daee9">GPL-3.0</text>
     <text x="997" y="1060" font-size="19" fill="#c8ccd2">open source</text>
   </g>
-  <text x="600" y="1140" text-anchor="middle" font-family="Noto Sans Mono, monospace" font-size="28" fill="#fcfcfc" fill-opacity="0.85">github.com/andreacimino/kteams</text>
+  <text x="600" y="1140" text-anchor="middle" font-family="Noto Sans Mono, monospace" font-size="28" fill="#fcfcfc" fill-opacity="0.85">github.com/andreacimino/kollega</text>
 </svg>

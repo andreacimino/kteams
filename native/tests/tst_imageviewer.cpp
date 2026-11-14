@@ -42,7 +42,7 @@ private slots:
         QVERIFY(image.save(path));
         imageUrl = QUrl::fromLocalFile(path).toString();
         engine.rootContext()->setContextProperty("backend", &backend);
-        component = new QQmlComponent(&engine, QUrl::fromLocalFile(QStringLiteral(KTEAMS_QML_DIR "/ImageViewer.qml")));
+        component = new QQmlComponent(&engine, QUrl::fromLocalFile(QStringLiteral(KOLLEGA_QML_DIR "/ImageViewer.qml")));
         QVERIFY2(component->isReady(), qPrintable(component->errorString()));
         window.resize(400, 300);
         window.show();

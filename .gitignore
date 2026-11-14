@@ -10,9 +10,9 @@
 /packaging/arch/src/
 /packaging/arch/*.tar.gz
 /packaging/arch/*.pkg.tar.*
-/packaging/arch/kteams-git/pkg/
-/packaging/arch/kteams-git/src/
-/packaging/arch/kteams-git/*.pkg.tar.*
+/packaging/arch/kollega-git/pkg/
+/packaging/arch/kollega-git/src/
+/packaging/arch/kollega-git/*.pkg.tar.*
 /.flatpak-builder/
 *.flatpak
 /native/build-coverage/

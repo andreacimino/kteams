@@ -1,7 +1,7 @@
 [Global]
-IconName=io.github.andreacimino.kteams
-Comment=KTeams
-Name=KTeams
+IconName=io.github.andreacimino.kollega
+Comment=Kollega
+Name=Kollega
 
 [Event/newMessage]
 Name=Nuovo messaggio

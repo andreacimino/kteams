@@ -1,6 +1,6 @@
 # Teams calling protocol: what the native client does
 
-Learned from `kteams-capture --capture` (Teams web test call, 2026-11-12), from Teams web's
+Learned from `kollega-capture --capture` (Teams web test call, 2026-11-12), from Teams web's
 calling code (service-worker cache) and by trial against the live service. Secrets were
 masked in the captures; this file holds structure only. Implementation: `src/nativecall.cpp`
 (signaling) and `src/callengine.cpp` (media, GStreamer webrtcbin).

@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <functional>
 #include <memory>
+#include <vector>
 
 // Where the refresh token is kept between runs. The default is the system keychain; the
 // tests use one in memory.
@@ -19,6 +20,24 @@ public:
     // `done` gets an empty string on success, else the error.
     virtual void write(const QString &token, std::function<void(const QString &error)> done) = 0;
     virtual void remove() = 0;
+};
+
+// A store that takes over a session kept under one of the app's earlier names: when
+// `current` has no token, the first `legacy` store that has one gives it; the token is
+// copied into `current` and removed from where it was. Writes and removals go to `current`.
+class MigratingTokenStore : public TokenStore
+{
+public:
+    MigratingTokenStore(std::unique_ptr<TokenStore> current, std::vector<std::unique_ptr<TokenStore>> legacy);
+    void read(std::function<void(const QString &token)> done) override;
+    void write(const QString &token, std::function<void(const QString &error)> done) override;
+    void remove() override;
+
+private:
+    void readLegacy(size_t index, std::function<void(const QString &token)> done);
+
+    std::unique_ptr<TokenStore> m_current;
+    std::vector<std::unique_ptr<TokenStore>> m_legacy;
 };
 
 // Native Microsoft sign-in for a work/school account, without any embedded browser:

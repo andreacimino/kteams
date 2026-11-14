@@ -12,7 +12,9 @@ namespace {
 constexpr auto kClientId = "1fec8e78-bce4-4aaf-ab1b-5451cc387264";
 constexpr auto kLoginResource = "https://api.spaces.skype.com";
 constexpr auto kAuthority = "https://login.microsoftonline.com/organizations";
-constexpr auto kKeychainService = "kteams";
+constexpr auto kKeychainService = "kollega";
+// Where earlier versions kept the refresh token (the app's previous name, ac-teams-native).
+constexpr const char *kLegacyKeychainServices[] = {"ac-teams-native"};
 constexpr auto kKeychainKey = "refresh_token";
 // Renew access tokens a little before they expire.
 constexpr int kExpirySlackSecs = 120;
@@ -29,41 +31,25 @@ int intField(const QJsonObject &o, const char *name)
     return v.isString() ? v.toString().toInt() : v.toInt();
 }
 
-// The system keychain (KWallet / Secret Service) through QtKeychain.
+// The system keychain (KWallet / Secret Service) through QtKeychain, under one service name.
 class KeychainTokenStore : public TokenStore
 {
 public:
-    explicit KeychainTokenStore(QObject *owner) : m_owner(owner) {}
+    KeychainTokenStore(QObject *owner, const QString &service) : m_owner(owner), m_service(service) {}
 
     void read(std::function<void(const QString &)> done) override
     {
-        auto *job = new QKeychain::ReadPasswordJob(QString::fromLatin1(kKeychainService), m_owner);
+        auto *job = new QKeychain::ReadPasswordJob(m_service, m_owner);
         job->setKey(QString::fromLatin1(kKeychainKey));
-        QObject::connect(job, &QKeychain::Job::finished, m_owner, [this, job, done] {
-            const QString token = job->error() == QKeychain::NoError ? job->textData() : QString();
-            if (!token.isEmpty()) { done(token); return; }
-            // A session stored under the app's previous name (ac-teams-native): taken over.
-            auto *old = new QKeychain::ReadPasswordJob(QStringLiteral("ac-teams-native"), m_owner);
-            old->setKey(QString::fromLatin1(kKeychainKey));
-            QObject::connect(old, &QKeychain::Job::finished, m_owner, [this, old, done] {
-                const QString legacy = old->error() == QKeychain::NoError ? old->textData() : QString();
-                if (!legacy.isEmpty()) {
-                    write(legacy, [](const QString &) {});
-                    auto *remove = new QKeychain::DeletePasswordJob(QStringLiteral("ac-teams-native"), m_owner);
-                    remove->setKey(QString::fromLatin1(kKeychainKey));
-                    remove->setAutoDelete(true);
-                    remove->start();
-                }
-                done(legacy);
-            });
-            old->start();
+        QObject::connect(job, &QKeychain::Job::finished, m_owner, [job, done] {
+            done(job->error() == QKeychain::NoError ? job->textData() : QString());
         });
         job->start();
     }
 
     void write(const QString &token, std::function<void(const QString &)> done) override
     {
-        auto *job = new QKeychain::WritePasswordJob(QString::fromLatin1(kKeychainService), m_owner);
+        auto *job = new QKeychain::WritePasswordJob(m_service, m_owner);
         job->setKey(QString::fromLatin1(kKeychainKey));
         job->setTextData(token);
         QObject::connect(job, &QKeychain::Job::finished, m_owner, [job, done] {
@@ -74,18 +60,59 @@ public:
 
     void remove() override
     {
-        auto *job = new QKeychain::DeletePasswordJob(QString::fromLatin1(kKeychainService), m_owner);
+        auto *job = new QKeychain::DeletePasswordJob(m_service, m_owner);
         job->setKey(QString::fromLatin1(kKeychainKey));
         job->start();
     }
 
 private:
     QObject *m_owner;
+    QString m_service;
 };
 }
 
+MigratingTokenStore::MigratingTokenStore(std::unique_ptr<TokenStore> current, std::vector<std::unique_ptr<TokenStore>> legacy)
+    : m_current(std::move(current)), m_legacy(std::move(legacy))
+{
+}
+
+void MigratingTokenStore::read(std::function<void(const QString &)> done)
+{
+    m_current->read([this, done](const QString &token) {
+        if (!token.isEmpty()) done(token);
+        else readLegacy(0, done);
+    });
+}
+
+void MigratingTokenStore::readLegacy(size_t index, std::function<void(const QString &)> done)
+{
+    if (index >= m_legacy.size()) { done(QString()); return; }
+    m_legacy[index]->read([this, index, done](const QString &found) {
+        const QString token = found; // a copy: removing the old entry may clear what `found` refers to
+        if (token.isEmpty()) { readLegacy(index + 1, done); return; }
+        // The old copy goes only once the new one is written: a failed write keeps it.
+        m_current->write(token, [this, index](const QString &error) {
+            if (error.isEmpty()) m_legacy[index]->remove();
+        });
+        done(token);
+    });
+}
+
+void MigratingTokenStore::write(const QString &token, std::function<void(const QString &)> done) { m_current->write(token, std::move(done)); }
+
+void MigratingTokenStore::remove() { m_current->remove(); }
+
+namespace {
+std::unique_ptr<TokenStore> keychainStore(QObject *owner)
+{
+    std::vector<std::unique_ptr<TokenStore>> legacy;
+    for (const char *service : kLegacyKeychainServices) legacy.push_back(std::make_unique<KeychainTokenStore>(owner, QString::fromLatin1(service)));
+    return std::make_unique<MigratingTokenStore>(std::make_unique<KeychainTokenStore>(owner, QString::fromLatin1(kKeychainService)), std::move(legacy));
+}
+}
+
 OAuth::OAuth(QObject *parent)
-    : QObject(parent), m_store(std::make_unique<KeychainTokenStore>(this)), m_authority(QString::fromLatin1(kAuthority))
+    : QObject(parent), m_store(keychainStore(this)), m_authority(QString::fromLatin1(kAuthority))
 {
     connect(&m_pollTimer, &QTimer::timeout, this, &OAuth::pollDeviceCode);
 }

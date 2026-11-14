@@ -1,4 +1,4 @@
-// kteams-capture: a window with the Teams web app, only for calls and meetings.
+// kollega-capture: a window with the Teams web app, only for calls and meetings.
 //
 // One instance at a time: a second start hands its address to the running one and exits,
 // so a call reuses an already loaded Teams. Closing the window ends the call and hides it;
@@ -30,7 +30,7 @@
 #include <QtWebEngineQuick/qtwebenginequickglobal.h>
 
 namespace {
-constexpr auto kServerName = "kteams-capture";
+constexpr auto kServerName = "kollega-capture";
 constexpr int kWarmMinutes = 15;  // stay loaded this long after a call, unless --keep-warm
 // The Teams web app's current home: going there directly skips a redirect.
 constexpr auto kHome = "https://teams.cloud.microsoft/";
@@ -44,12 +44,12 @@ bool isTeamsUrl(const QUrl &url)
 }
 }
 
-Q_LOGGING_CATEGORY(lcCall, "kteams.call", QtInfoMsg)
+Q_LOGGING_CATEGORY(lcCall, "kollega.call", QtInfoMsg)
 
 // This window is only for calls: what Teams web would load for chats, files, calendar,
 // pictures and telemetry is never requested. Login, configuration, the app's own files,
 // Trouter, the calling services and threads (group calls) still go through.
-// KTEAMS_CALL_NO_BLOCK=1 turns this off, to tell a blocking problem from another one.
+// KOLLEGA_CALL_NO_BLOCK=1 turns this off, to tell a blocking problem from another one.
 class CallOnlyFilter : public QWebEngineUrlRequestInterceptor
 {
 public:
@@ -93,7 +93,7 @@ class CaptureLog : public QObject
 public:
     explicit CaptureLog(QObject *parent = nullptr) : QObject(parent)
     {
-        const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/kteams/call-captures");
+        const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/kollega/call-captures");
         QDir().mkpath(dir);
         m_file.setFileName(dir + QStringLiteral("/capture-%1.jsonl").arg(QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd-HHmmss"))));
         if (m_file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
@@ -223,12 +223,12 @@ public:
     QUrl homeUrl() const { return m_home; }
     void setWindow(QQuickWindow *window) { m_window = window; }
 
-    // Started by the main app inside a systemd scope (KTEAMS_CALL_SCOPE): while hidden the
+    // Started by the main app inside a systemd scope (KOLLEGA_CALL_SCOPE): while hidden the
     // scope has a memory ceiling, so the kernel compresses idle pages into zram; during a
     // call the ceiling is lifted so nothing slows down.
     static void setMemoryCeiling(bool limited)
     {
-        const QString scope = qEnvironmentVariable("KTEAMS_CALL_SCOPE");
+        const QString scope = qEnvironmentVariable("KOLLEGA_CALL_SCOPE");
         if (scope.isEmpty()) return;
         QProcess::startDetached(QStringLiteral("systemctl"),
                                 {QStringLiteral("--user"), QStringLiteral("set-property"), QStringLiteral("--runtime"), scope,
@@ -278,8 +278,8 @@ int main(int argc, char *argv[])
                 "--disable-component-update --disable-sync --no-pings");
     QtWebEngineQuick::initialize();
     QApplication app(argc, argv);
-    QCoreApplication::setOrganizationName(QStringLiteral("kteams"));
-    QCoreApplication::setApplicationName(QStringLiteral("kteams-capture"));
+    QCoreApplication::setOrganizationName(QStringLiteral("kollega"));
+    QCoreApplication::setApplicationName(QStringLiteral("kollega-capture"));
     app.setQuitOnLastWindowClosed(false);
 
     // Arguments: [url] [--login-hint <upn>] [--keep-warm] [--background] [--capture]
@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
     // Reuse the web profile the first app versions signed in with: usually no new sign-in.
     // (The native app's tokens cannot be shared: Microsoft binds them to the requesting client.)
     const QString profilePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
-        + QStringLiteral("/kteams/kteams/QtWebEngine/kteams-auth");
+        + QStringLiteral("/kollega/kollega/QtWebEngine/kollega-auth");
 
     CallPolicy policy;
     CallController controller(home, keepWarm);
@@ -351,7 +351,7 @@ int main(int argc, char *argv[])
     // While capturing, nothing is blocked: the point is to see what Teams really does.
     CaptureInterceptor *captureInterceptor = captureLog ? new CaptureInterceptor(captureLog, &app) : nullptr;
     if (profile && captureInterceptor) profile->setUrlRequestInterceptor(captureInterceptor);
-    else if (profile && qEnvironmentVariableIsEmpty("KTEAMS_CALL_NO_BLOCK")) profile->setUrlRequestInterceptor(&filter);
+    else if (profile && qEnvironmentVariableIsEmpty("KOLLEGA_CALL_NO_BLOCK")) profile->setUrlRequestInterceptor(&filter);
     QTimer stats;  // how much was spared, for the log
     QObject::connect(&stats, &QTimer::timeout, [&filter] { qCInfo(lcCall) << "requests blocked so far:" << filter.blocked(); });
     stats.start(std::chrono::seconds(30));

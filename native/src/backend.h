@@ -241,9 +241,9 @@ public:
     // A Teams meeting in the calendar (Microsoft Graph); attendees: e-mail addresses.
     Q_INVOKABLE void createMeeting(const QString &subject, const QDateTime &start, const QDateTime &end, const QStringList &attendees);
     Q_PROPERTY(QString activityFilter READ activityFilter WRITE setActivityFilter NOTIFY activityChanged)
-    // Demo mode helpers (screenshots): the tab to open at start (KTEAMS_START_TAB, 0-3), or -1.
+    // Demo mode helpers (screenshots): the tab to open at start (KOLLEGA_START_TAB, 0-3), or -1.
     Q_PROPERTY(int startTab READ startTab CONSTANT)
-    int startTab() const { return qEnvironmentVariableIsSet("KTEAMS_START_TAB") ? qEnvironmentVariableIntValue("KTEAMS_START_TAB") : -1; }
+    int startTab() const { return qEnvironmentVariableIsSet("KOLLEGA_START_TAB") ? qEnvironmentVariableIntValue("KOLLEGA_START_TAB") : -1; }
     Q_PROPERTY(QString quoteWho READ quoteWho NOTIFY quoteChanged)
     Q_PROPERTY(QString quoteText READ quoteText NOTIFY quoteChanged)
     QString activityFilter() const { return m_activityFilter; }

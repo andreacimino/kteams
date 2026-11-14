@@ -10,7 +10,7 @@
 #include <QRegularExpression>
 #include <QUuid>
 
-Q_LOGGING_CATEGORY(lcNativeCall, "kteams.nativecall", QtInfoMsg)
+Q_LOGGING_CATEGORY(lcNativeCall, "kollega.nativecall", QtInfoMsg)
 
 using namespace CallJson;
 
@@ -563,7 +563,7 @@ void NativeCall::onOffer(const QString &sdp)
                 {QStringLiteral("controlVideoStreaming"), link(QStringLiteral("call"), QStringLiteral("controlVideoStreaming"))},
                 {QStringLiteral("csrcInfo"), link(QStringLiteral("call"), QStringLiteral("csrcInfo"))}}},
             {QStringLiteral("pstnContent"), QJsonObject{{QStringLiteral("emergencyCallCountry"), QString()},
-                                                        {QStringLiteral("platformName"), QStringLiteral("KTeams/0.1; os=linux; deviceType=computer")},
+                                                        {QStringLiteral("platformName"), QStringLiteral("Kollega/0.1; os=linux; deviceType=computer")},
                                                         {QStringLiteral("publicApiCall"), false}}},
             {QStringLiteral("emergencyContent"), QJsonValue::Null},
             {QStringLiteral("mediaContent"), QJsonObject{

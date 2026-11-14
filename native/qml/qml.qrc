@@ -1,5 +1,5 @@
 <RCC>
-  <qresource prefix="/KTeams/qml">
+  <qresource prefix="/Kollega/qml">
     <file>Main.qml</file>
     <file>LoginPage.qml</file>
     <file>ChatPage.qml</file>
@@ -15,8 +15,8 @@
     <file>SettingsPage.qml</file>
     <file>NewMeetingDialog.qml</file>
   </qresource>
-  <qresource prefix="/KTeams">
-    <file alias="icon.svg">../data/io.github.andreacimino.kteams.svg</file>
-    <file alias="kteams.notifyrc">../data/kteams.notifyrc</file>
+  <qresource prefix="/Kollega">
+    <file alias="icon.svg">../data/io.github.andreacimino.kollega.svg</file>
+    <file alias="kollega.notifyrc">../data/kollega.notifyrc</file>
   </qresource>
 </RCC>

@@ -159,7 +159,7 @@ int main(int argc, char **argv)
     static QTemporaryDir cacheHome;
     qputenv("XDG_CACHE_HOME", cacheHome.path().toUtf8());
     QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName(QStringLiteral("kteams-test"));
+    QCoreApplication::setApplicationName(QStringLiteral("kollega-test"));
     CachesTest test;
     return QTest::qExec(&test, argc, argv);
 }

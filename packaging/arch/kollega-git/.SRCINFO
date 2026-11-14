@@ -1,8 +1,8 @@
-pkgbase = kteams-git
+pkgbase = kollega-git
 	pkgdesc = Native Microsoft Teams client for KDE (work accounts): chat, calls, video, screen sharing
 	pkgver = r12.8d5b356
 	pkgrel = 1
-	url = https://github.com/andreacimino/kteams
+	url = https://github.com/andreacimino/kollega
 	arch = x86_64
 	arch = aarch64
 	license = GPL-3.0-or-later
@@ -34,9 +34,9 @@ pkgbase = kteams-git
 	optdepends = pipewire-pulse: microphone and speakers through PipeWire
 	optdepends = xdg-desktop-portal-kde: screen sharing picker
 	optdepends = ocean-sound-theme: notification and call sounds
-	provides = kteams
-	conflicts = kteams
-	source = kteams-git::git+https://github.com/andreacimino/kteams.git#branch=develop
+	provides = kollega
+	conflicts = kollega
+	source = kollega-git::git+https://github.com/andreacimino/kollega.git#branch=develop
 	sha256sums = SKIP
 
-pkgname = kteams-git
+pkgname = kollega-git

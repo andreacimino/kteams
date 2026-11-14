@@ -228,8 +228,8 @@ int main(int argc, char **argv)
     static QTemporaryDir configHome;
     qputenv("XDG_CONFIG_HOME", configHome.path().toUtf8());
     QCoreApplication app(argc, argv);
-    QCoreApplication::setOrganizationName(QStringLiteral("kteams-test"));
-    QCoreApplication::setApplicationName(QStringLiteral("kteams-test"));
+    QCoreApplication::setOrganizationName(QStringLiteral("kollega-test"));
+    QCoreApplication::setApplicationName(QStringLiteral("kollega-test"));
     MediaDevicesTest test;
     return QTest::qExec(&test, argc, argv);
 }
